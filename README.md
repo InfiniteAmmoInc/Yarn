@@ -2,6 +2,8 @@
 
 Dialogue editor created for "Night in the Woods" (and other projects) by Noel Berry and Alec Holowka.
 
+[![Screenshot](http://infiniteammo.com/Yarn/Screenshot.jpg)]
+
 # Builds
 
 Mac: http://infiniteammo.com/Yarn/Yarn-01-04-2015-mac.zip
