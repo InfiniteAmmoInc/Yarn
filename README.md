@@ -10,7 +10,13 @@ Yarn logo created by @Mr_Alistair.
 
 Mac: http://infiniteammo.com/Yarn/Yarn-01-04-2015-mac.zip
 
-# How to Run as an App
+# How to Connect Nodes
+
+Node connections work similar to Twine.
+
+![Screenshot](http://infiniteammo.com/Yarn/NodeConnections.jpg)
+
+# How to Run Source as an App
 
 Download http://nwjs.io/ for your platform and extract the contents.
 
