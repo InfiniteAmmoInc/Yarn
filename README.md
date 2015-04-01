@@ -4,10 +4,6 @@ Dialogue editor created for "Night in the Woods" (and other projects) by Noel Be
 
 ![Screenshot](http://infiniteammo.com/Yarn/Screenshot.jpg)
 
-Yarn logo/icon created by @Mr_Alistair.
-
-![Icon](http://infiniteammo.com/Yarn/YarnIcon.png)
-
 # Builds
 
 Mac: http://infiniteammo.com/Yarn/Yarn-01-04-2015-mac.zip
@@ -30,3 +26,9 @@ Mac: Place source code in a new folder named "app.nw" inside the extracted nwjs.
 # How to Run Your Dialogue in Unity
 
 Unity example project coming soon!
+
+# Yarn Icon
+
+Yarn logo/icon created by @Mr_Alistair.
+
+![Icon](http://infiniteammo.com/Yarn/YarnIcon.png)
