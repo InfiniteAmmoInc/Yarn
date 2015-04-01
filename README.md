@@ -4,7 +4,9 @@ Dialogue editor created for "Night in the Woods" (and other projects) by Noel Be
 
 ![Screenshot](http://infiniteammo.com/Yarn/Screenshot.jpg)
 
-Yarn logo created by @Mr_Alistair.
+Yarn logo/icon created by @Mr_Alistair.
+
+![Icon](http://infiniteammo.com/Yarn/YarnIcon.png)
 
 # Builds
 
