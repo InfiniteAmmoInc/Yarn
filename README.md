@@ -25,3 +25,6 @@ Windows:
 Mac: Place source code in a new folder named "app.nw" inside the extracted nwjs.app's "Contents/Resources/" folder.
 (to explore an app's folder structure, right click and select "Show Package Contents")
 
+# How to Run Your Dialogue in Unity
+
+Coming Soon!
