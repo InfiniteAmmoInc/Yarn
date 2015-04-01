@@ -4,8 +4,10 @@ Dialogue editor created for "Night in the Woods" (and other projects) by Noel Be
 
 # How to Run as an App
 
-Use http://nwjs.io/ for your platform.
+Download http://nwjs.io/ for your platform and extract the contents.
 
-Download the .zip, extract.
-MacOSX: Place source code in a folder named "app.nw" inside the app "Contents/Resources/" folder.
+Windows: 
+
+MacOSX: Place source code in a new folder named "app.nw" inside the extracted nwjs.app's "Contents/Resources/" folder.
 (to explore an app's folder structure, right click and select "Show Package Contents")
+
