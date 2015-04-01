@@ -15,6 +15,9 @@ var App = function(name, version)
 	this.editingHistory = [];
 	this.appleCmdKey = false;
 	this.editingSaveHistoryTimeout = null;
+	this.dirty = false;
+	//this.editingPath = ko.observable(null);
+
 
 	// node-webkit
 	if (typeof(require) == "function")
@@ -125,6 +128,15 @@ var App = function(name, version)
 		{
 			self.gui.App.quit();
 		}
+	}
+
+	this.refreshWindowTitle = function(editingPath)
+	{
+		var gui = require('nw.gui');
+		// Get the current window
+		var win = gui.Window.get();
+
+		win.title = "Yarn - [" + editingPath + "] ";// + (self.dirty?"*":"");
 	}
 
 	this.newNode = function(updateArrows)

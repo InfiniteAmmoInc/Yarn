@@ -57,11 +57,7 @@ var data =
 	{
 		data.readFile(e, filename, true);
 
-		var gui = require('nw.gui');
-		// Get the current window
-		var win = gui.Window.get();
-
-		win.title = "Yarn - [" + filename + "]";
+		app.refreshWindowTitle(filename);
 	},
 
 	openFolder: function(e, foldername)
