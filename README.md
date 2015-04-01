@@ -27,4 +27,4 @@ Mac: Place source code in a new folder named "app.nw" inside the extracted nwjs.
 
 # How to Run Your Dialogue in Unity
 
-Coming Soon!
+Unity example project coming soon!
