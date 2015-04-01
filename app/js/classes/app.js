@@ -117,6 +117,28 @@ var App = function(name, version)
 		$(".search-body input").click(self.updateSearch);
 		$(".search-tags input").click(self.updateSearch);
 
+		/*
+		// using on
+		$('.nodes').on('mousewheel', function(event) {
+			self.cachedScale += event.deltaY * .001;
+			$(".nodes-holder").transition({ scale: self.cachedScale }, 0);
+		    //console.log(event.deltaX, event.deltaY, event.deltaFactor);
+		});
+*/
+
+		// using the event helper
+		$('.nodes').mousewheel(function(event) {
+			self.cachedScale += event.deltaY * .001 * self.cachedScale;
+
+			$(".nodes-holder").css({ transformOrigin: ""+$(window).width()/2+"px "+$(window).height()/2+"px" });
+			if (self.cachedScale > 1)
+				self.cachedScale = 1;
+			if (self.cachedScale < .25)
+				self.cachedScale = .25;
+			$(".nodes-holder").transition({ scale: self.cachedScale }, 0);
+		    //console.log(event.deltaX, event.deltaY, event.deltaFactor);
+		});
+
 		// apple command key
 		$(window).on('keydown', function(e) { if (e.keyCode == 91 || e.keyCode == 93) { self.appleCmdKey = true; } });
 		$(window).on('keyup', function(e) { if (e.keyCode == 91 || e.keyCode == 93) { self.appleCmdKey = false; } });
