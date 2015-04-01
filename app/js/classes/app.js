@@ -13,7 +13,7 @@ var App = function(name, version)
 	this.canvas;
 	this.context;
 	this.editingHistory = [];
-	this.appleCmdKey = false;
+	//this.appleCmdKey = false;
 	this.editingSaveHistoryTimeout = null;
 	this.dirty = false;
 	//this.editingPath = ko.observable(null);
@@ -34,6 +34,12 @@ var App = function(name, version)
 		self.canvas = $(".arrows")[0];
 		self.context = self.canvas.getContext('2d');
 		self.newNode().title("Start");
+
+		var win = this.gui.Window.get();
+		var nativeMenuBar = new this.gui.Menu({ type: "menubar" });
+		nativeMenuBar.createMacBuiltin("Yarn");
+		win.menu = nativeMenuBar;
+
 
 		// search field enter
 		$(".search-field").on("keydown", function (e)
@@ -140,8 +146,8 @@ var App = function(name, version)
 		});
 
 		// apple command key
-		$(window).on('keydown', function(e) { if (e.keyCode == 91 || e.keyCode == 93) { self.appleCmdKey = true; } });
-		$(window).on('keyup', function(e) { if (e.keyCode == 91 || e.keyCode == 93) { self.appleCmdKey = false; } });
+		//$(window).on('keydown', function(e) { if (e.keyCode == 91 || e.keyCode == 93) { self.appleCmdKey = true; } });
+		//$(window).on('keyup', function(e) { if (e.keyCode == 91 || e.keyCode == 93) { self.appleCmdKey = false; } });
 	}
 
 	this.quit = function()
@@ -191,9 +197,9 @@ var App = function(name, version)
 			$(".node-editor").css({ opacity: 0 }).transition({ opacity: 1 }, 250);
 			$(".node-editor .form").css({ y: "-100" }).transition({ y: "0" }, 250);
 			$(".editor").html(self.getHighlightedText(node.body()));
-			$(".editor").on("keyup", function(e) { self.updateHighlights(e); });
-			$(".editor").on("keydown", function(e) { if (e.keyCode == 9 || ((e.ctrlKey || e.metaKey) && e.keyCode == 90)) { e.preventDefault(); } });
-			$(".editor").on("cut copy paste",function(e) { e.preventDefault(); });
+			//$(".editor").on("keyup", function(e) { self.updateHighlights(e); });
+			//$(".editor").on("keydown", function(e) { if (e.keyCode == 9 || ((e.ctrlKey || e.metaKey) && e.keyCode == 90)) { e.preventDefault(); } });
+			//$(".editor").on("cut copy paste",function(e) { e.preventDefault(); });
 			self.updateLineNumbers(node.body());
 		}
 	}
