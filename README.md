@@ -1,6 +1,6 @@
 # Yarn
 
-Dialogue editor created for "Night in the Woods" and other projects.
+Dialogue editor created for "Night in the Woods" (and other projects) by Noel Berry and Alec Holowka.
 
 # How to Run as an App
 
