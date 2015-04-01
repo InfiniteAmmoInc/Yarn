@@ -1,0 +1,13 @@
+{
+	"name": "Yarn",
+	"version": "0.1.0",
+	"main": "app/index.html",
+	"window": {
+		"toolbar": false,
+		"position": "center",
+		"width": 1280,
+		"height": 720,
+		"min_width": 800,
+		"min_height": 600
+	}
+}

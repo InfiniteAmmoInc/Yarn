@@ -1,0 +1,548 @@
+/* --- ROOT CSS --- */
+
+body
+{
+	overflow: hidden;
+	-webkit-user-select: none;
+	line-height: 1.6em;
+	background: #000;
+}
+
+#app-bg
+{
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	bottom: 0px;
+	right: 0px;
+	background: -webkit-linear-gradient(45deg, #ddc9b9 0%, #daf0f2 100%);
+	transform-style: preserve-3d;
+	z-index: -1000;
+}
+
+#app
+{
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	cursor: default;
+	display: none;
+}
+
+/* --- GLOBAL CSS --- */
+
+h1, h2, h3, h4, h5, h6 { margin: 0; padding: 0; }
+
+textarea, input, button, select, .editor { outline: none; }
+
+input[type='checkbox'] { width: 20px; height: 20px; margin: 0; padding: 0; line-height: 0; vertical-align: bottom; margin-bottom: 6px; }
+
+a { color: #2f919a; text-decoration: none; transition: color 0.25s; }
+a:hover { color: #000;}
+
+::-webkit-scrollbar	
+{ 
+	background: -webkit-linear-gradient(top, #eee, #f4f4f4 50%, #eee); 
+	border-radius: 12px; 
+	border: 1px solid #e8e8e8;
+	border-top: 1px solid #ccc; 
+	border-bottom: 1px solid #ccc; 
+	cursor: pointer;
+}
+::-webkit-scrollbar-button { display: none; }
+::-webkit-scrollbar-thumb { background: #ccc; border-radius: 12px; border: 1px solid #ccc; }
+::-webkit-scrollbar-thumb:hover { background: #289aa5; border: 1px solid #148691; }
+
+.templates, .hidden { display: none; }
+
+/* --- VARIOUS CSS --- */
+
+.app-info
+{
+	position: absolute;
+	left: 20px;
+	bottom: 20px;
+	color: #000;
+	font-size: 0.8em;
+	text-transform: uppercase;
+	opacity: 0.4;
+	line-height: 1.2em;
+	z-index:-10;
+}
+
+.app-info span
+{
+	display: block;
+}
+
+.app-title
+{
+	font-weight: bold;
+}
+
+.app-version::before
+{
+	content: "Version ";
+}
+
+.icon
+{
+	border-radius: 4px;
+	width: 32px;
+	height: 32px;
+	background: #eee url('../images/icons.png') no-repeat;
+	background-blend-mode: difference;
+	overflow: hidden;
+	opacity: 0.5;
+	cursor: pointer;
+	transition: opacity 0.25s, background 0.25s;
+}
+
+.icon:hover
+{
+	opacity: 1;
+	background-color: #fff;
+}
+
+/* --- MENU --- */
+
+.app-controller
+{
+	position: absolute;
+	top: 20px;
+	left: 20px;
+	right: 20px;
+	z-index: 100;
+	float: left;
+}
+
+.app-menu
+{
+	float: right;
+	display: inline;
+}
+
+.app-menu .menu
+{
+	width: 160px;
+	float: left;
+	display: inline;
+	margin-left: 10px;
+	border-radius: 2px;
+	box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.5);
+	font-size: 0.9em;
+	color: #666;
+	text-transform: uppercase;
+	background: #fff;
+	cursor: pointer;
+}
+
+.app-menu .title
+{
+	box-sizing: border-box;
+	padding: 15px;
+	width: 100%;
+	height: 50px;
+	line-height: 20px;
+	font-weight: bold;
+	float: left;
+	transition: background 0.25s;
+}
+
+.app-menu .dropdown
+{
+	transition: max-height 0.5s;
+	max-height: 0px;
+	overflow: hidden;
+	float: left;
+}
+
+.app-menu .dropdown .item
+{
+	box-sizing: border-box;
+	float: left;
+	display: block;
+	width: 100%;
+	padding: 10px;
+}
+
+.app-menu .dropdown .item:hover
+{
+	background: #eee;
+	color: #000;
+}
+
+.app-menu .menu:hover .dropdown
+{
+	max-height: 400px;
+}
+
+.app-menu .menu:hover .title
+{
+	background: #f4f4f4;
+}
+
+/* --- NODE SEARCH--- */
+
+.app-search
+{
+	float: left;
+	display: inline;
+
+	background: #fff;
+	border-radius: 2px;
+	box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.5);
+	padding: 10px 20px 10px 10px;
+}
+
+.app-search input { padding: 4px 8px 4px 8px; font-family: "Lucida Console", Monaco, monospace; margin-left: 10px; margin-right: 8px; }
+.app-search .search-field { margin-left: 0px; margin-right: 0px; }
+.app-search input[type="checkbox"] { cursor: pointer; }
+
+/* --- ZOOM --- */
+
+.app-zoom
+{
+	float: left;
+	display: inline;
+	margin-left: 20px;
+
+	background: #fff;
+	border-radius: 2px;
+	box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.5);
+}
+
+.app-zoom span
+{
+	width: 32px;
+	height: 32px;
+	margin: 8px;
+	background: #fff url("../images/zooms.png") no-repeat;
+	float: left;
+	display: inline;
+	opacity: 0.25;
+	cursor: pointer;
+	transition: opacity 0.25s;
+}
+
+.app-zoom span:nth-child(2) { background-position: -32px 0px; }
+.app-zoom span:nth-child(3) { background-position: -64px 0px; }
+.app-zoom span:nth-child(4) { background-position: -96px 0px; }
+.app-zoom span:hover
+{
+	opacity: 0.50;
+}
+
+/* --- SORT --- */
+
+.app-sort
+{
+	float: left;
+	display: inline;
+	margin-left: 20px;
+
+	background: #fff;
+	border-radius: 2px;
+	box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.5);
+	padding: 10px 0px 10px 10px;
+}
+
+.app-sort span
+{
+	padding: 2px 8px 2px 8px;
+	height: 25px;
+	margin-right: 10px;
+	background: #ddd;
+	float: left;
+	display: inline;
+	transition: background 0.25s;
+	cursor: pointer;
+}
+
+.app-sort span:hover
+{
+	background: #bbb;
+}
+
+/* --- NODE WINDOW CSS --- */
+
+.arrows
+{
+	position: absolute;
+	width: 100%;
+	height: 100%;
+}
+
+.nodes
+{
+	position: absolute;
+	overflow: hidden;
+	width: 100%;
+	height: 100%;
+}
+
+.nodes-holder
+{
+	position: absolute;
+}
+
+.node
+{
+	position: absolute;
+	width: 200px;
+	height: 200px;
+	background: #fff;
+	border-radius: 2px;
+	box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.5);
+	border: 1px solid rgba(0, 0, 0, 0);
+	border-top: 1px solid #fff;
+	cursor: pointer;
+	transition: border 0.25s;
+}
+
+.node:hover
+{
+	border: 1px solid #49eff1;
+}
+
+.node .title
+{
+	box-sizing: border-box;
+	width: 100%;
+	padding: 0px 10px 0px 10px;
+	height: 40px;
+	line-height: 40px;
+	background: #eee;
+	color: #666;
+	font-size: 0.9em;
+	font-weight: bold;
+	transition: color 0.25s, background 0.25s;
+	overflow: hidden;
+}
+
+.node .body
+{
+	position: absolute;
+	box-sizing: border-box;
+	top: 40px;
+	width: 100%;
+	height: calc(100% - 48px);
+	padding: 8px 8px 8px 8px;
+	font-size: 0.8em;
+	overflow: hidden;
+	font-family: "Lucida Console", Monaco, monospaces;
+	color: #666;
+	line-height: 1.3em;
+}
+
+.node .body p { display: inline; margin: 0; padding:  0; }
+
+.node:hover .body
+{
+	overflow: auto;
+}
+
+.node .body-expanded
+{
+	overflow: auto;
+}
+
+.node .tags
+{
+	position: absolute;
+	box-sizing: border-box;
+	width: 100%;
+	padding: 2px 4px 2px 4px;
+	bottom: 0px;
+	border-top: 1px solid #ddd;
+	background: #f2f0eb;
+	overflow: hidden;
+}
+
+.node .tags span
+{
+	padding: 4px 8px 4px 8px;
+	margin: 4px 4px 0px 0px;
+	font-size: 0.8em;
+	background: #e4dbcb;
+	color: #978e7e;
+	border-radius: 4px;
+}
+
+.node .edit, .node .delete
+{
+	position: absolute;
+	right: 40px;
+	top: 4px;
+	opacity: 0;
+	transition: opacity 0.125s;
+}
+
+.node .delete
+{
+	right: 4px;
+	background-position: -32px 0px;
+}
+
+.node:hover .edit, .node:hover .delete
+{
+	opacity: 1;
+}
+
+.node .resize
+{
+	position: absolute;
+	right: 0px;
+	bottom: 0px;
+	width: 20px;
+	height: 20px;
+	background-color: #ddd;
+}
+
+.inactive, .inactive:hover { border: 1px solid #fff; cursor: default; pointer-events:none; }
+.inactive .edit, .inactive .delete, .inactive:hover .edit, .inactive:hover .delete { opacity: 0; }
+
+/* --- NODE EDITOR --- */
+
+.node-editor
+{
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	z-index: 200;
+	background: rgba(0, 0, 0, 0.5);
+}
+
+.node-editor .form
+{
+	position: absolute;
+	box-sizing: border-box;
+	left: 10%;
+	top: 10%;
+	width: 80%;
+	height: 80%;
+	padding: 40px;
+	background: #fff;
+	border-radius: 4px;
+	box-shadow: 0px 1px 1px #000;
+}
+
+.node-editor .form .close
+{
+	position: absolute;
+	right: 4px;
+	top: 4px;
+	background-position: -64px 0px;
+}
+
+.node-editor .form input[type="text"]
+{
+	box-sizing: border-box;
+	width: 100%;
+	font-size: 1.2em;
+	color: #666;
+	padding: 10px 0px 10px 0px;
+	margin-bottom: 10px;
+	border: none;
+	border-bottom: 2px solid #eee;
+	font-family: "Lucida Console", Monaco, monospace;
+}
+
+.node-editor .form .editor-container
+{
+	margin-top: 20px;
+	width: 100%;
+	height: calc(100% - 120px);
+	overflow-x: hidden;
+	overflow-y: scroll;
+	float: left;
+}
+
+.node-editor .form .editor
+{
+	float: right;
+	white-space: pre;
+	box-sizing: border-box;
+	width: calc(100% - 50px);
+	min-height: 100%;
+	padding: 0;
+	margin: 0;
+	font-size: 1.1em;
+	color: #666;
+	font-family: "Lucida Console", Monaco, monospaces;
+	cursor: text;
+}
+
+.node-editor .form .lines
+{
+	text-align: right;
+	float: left;
+	width: 30px;
+	height: 100%;
+	font-size: 1.1em;
+	font-family: "Lucida Console", Monaco, monospaces;
+	color: #aaa;
+}
+
+/* --- EDITOR HIGHLIGHTING --- */
+
+.editor p, .node .body p { display: inline; margin: 0; padding: 0; }
+
+.linkname
+{
+	color: #3ecfe9;
+}
+
+.linkbounds
+{
+	color: #0ec0e0;
+}
+
+.condition
+{
+	color: #e93ecf;
+}
+
+.conditionbounds
+{
+	color: #e00ec0;
+}
+
+.comment
+{
+	color: #44fe66;
+}
+
+/* --- NODE DELETE --- */
+
+.node-delete
+{
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	z-index: 200;
+	background: rgba(0, 0, 0, 0.5);
+
+}
+
+.node-delete .form
+{
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 100px;
+	padding: 20px;
+	width: 200px;
+	height: 120px;
+	background: #fff;
+	border-radius: 4px;
+	box-shadow: 0px 1px 1px #000;
+}
+
+.node-delete .form .close
+{
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 50px;
+	background-position: -64px 0px;
+}

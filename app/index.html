@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Yarn</title>
+		<link rel="stylesheet" href="css/normalize.css">
+		<link rel="stylesheet" href="css/style.css">
+
+		<!-- libraries -->
+		<script type="text/javascript" src="js/libs/jquery-1.10.2.js"></script>
+		<script type="text/javascript" src="js/libs/transit.js"></script>
+		<script type="text/javascript" src="js/libs/knockout-3.1.0.js"></script>
+
+		<!-- various models / classes -->
+		<script type="text/javascript" src="js/classes/app.js"></script>
+		<script type="text/javascript" src="js/classes/data.js"></script>
+		<script type="text/javascript" src="js/classes/utils.js"></script>
+		<script type="text/javascript" src="js/classes/node.js"></script>
+
+		<!-- start it all up! -->
+		<script type="text/javascript">
+
+			var app = new App("Yarn", "0.1.0");
+
+			$(document).ready(function()
+			{
+				app.run();
+			});
+
+		</script>
+	</head>
+	<body>
+
+		<!-- Fancy Background -->
+		<div id="app-bg">&nbsp;</div>
+
+		<!-- Entry Point / Container -->
+		<div id="app">
+
+			<div class="app-controller">
+				<!-- search form -->
+				<div class="app-search">
+					<input type="text" class="search-field"/>
+					<span class="search-title"><input type="checkbox" checked="checked"> Title</span>
+					<span class="search-body"><input type="checkbox"> Body</span>
+					<span class="search-tags"><input type="checkbox"> Tags</span>
+				</div>
+
+				<!-- zoom controls -->
+				<div class="app-zoom">
+					<span data-bind="click: function() { app.zoom(4); }"></span>
+					<span data-bind="click: function() { app.zoom(3); }"></span>
+					<span data-bind="click: function() { app.zoom(2); }"></span>
+					<span data-bind="click: function() { app.zoom(1); }"></span>
+				</div>
+
+				<!--
+				<div class="app-sort">
+					<span data-bind="click: function() { app.arrangeGrid(); }">G</span>
+					<span data-bind="click: function() { app.arrangeSpiral(); }">S</span>
+					<span data-bind="click: function() { app.sortAlphabetical(); }">A</span>
+				</div>
+				-->
+
+				<!-- navigation / menu -->
+				<div class="app-menu">
+					<div class="menu">
+						<span class="title" data-bind="click:app.newNode">+ Node</span>
+					</div>
+
+					<div class="menu">
+						<span class="title">Project</span>
+						<div class="dropdown">
+							<span class="item" data-bind="click: data.tryOpenFile">Open...</span>
+							<span class="item" data-bind="click: data.tryOpenFolder">Open Folder...</span>
+							<span class="item" data-bind="click: data.tryAppend">Append...</span>
+							<!-- ko if:data.editingPath() != null -->
+							<span class="item" data-bind="click: data.trySaveCurrent">Save</span>
+							<!-- /ko -->
+							<span class="item" data-bind="click: function() { data.trySave(FILETYPE.JSON); }">Save As Json...</span>
+							<span class="item" data-bind="click: function() { data.trySave(FILETYPE.TWEE); }">Save As Twee...</span>
+							<span class="item" data-bind="click: function() { data.trySave(FILETYPE.XML); }">Save As Xml...</span>
+							<span class="item" data-bind="click: app.quit">Close</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- arrow bg canvas for linked nodes -->
+			<canvas class="arrows">
+
+			</canvas>
+
+			<!-- foreach loop  of the nodes -->
+			<div class="nodes">
+				<div class="nodes-holder" data-bind="foreach: { data: app.nodes, as: 'node' }">
+					<div class="node" data-bind="nodeBind: true, css: { inactive: !node.active() }">
+						<div class="title" data-bind="text: node.title"></div>
+						<div class="body" data-bind="html: node.clippedBody"></div>
+						<div class="tags" data-bind="html: node.clippedTags"></div>
+						<div class="icon edit" data-bind="click: function() { app.editNode(node); }"></div>
+						<div class="icon delete" data-bind="click: node.tryRemove"></div>
+						<!--<div class="resize" data-bind="click:node.toggleExpand"></div>-->
+					</div>
+				</div>
+			</div>
+
+			<!-- ko if:app.editing() != null -->
+			<div class="node-editor" data-bind="mousedown:app.saveNode">
+
+				<div class="form" data-bind="preventBubble: 'click', preventBubble: 'mousedown'">
+					<input type="text" class="title" data-bind="value: app.editing().title">
+					<input type="text" data-bind="value: app.editing().tags">
+					<div class="editor-container">
+						<pre class="editor" contentEditable="true">Loading Node Text</pre>
+						<div class="lines"></div>
+					</div>
+					<div class="icon close" data-bind="click:app.saveNode"></div>
+				</div>
+
+			</div>
+			<!-- /ko -->
+
+			<!-- ko if:app.deleting() != null -->
+			<div class="node-delete" data-bind="click: function() { app.deleting(null); }">
+
+				<div class="form" data-bind="preventBubble: 'click'">
+					<div>Remove <span data-bind="text: app.deleting().title"></span>?</div>
+					<div class="icon close" data-bind="click:app.deleting().remove;"></div>
+				</div>
+
+			</div>
+			<!-- /ko -->
+
+			<!-- app info -->
+			<div class="app-info">
+				<span class="app-title" data-bind="text:app.name"></span>
+				<span class="app-version" data-bind="text:app.version"></span>
+			</div>
+
+		</div>
+
+		<!-- Hidden fields, file dialogs, and elements -->
+		<div class="hidden">
+			<input type="file" id="open-file" accept=".txt,.xml,.json,.twee"/>
+			<input type="file" id="open-folder" webkitdirectory directory/>
+			<input type="file" id="save-file" nwsaveas="filename.txt" />
+		</div>
+
+		<!-- templates container (they get loaded into this) -->
+		<div class="templates">
+		</div>
+
+	</bosy>
+</html>
