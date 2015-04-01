@@ -170,7 +170,7 @@ var App = function(name, version)
 			$(".node-editor .form").css({ y: "-100" }).transition({ y: "0" }, 250);
 			$(".editor").html(self.getHighlightedText(node.body()));
 			$(".editor").on("keyup", function(e) { self.updateHighlights(e); });
-			$(".editor").on("keydown", function(e) { if (e.keyCode == 9 || ((e.ctrlKey || self.appleCmdKey) && e.keyCode == 90)) { e.preventDefault(); } });
+			$(".editor").on("keydown", function(e) { if (e.keyCode == 9 || ((e.ctrlKey || e.metaKey) && e.keyCode == 90)) { e.preventDefault(); } });
 			$(".editor").on("cut copy paste",function(e) { e.preventDefault(); });
 			self.updateLineNumbers(node.body());
 		}
@@ -382,7 +382,7 @@ var App = function(name, version)
 		var startOffset, endOffset;
 
 		// ctrl + z
-		if ((self.appleCmdKey || e.ctrlKey) && e.keyCode == 90)
+		if ((e.metaKey || e.ctrlKey) && e.keyCode == 90)
 		{
 			if (self.editingHistory.length > 0)
 			{
@@ -412,7 +412,7 @@ var App = function(name, version)
 			endOffset = preCaretEndRange.toString().length;
 
 			// ctrl + c
-			if ((self.appleCmdKey || e.ctrlKey) && e.keyCode == 67)
+			if ((e.metaKey || e.ctrlKey) && e.keyCode == 67)
 			{
 				if (self.gui != undefined)
 				{
@@ -423,14 +423,14 @@ var App = function(name, version)
 			else
 			{
 				// ctrl + v
-				if ((self.appleCmdKey || e.ctrlKey) && e.keyCode == 86)
+				if ((e.metaKey || e.ctrlKey) && e.keyCode == 86)
 				{
 					var clipboard = self.gui.Clipboard.get();
 					text = text.substr(0, startOffset) + clipboard.get('text') + text.substr(endOffset);
 					startOffset = endOffset = (startOffset + clipboard.get('text').length);
 				}
 				// ctrl + x
-				else if ((self.appleCmdKey || e.ctrlKey) && e.keyCode == 88)
+				else if ((e.metaKey || e.ctrlKey) && e.keyCode == 88)
 				{
 					if (self.gui != undefined)
 					{
