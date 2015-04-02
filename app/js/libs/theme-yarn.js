@@ -30,7 +30,7 @@ color: #3ecfe9;\
 .ace-yarn .ace_string.ace_comm {\
 color: #e93ecf;\
 }\
-.ace-yarn .ace_lcomm, .ace-yarn .ace_rcomm {\
+.ace-yarn .ace_paren.ace_lcomm, .ace-yarn .ace_paren.ace_rcomm {\
 color: #e00ec0;\
 }\
 .ace-yarn .ace_paren.ace_llink, .ace-yarn .ace_paren.ace_rlink {\
