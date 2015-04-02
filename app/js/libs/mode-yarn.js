@@ -43,7 +43,7 @@ var YarnHighlightRules = function() {
         comm: [
             {
                 token: "string.comm",
-                regex: "[a-zA-Z0-9 ]+"
+                regex: "[a-zA-Z0-9\s\$ ]+"
             },
             {
                 token: "paren.rcomm",
