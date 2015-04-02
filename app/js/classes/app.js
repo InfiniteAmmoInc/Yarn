@@ -13,7 +13,7 @@ var App = function(name, version)
 	this.canvas;
 	this.context;
 	this.editingHistory = [];
-	this.appleCmdKey = false;
+	//this.appleCmdKey = false;
 	this.editingSaveHistoryTimeout = null;
 	this.dirty = false;
 	//this.editingPath = ko.observable(null);
@@ -34,6 +34,11 @@ var App = function(name, version)
 		self.canvas = $(".arrows")[0];
 		self.context = self.canvas.getContext('2d');
 		self.newNode().title("Start");
+
+		var win = self.gui.Window.get();
+		var nativeMenuBar = new self.gui.Menu({ type: "menubar" });
+		nativeMenuBar.createMacBuiltin("Yarn");
+		win.menu = nativeMenuBar;
 
 		// search field enter
 		$(".search-field").on("keydown", function (e)
@@ -140,8 +145,8 @@ var App = function(name, version)
 		});
 
 		// apple command key
-		$(window).on('keydown', function(e) { if (e.keyCode == 91 || e.keyCode == 93) { self.appleCmdKey = true; } });
-		$(window).on('keyup', function(e) { if (e.keyCode == 91 || e.keyCode == 93) { self.appleCmdKey = false; } });
+		//$(window).on('keydown', function(e) { if (e.keyCode == 91 || e.keyCode == 93) { self.appleCmdKey = true; } });
+		//$(window).on('keyup', function(e) { if (e.keyCode == 91 || e.keyCode == 93) { self.appleCmdKey = false; } });
 	}
 
 	this.quit = function()
@@ -487,7 +492,7 @@ var App = function(name, version)
 		}
 
 		// update text
-		editor[0].innerHTML = self.getHighlightedText(text);
+		//editor[0].innerHTML = self.getHighlightedText(text);
 
 		self.updateLineNumbers(text);
 
