@@ -7,6 +7,7 @@ Dialogue editor created for "Night in the Woods" (and other projects) by Noel Be
 # Builds
 
 Win64: http://infiniteammo.com/Yarn/Yarn-02-04-2015-win.zip
+
 MacOS: http://infiniteammo.com/Yarn/Yarn-02-04-2015-mac.zip
 
 # How to Connect Nodes
