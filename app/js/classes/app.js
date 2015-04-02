@@ -48,23 +48,23 @@ var App = function(name, version)
 			});
 
 		// prevent click bubbling
-		ko.bindingHandlers.preventBubble = 
+		ko.bindingHandlers.preventBubble =
 		{
-			init: function(element, valueAccessor) 
+			init: function(element, valueAccessor)
 			{
 				var eventName = ko.utils.unwrapObservable(valueAccessor());
-				ko.utils.registerEventHandler(element, eventName, function(event) 
+				ko.utils.registerEventHandler(element, eventName, function(event)
 				{
 					event.cancelBubble = true;
 					if (event.stopPropagation)
-						event.stopPropagation();             
+						event.stopPropagation();
 				});
 			}
 		};
-		
-		ko.bindingHandlers.mousedown = 
+
+		ko.bindingHandlers.mousedown =
 		{
-			init: function(element, valueAccessor, allBindings, viewModel, bindingContext) 
+			init: function(element, valueAccessor, allBindings, viewModel, bindingContext)
 			{
 				var value = ko.unwrap(valueAccessor());
 				$(element).mousedown(function()
@@ -186,15 +186,9 @@ var App = function(name, version)
 		if (node.active())
 		{
 			self.editing(node);
-			self.editingHistory = [{text: node.body(), start: node.body().length, end: node.body().length}];
 
 			$(".node-editor").css({ opacity: 0 }).transition({ opacity: 1 }, 250);
 			$(".node-editor .form").css({ y: "-100" }).transition({ y: "0" }, 250);
-			$(".editor").html(self.getHighlightedText(node.body()));
-			$(".editor").on("keyup", function(e) { self.updateHighlights(e); });
-			$(".editor").on("keydown", function(e) { if (e.keyCode == 9 || ((e.ctrlKey || e.metaKey) && e.keyCode == 90)) { e.preventDefault(); } });
-			$(".editor").on("cut copy paste",function(e) { e.preventDefault(); });
-			self.updateLineNumbers(node.body());
 		}
 	}
 
@@ -207,7 +201,6 @@ var App = function(name, version)
 	{
 		if (self.editing() != null)
 		{
-			self.editing().body($(".editor")[0].innerText);
 			self.updateNodeLinks();
 
 			self.editing().title(self.trim(self.editing().title()));
@@ -261,7 +254,7 @@ var App = function(name, version)
 				node.active(true);
 				element.clearQueue();
 				element.transition({opacity: on}, 500);
-			}	
+			}
 		}
 	}
 
@@ -418,7 +411,7 @@ var App = function(name, version)
 				return;
 			}
 		}
-		else 
+		else
 		{
 			// get the current start offset
 			var range = window.getSelection().getRangeAt(0);
@@ -448,6 +441,7 @@ var App = function(name, version)
 				if ((e.metaKey || e.ctrlKey) && e.keyCode == 86)
 				{
 					var clipboard = self.gui.Clipboard.get();
+					console.log(clipboard);
 					text = text.substr(0, startOffset) + clipboard.get('text') + text.substr(endOffset);
 					startOffset = endOffset = (startOffset + clipboard.get('text').length);
 				}
@@ -500,12 +494,12 @@ var App = function(name, version)
 		// reset offsets
 		if (document.createRange && window.getSelection)
 		{
-			function getTextNodesIn(node) 
+			function getTextNodesIn(node)
 			{
 				var textNodes = [];
-				if (node.nodeType == 3) 
+				if (node.nodeType == 3)
 					textNodes.push(node);
-				else 
+				else
 				{
 					var children = node.childNodes;
 					for (var i = 0, len = children.length; i < len; ++i)
@@ -521,15 +515,15 @@ var App = function(name, version)
 			var foundStart = false;
 			var foundEnd = false;
 
-			for (var i = 0, textNode; textNode = textNodes[i++]; ) 
+			for (var i = 0, textNode; textNode = textNodes[i++]; )
 			{
 				endCharCount = charCount + textNode.length;
-				if (!foundStart && startOffset >= charCount && (startOffset <= endCharCount || (startOffset == endCharCount && i < textNodes.length))) 
+				if (!foundStart && startOffset >= charCount && (startOffset <= endCharCount || (startOffset == endCharCount && i < textNodes.length)))
 				{
 					range.setStart(textNode, startOffset - charCount);
 					foundStart = true;
 				}
-				if (!foundEnd && endOffset >= charCount && (endOffset <= endCharCount || (endOffset == endCharCount && i < textNodes.length))) 
+				if (!foundEnd && endOffset >= charCount && (endOffset <= endCharCount || (endOffset == endCharCount && i < textNodes.length)))
 				{
 					range.setEnd(textNode, endOffset - charCount);
 					foundEnd = true;
@@ -544,7 +538,7 @@ var App = function(name, version)
 			sel.addRange(range);
 		}
 
-		
+
 	}
 
 	this.zoom = function(zoomLevel)
