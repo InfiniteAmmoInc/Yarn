@@ -12,16 +12,43 @@ var YarnHighlightRules = function() {
         start: [
             {
                 token: "comment",
-                regex: "//.+$",
-                next: "singleLineComment"
+                regex: "//.+$"
             },
             {
-                token: "string",
-                regex: "<<[a-zA-Z0-9_ ]+>>"
+                token: "paren.lcomm",
+                regex: "<<",
+                next: "comm"
             },
             {
-                token: "constant.numeric",
-                regex: "\[\[[a-zA-Z0-9_ ]+\]\]"
+                token: "paren.llink",
+                regex: "\\[\\[",
+                next: "link"
+            }
+        ],
+        link: [
+            {
+                token: "string.rlink",
+                regex: "\\|\\w*[a-zA-Z0-9 ]+"
+            },
+            {
+                token: "string.llink",
+                regex: "[a-zA-Z0-9 ]+"
+            },
+            {
+                token: "paren.rlink",
+                regex: "\\]\\]",
+                next: "start"
+            }
+        ],
+        comm: [
+            {
+                token: "string.comm",
+                regex: "[a-zA-Z0-9 ]+"
+            },
+            {
+                token: "paren.rcomm",
+                regex: ">>",
+                next: "start"
             }
         ]
     }

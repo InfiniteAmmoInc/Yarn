@@ -11,24 +11,6 @@ color: #AAA;\
 background: #fff;\
 color: #000;\
 }\
-.ace-yarn .ace_keyword {\
-font-weight: bold;\
-}\
-.ace-yarn .ace_string {\
-color: #e93ecf;\
-}\
-.ace-yarn .ace_variable.ace_class {\
-color: teal;\
-}\
-.ace-yarn .ace_constant.ace_numeric {\
-color: #3ecfe9;\
-}\
-.ace-yarn .ace_constant.ace_buildin {\
-color: #0086B3;\
-}\
-.ace-yarn .ace_support.ace_function {\
-color: #0086B3;\
-}\
 .ace-yarn .ace_comment {\
 color: #44fe66;\
 font-style: italic;\
@@ -39,12 +21,20 @@ color: #0086B3;\
 .ace-yarn .ace_paren {\
 font-weight: bold;\
 }\
-.ace-yarn .ace_boolean {\
-font-weight: bold;\
+.ace-yarn .ace_string.ace_llink {\
+color: #000;\
 }\
-.ace-yarn .ace_string.ace_regexp {\
-color: #009926;\
-font-weight: normal;\
+.ace-yarn .ace_string.ace_rlink {\
+color: #3ecfe9;\
+}\
+.ace-yarn .ace_string.ace_comm {\
+color: #e93ecf;\
+}\
+.ace-yarn .ace_lcomm, .ace-yarn .ace_rcomm {\
+color: #e00ec0;\
+}\
+.ace-yarn .ace_paren.ace_llink, .ace-yarn .ace_paren.ace_rlink {\
+color: #0ec0e0;\
 }\
 .ace-yarn .ace_variable.ace_instance {\
 color: teal;\
