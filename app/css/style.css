@@ -448,22 +448,19 @@ a:hover { color: #000;}
 	font-family: "Lucida Console", Monaco, monospace;
 }
 
+
 .node-editor .form .editor-container
 {
 	margin-top: 20px;
 	width: 100%;
 	height: calc(100% - 120px);
-	overflow-x: hidden;
-	overflow-y: scroll;
 	float: left;
 }
 
 .node-editor .form .editor
 {
-	float: right;
 	white-space: pre;
 	box-sizing: border-box;
-	width: calc(100% - 50px);
 	min-height: 100%;
 	padding: 0;
 	margin: 0;
@@ -471,17 +468,6 @@ a:hover { color: #000;}
 	color: #666;
 	font-family: "Lucida Console", Monaco, monospaces;
 	cursor: text;
-}
-
-.node-editor .form .lines
-{
-	text-align: right;
-	float: left;
-	width: 30px;
-	height: 100%;
-	font-size: 1.1em;
-	font-family: "Lucida Console", Monaco, monospaces;
-	color: #aaa;
 }
 
 /* --- EDITOR HIGHLIGHTING --- */
