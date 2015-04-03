@@ -28,6 +28,12 @@ var App = function(name, version)
 
 	this.run = function()
 	{
+		var osName = "Unknown OS";
+		if (navigator.appVersion.indexOf("Win")!=-1) osName="Windows";
+		if (navigator.appVersion.indexOf("Mac")!=-1) osName="MacOS";
+		if (navigator.appVersion.indexOf("X11")!=-1) osName="UNIX";
+		if (navigator.appVersion.indexOf("Linux")!=-1) osName="Linux";
+
 		$("#app").show();
 		ko.applyBindings(self, $("#app")[0]);
 
@@ -35,8 +41,7 @@ var App = function(name, version)
 		self.context = self.canvas.getContext('2d');
 		self.newNode().title("Start");
 
-		// self.gui seems to only be defined on mac
-		if (self.gui != null)
+		if (osName != "Windows" && self.gui != undefined)
 		{
 			var win = self.gui.Window.get();
 			var nativeMenuBar = new self.gui.Menu({ type: "menubar" });
