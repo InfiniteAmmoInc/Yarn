@@ -16,6 +16,12 @@ Node connections work similar to Twine.
 
 ![Screenshot](http://infiniteammo.com/Yarn/NodeConnections.jpg)
 
+# How to Import Twine Files
+
+One way to import Twine files into Yarn is to export a "Twee" file from Twine. (txt format) Open this txt file in Yarn as you would any other file.
+
+Note: This method of importing will not preserve node locations, just each node's title, body and tags.
+
 # How to Run Source as an App
 
 Download http://nwjs.io/ for your platform and extract the contents.
