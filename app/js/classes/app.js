@@ -16,6 +16,7 @@ var App = function(name, version)
 	//this.appleCmdKey = false;
 	this.editingSaveHistoryTimeout = null;
 	this.dirty = false;
+	this.zoomSpeed = .005;
 	//this.editingPath = ko.observable(null);
 
 
@@ -33,6 +34,9 @@ var App = function(name, version)
 		if (navigator.appVersion.indexOf("Mac")!=-1) osName="MacOS";
 		if (navigator.appVersion.indexOf("X11")!=-1) osName="UNIX";
 		if (navigator.appVersion.indexOf("Linux")!=-1) osName="Linux";
+
+		if (osName == "Windows")
+			zoomSpeed = .1;
 
 		$("#app").show();
 		ko.applyBindings(self, $("#app")[0]);
@@ -131,18 +135,9 @@ var App = function(name, version)
 		$(".search-body input").click(self.updateSearch);
 		$(".search-tags input").click(self.updateSearch);
 
-		/*
-		// using on
-		$('.nodes').on('mousewheel', function(event) {
-			self.cachedScale += event.deltaY * .001;
-			$(".nodes-holder").transition({ scale: self.cachedScale }, 0);
-		    //console.log(event.deltaX, event.deltaY, event.deltaFactor);
-		});
-*/
-
 		// using the event helper
 		$('.nodes').mousewheel(function(event) {
-			self.cachedScale += event.deltaY * .001 * self.cachedScale;
+			self.cachedScale += event.deltaY * self.zoomSpeed * self.cachedScale;
 
 			$(".nodes-holder").css({ transformOrigin: ""+$(window).width()/2+"px "+$(window).height()/2+"px" });
 			if (self.cachedScale > 1)
