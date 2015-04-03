@@ -35,10 +35,14 @@ var App = function(name, version)
 		self.context = self.canvas.getContext('2d');
 		self.newNode().title("Start");
 
-		var win = self.gui.Window.get();
-		var nativeMenuBar = new self.gui.Menu({ type: "menubar" });
-		nativeMenuBar.createMacBuiltin("Yarn");
-		win.menu = nativeMenuBar;
+		// self.gui seems to only be defined on mac
+		if (self.gui != null)
+		{
+			var win = self.gui.Window.get();
+			var nativeMenuBar = new self.gui.Menu({ type: "menubar" });
+			nativeMenuBar.createMacBuiltin("Yarn");
+			win.menu = nativeMenuBar;
+		}
 
 		// search field enter
 		$(".search-field").on("keydown", function (e)
