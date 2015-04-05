@@ -16,7 +16,11 @@ Games built with Unity and Yarn.
 
 Lost Constellation: http://finji.itch.io/lost-constellation
 
+![Screenshot](http://infiniteammo.com/Yarn/lost-constellation.jpg)
+
 Sunflower (Demo): http://infiniteammo.com/Sunflower
+
+![Screenshot](http://infiniteammo.com/Yarn/sunflower.jpg)
 
 # How to Connect Nodes
 
