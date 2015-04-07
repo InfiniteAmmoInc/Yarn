@@ -22,6 +22,10 @@ Sunflower (Demo): http://infiniteammo.com/Sunflower
 
 ![Screenshot](http://infiniteammo.com/Yarn/sunflower.jpg)
 
+YarnTest: http://infiniteammo.com/YarnTest/  
+
+Test drive your Yarn files here ^
+
 # How to Connect Nodes
 
 Node connections work similar to Twine.
