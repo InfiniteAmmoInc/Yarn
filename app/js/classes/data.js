@@ -233,6 +233,7 @@ var data =
 				output += "\t\t<tags>" + content[i].tags + "</tags>\n";
 				output += "\t\t<body>" + content[i].body + "</body>\n";
 				output += '\t\t<position x="' + content[i].position.x + '" y="' + content[i].position.y + '"></position>\n';
+				output += '\t\t<colorID>' + content[i].colorID + '</colorID>\n';
 				output += "\t</node>\n";
 			}
 			output += '</nodes>\n';
