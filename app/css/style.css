@@ -369,7 +369,7 @@ a:hover { color: #000;}
 	border-radius: 4px;
 }
 
-.node .edit, .node .delete
+.node .edit, .node .delete, .node .colorUp, .node .colorDown
 {
 	position: absolute;
 	right: 40px;
@@ -384,7 +384,21 @@ a:hover { color: #000;}
 	background-position: -32px 0px;
 }
 
-.node:hover .edit, .node:hover .delete
+.node .colorUp
+{
+	width: 16px;
+	right: 40px;
+	background-position: -112px 0px;
+}
+
+.node .colorDown
+{
+	width: 16px;
+	right: 60px;
+	background-position: -96px 0px;
+}
+
+.node:hover .edit, .node:hover .delete, .node:hover .colorUp, .node:hover .colorDown
 {
 	opacity: 1;
 }

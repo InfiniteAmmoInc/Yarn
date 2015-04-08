@@ -19,6 +19,7 @@ var Node = function()
 	this.tempHeight;
 	this.tempOpacity;
 	this.style;
+	this.colorID = ko.observable(0);
 
 	// clipped values for display
 	this.clippedTags = ko.computed(function() 
@@ -51,6 +52,8 @@ var Node = function()
 	// reference to element containing us
 	this.element = null;
 
+	this.canDoubleClick = true;
+
 	this.create = function()
 	{
 		Utils.pushToTop($(self.element));
@@ -67,7 +70,8 @@ var Node = function()
 
 		$(self.element).on("dblclick", function()
 		{
-			app.editNode(self);
+			if (self.canDoubleClick)
+				app.editNode(self);
 		});
 	}
 
@@ -85,10 +89,39 @@ var Node = function()
 		return Math.floor((new WebKitCSSMatrix(self.style.webkitTransform)).m42);
 	}
 
+	this.resetDoubleClick = function()
+	{
+		self.canDoubleClick = true;
+	}
+
 	this.tryRemove = function()
 	{
 		if (self.active())
 			app.deleting(this);
+
+		setTimeout(self.resetDoubleClick, 500);
+		self.canDoubleClick = false;
+	}
+
+	this.cycleColorDown = function()
+	{
+		self.colorID(self.colorID() - 1);
+		if (self.colorID() < 0)
+			self.colorID(7);
+
+		setTimeout(self.resetDoubleClick, 500);
+		self.canDoubleClick = false;
+	}
+
+	this.cycleColorUp = function()
+	{
+		self.colorID(self.colorID() + 1);
+		if (self.colorID() > 7)
+			self.colorID(0);
+
+		
+		setTimeout(self.resetDoubleClick, 500);
+		self.canDoubleClick = false;
 	}
 	
 	this.remove = function()
@@ -151,6 +184,7 @@ var Node = function()
 
 	this.updateLinks = function()
 	{
+		self.resetDoubleClick();
 		// clear existing links
 		self.linkedTo.removeAll();
 

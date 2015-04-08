@@ -99,11 +99,14 @@
 			<!-- foreach loop  of the nodes -->
 			<div class="nodes">
 				<div class="nodes-holder" data-bind="foreach: { data: app.nodes, as: 'node' }">
-					<div class="node" data-bind="nodeBind: true, css: { inactive: !node.active() }">
-						<div class="title" data-bind="text: node.title"></div>
+					<div class="node" data-bind="nodeBind: true, css: { inactive: !node.active()}" >
+						<div class="title" data-bind="text: node.title, style: { background: node.colorID() == 1 ? '#fdd' : node.colorID() == 2 ? '#dfd'
+						: node.colorID() == 3 ? '#ddf' : node.colorID() == 4 ? '#ffd' : node.colorID() == 5 ? '#fdf' : node.colorID() == 6 ? '#dff' : node.colorID() == 7 ? '#bbb' : '#eee'}"></div>
 						<div class="body" data-bind="html: node.clippedBody"></div>
 						<div class="tags" data-bind="html: node.clippedTags"></div>
-						<div class="icon edit" data-bind="click: function() { app.editNode(node); }"></div>
+						<div class="icon colorDown" data-bind="click: node.cycleColorDown"></div>
+						<div class="icon colorUp" data-bind="click: node.cycleColorUp"></div>
+						<!--<div class="icon edit" data-bind="click: function() { app.editNode(node); }"></div>-->
 						<div class="icon delete" data-bind="click: node.tryRemove"></div>
 						<!--<div class="resize" data-bind="click:node.toggleExpand"></div>-->
 					</div>
