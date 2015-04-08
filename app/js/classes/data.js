@@ -183,6 +183,8 @@ var data =
 				node.x(object.position.x);
 			if (object.position != undefined && object.position.y != undefined)
 				node.y(object.position.y);
+			if (object.colorID != undefined)
+				node.colorID(object.colorID);
 		}
 
 		$(".arrows").css({ opacity: 0 }).transition({ opacity: 1 }, 500);
@@ -201,7 +203,8 @@ var data =
 				"title": nodes[i].title(), 
 				"tags": nodes[i].tags(), 
 				"body": nodes[i].body(),
-				"position": { "x": nodes[i].x(), "y": nodes[i].y() }
+				"position": { "x": nodes[i].x(), "y": nodes[i].y() },
+				"colorID": nodes[i].colorID()
 			});
 		}
 
