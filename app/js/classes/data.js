@@ -279,11 +279,13 @@ var data =
 		dialog.trigger("click");
 	},
 
-	saveFileDialog: function(dialog, defaultValue, content)
+	saveFileDialog: function(dialog, type, content)
 	{
+		var file = 'file.' + type;
+
 		if (app.fs)
 		{
-			dialog.attr("nwsaveas", defaultValue);
+			dialog.attr("nwsaveas", file);
 			data.openFileDialog(dialog, function(e, path)
 			{
 				data.saveTo(path, content);
@@ -292,9 +294,18 @@ var data =
 		}
 		else
 		{
-			var w = window.open();
-			$(w.document.body).css("white-space", "pre");
-			$(w.document.body).html(content);
+			switch(type) {
+				case 'json':
+					content = "data:text/json," + content;
+					break;
+				case 'xml':
+					content = "data:text/xml," + content;
+					break;
+				default:
+					content = "data:text/plain," + content;
+					break;
+			}
+			window.open(content, "_blank");
 		}
 	},
 
@@ -316,7 +327,7 @@ var data =
 	trySave: function(type)
 	{
 		data.editingType(type);
-		data.saveFileDialog($('#save-file'), 'file.' + type, data.getSaveData(type));
+		data.saveFileDialog($('#save-file'), type, data.getSaveData(type));
 	},
 
 	trySaveCurrent: function()
