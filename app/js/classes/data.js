@@ -281,9 +281,9 @@ var data =
 
 	saveFileDialog: function(dialog, type, content)
 	{
-        var file = 'file.' + type;
+		var file = 'file.' + type;
 
-        if (app.fs)
+		if (app.fs)
 		{
 			dialog.attr("nwsaveas", file);
 			data.openFileDialog(dialog, function(e, path)
@@ -293,18 +293,18 @@ var data =
 		}
 		else
 		{
-            switch(type) {
-                case 'json':
-                    content = "data:text/json," + content;
-                    break;
-                case 'xml':
-                    content = "data:text/xml," + content;
-                    break;
-                default:
-                    content = "data:text/plain," + content;
-                    break;
-            }
-            window.open(content, "_blank");
+			switch(type) {
+				case 'json':
+					content = "data:text/json," + content;
+					break;
+				case 'xml':
+					content = "data:text/xml," + content;
+					break;
+				default:
+					content = "data:text/plain," + content;
+					break;
+			}
+			window.open(content, "_blank");
 		}
 	},
 
