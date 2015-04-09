@@ -162,8 +162,22 @@ var App = function(name, version)
 		var connectedNodes = [];
 		var nodes = self.nodes();
 		for (var i in nodes)
-			if (nodes[i].isConnectedTo(toNode, true))
-				connectedNodes.push(nodes[i]);
+		{
+			if (nodes[i] != toNode && nodes[i].isConnectedTo(toNode, true))
+			{
+				var hasNode = false;
+				for (var j in connectedNodes)
+				{
+					if (connectedNodes[j] == nodes[i])
+					{
+						hasNode = true;
+						break;
+					}
+				}
+				if (!hasNode)
+					connectedNodes.push(nodes[i]);
+			}
+		}
 		return connectedNodes;
 	}
 

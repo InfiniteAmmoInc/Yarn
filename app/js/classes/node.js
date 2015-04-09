@@ -20,6 +20,7 @@ var Node = function()
 	this.tempOpacity;
 	this.style;
 	this.colorID = ko.observable(0);
+	this.checked = false;
 
 	// clipped values for display
 	this.clippedTags = ko.computed(function() 
@@ -235,6 +236,8 @@ var Node = function()
 			if (linkedNodes[i] == otherNode)
 				return true;
 			if (linkedNodes[i].isConnectedTo(otherNode, false))
+				return true;
+			if (otherNode.isConnectedTo(linkedNodes[i], false))
 				return true;
 		}
 
