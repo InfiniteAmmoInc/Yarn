@@ -17,8 +17,8 @@ var App = function(name, version)
 	this.editingSaveHistoryTimeout = null;
 	this.dirty = false;
 	this.zoomSpeed = .005;
+	this.shifted = false;
 	//this.editingPath = ko.observable(null);
-
 
 	// node-webkit
 	if (typeof(require) == "function")
@@ -92,6 +92,8 @@ var App = function(name, version)
 			}
 		};
 
+
+
 		// updateArrows
 		setInterval(function() { self.updateArrows(); }, 16);
 
@@ -148,9 +150,28 @@ var App = function(name, version)
 		    //console.log(event.deltaX, event.deltaY, event.deltaFactor);
 		});
 
+		$(document).on('keyup keydown', function(e) { self.shifted = e.shiftKey; } );
+
 		// apple command key
 		//$(window).on('keydown', function(e) { if (e.keyCode == 91 || e.keyCode == 93) { self.appleCmdKey = true; } });
 		//$(window).on('keyup', function(e) { if (e.keyCode == 91 || e.keyCode == 93) { self.appleCmdKey = false; } });
+	}
+
+	this.getNodesConnectedTo = function(toNode)
+	{
+		var connectedNodes = [];
+		var nodes = self.nodes();
+		for (var i in nodes)
+			if (nodes[i].isConnectedTo(toNode, true))
+				connectedNodes.push(nodes[i]);
+		return connectedNodes;
+	}
+
+	this.matchConnectedColorID = function(fromNode)
+	{
+		var nodes = self.getNodesConnectedTo(fromNode);
+		for (var i in nodes)
+			nodes[i].colorID(fromNode.colorID());
 	}
 
 	this.quit = function()

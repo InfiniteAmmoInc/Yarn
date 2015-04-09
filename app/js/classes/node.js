@@ -105,23 +105,42 @@ var Node = function()
 
 	this.cycleColorDown = function()
 	{
-		self.colorID(self.colorID() - 1);
-		if (self.colorID() < 0)
-			self.colorID(6);
+		self.doCycleColorDown();
 
 		setTimeout(self.resetDoubleClick, 500);
 		self.canDoubleClick = false;
+
+		if (app.shifted)
+			app.matchConnectedColorID(self);
+
+		
 	}
 
 	this.cycleColorUp = function()
+	{	
+		self.doCycleColorUp();
+
+		setTimeout(self.resetDoubleClick, 500);
+		self.canDoubleClick = false;
+
+		if (app.shifted)
+			app.matchConnectedColorID(self);
+
+		
+	}
+
+	this.doCycleColorDown = function()
+	{
+		self.colorID(self.colorID() - 1);
+		if (self.colorID() < 0)
+			self.colorID(6);
+	}
+
+	this.doCycleColorUp = function()
 	{
 		self.colorID(self.colorID() + 1);
 		if (self.colorID() > 6)
 			self.colorID(0);
-
-		
-		setTimeout(self.resetDoubleClick, 500);
-		self.canDoubleClick = false;
 	}
 	
 	this.remove = function()
@@ -136,18 +155,34 @@ var Node = function()
 	this.drag = function()
 	{
 		var dragging = false;
+		var groupDragging = false;
 		var offset = [0, 0];
 
 		$(document.body).on("mousemove", function(e) 
 		{
-			if  (dragging)
+			if (dragging)
 			{
 				var parent = $(self.element).parent();
 				var newX = (e.pageX / parent.css("scale") - offset[0]);
 				var newY = (e.pageY / parent.css("scale") - offset[1]);
+				var movedX = newX - self.x();
+				var movedY = newY - self.y();
 
 				self.x(newX);
 				self.y(newY);
+
+				if (groupDragging)
+				{
+					var nodes = app.getNodesConnectedTo(self);
+					if (nodes.length > 0)
+					{
+						for (var i in nodes)
+						{
+							nodes[i].x(nodes[i].x() + movedX);
+							nodes[i].y(nodes[i].y() + movedY);
+						}
+					}
+				}
 
 				//app.refresh();
 			}
@@ -160,6 +195,12 @@ var Node = function()
 				var parent = $(self.element).parent();
 
 				dragging = true;
+
+				if (app.shifted)
+				{
+					groupDragging = true;
+				}
+
 				offset[0] = (e.pageX / parent.css("scale") - self.x());
 				offset[1] = (e.pageY / parent.css("scale") - self.y());
 			}
@@ -173,6 +214,7 @@ var Node = function()
 		$(document.body).on("mouseup", function (e) 
 		{
 			dragging = false;
+			groupDragging = false;
 		});
 	}
 
@@ -180,6 +222,23 @@ var Node = function()
 	{
 		$(self.element).clearQueue();
 		$(self.element).transition({x:newX, y:newY}, 500);
+	}
+
+	this.isConnectedTo = function(otherNode, checkBack)
+	{
+		if (checkBack && otherNode.isConnectedTo(self, false))
+			return true;
+
+		var linkedNodes = self.linkedTo();
+		for (var i in linkedNodes)
+		{
+			if (linkedNodes[i] == otherNode)
+				return true;
+			if (linkedNodes[i].isConnectedTo(otherNode, false))
+				return true;
+		}
+
+		return false;
 	}
 
 	this.updateLinks = function()
