@@ -30,13 +30,13 @@ var App = function(name, version)
 	this.run = function()
 	{
 		var osName = "Unknown OS";
-		if (navigator.appVersion.indexOf("Win")!=-1) osName="Windows";
-		if (navigator.appVersion.indexOf("Mac")!=-1) osName="MacOS";
-		if (navigator.appVersion.indexOf("X11")!=-1) osName="UNIX";
-		if (navigator.appVersion.indexOf("Linux")!=-1) osName="Linux";
+		if (navigator.platform.indexOf("Win")!=-1) osName="Windows";
+		if (navigator.platform.indexOf("Mac")!=-1) osName="MacOS";
+		if (navigator.platform.indexOf("X11")!=-1) osName="UNIX";
+		if (navigator.platform.indexOf("Linux")!=-1) osName="Linux";
 
 		if (osName == "Windows")
-			zoomSpeed = .1;
+			self.zoomSpeed = .1;
 
 		$("#app").show();
 		ko.applyBindings(self, $("#app")[0]);
