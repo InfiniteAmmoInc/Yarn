@@ -1,6 +1,6 @@
 # Yarn
 
-Dialogue editor created for "Night in the Woods" (and other projects) by Noel Berry and Alec Holowka.
+Dialogue editor created for "Night in the Woods" (and other projects) by Noel Berry and Alec Holowka. It is heavily inspired/based on the amazing Twine software: http://twinery.org/
 
 ![Screenshot](http://infiniteammo.com/Yarn/Screenshot.jpg)
 
