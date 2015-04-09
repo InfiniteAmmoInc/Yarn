@@ -100,8 +100,14 @@
 			<div class="nodes">
 				<div class="nodes-holder" data-bind="foreach: { data: app.nodes, as: 'node' }">
 					<div class="node" data-bind="nodeBind: true, css: { inactive: !node.active()}" >
-						<div class="title" data-bind="text: node.title, style: { background: node.colorID() == 1 ? '#fdd' : node.colorID() == 2 ? '#dfd'
-						: node.colorID() == 3 ? '#ddf' : node.colorID() == 4 ? '#ffd' : node.colorID() == 5 ? '#fdf' : node.colorID() == 6 ? '#dff' : node.colorID() == 7 ? '#bbb' : '#eee'}"></div>
+						<div class="title" data-bind="text: node.title, style: {background:
+						node.colorID() == 1 ? '#6EA5E0' :
+						node.colorID() == 2 ? '#9EDE74' :
+						node.colorID() == 3 ? '#FFE374' :
+						node.colorID() == 4 ? '#F7A666' :
+						node.colorID() == 5 ? '#C47862' :
+						node.colorID() == 6 ? '#97E1E9' :
+						'#eee'}"></div>
 						<div class="body" data-bind="html: node.clippedBody"></div>
 						<div class="tags" data-bind="html: node.clippedTags"></div>
 						<div class="icon colorDown" data-bind="click: node.cycleColorDown"></div>

@@ -107,7 +107,7 @@ var Node = function()
 	{
 		self.colorID(self.colorID() - 1);
 		if (self.colorID() < 0)
-			self.colorID(7);
+			self.colorID(6);
 
 		setTimeout(self.resetDoubleClick, 500);
 		self.canDoubleClick = false;
@@ -116,7 +116,7 @@ var Node = function()
 	this.cycleColorUp = function()
 	{
 		self.colorID(self.colorID() + 1);
-		if (self.colorID() > 7)
+		if (self.colorID() > 6)
 			self.colorID(0);
 
 		
