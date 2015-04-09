@@ -6,6 +6,8 @@ Dialogue editor created for "Night in the Woods" (and other projects) by Noel Be
 
 # Builds
 
+Browser: http://infiniteammo.com/yarn/
+
 Win64: http://infiniteammo.com/Yarn/Yarn-2015-04-09-win.zip
 
 MacOS: http://infiniteammo.com/Yarn/Yarn-2015-04-09-mac.zip
