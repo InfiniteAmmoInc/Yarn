@@ -124,7 +124,7 @@ a:hover { color: #000;}
 
 .app-menu .menu
 {
-	width: 160px;
+	width: 140px;
 	float: left;
 	display: inline;
 	margin-left: 10px;
@@ -394,7 +394,7 @@ a:hover { color: #000;}
 .node .colorDown
 {
 	width: 16px;
-	right: 60px;
+	right: 56px;
 	background-position: -96px 0px;
 }
 

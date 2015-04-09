@@ -287,6 +287,7 @@ var data =
 			data.openFileDialog(dialog, function(e, path)
 			{
 				data.saveTo(path, content);
+				app.refreshWindowTitle(path);
 			});
 		}
 		else

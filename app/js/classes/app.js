@@ -92,8 +92,6 @@ var App = function(name, version)
 			}
 		};
 
-
-
 		// updateArrows
 		setInterval(function() { self.updateArrows(); }, 16);
 
@@ -151,6 +149,14 @@ var App = function(name, version)
 		});
 
 		$(document).on('keyup keydown', function(e) { self.shifted = e.shiftKey; } );
+
+		$(document).mousedown(function(e){ 
+		    if( e.button == 2 )
+		    {
+		    	self.newNodeAt(e.pageX / self.cachedScale, e.pageY / self.cachedScale); 
+		    } 
+		    return true; 
+		  }); 
 
 		// apple command key
 		//$(window).on('keydown', function(e) { if (e.keyCode == 91 || e.keyCode == 93) { self.appleCmdKey = true; } });
@@ -211,6 +217,20 @@ var App = function(name, version)
 		self.nodes.push(node);
 		if (updateArrows == undefined || updateArrows == true)
 			self.updateNodeLinks();
+		return node;
+	}
+
+	this.newNodeAt = function(x, y)
+	{
+		var node = new Node();
+		//alert("x, y: " + x + ", " + y);
+		
+		self.nodes.push(node);
+
+		node.x(x-100);
+		node.y(y-100);
+		self.updateNodeLinks();
+
 		return node;
 	}
 
