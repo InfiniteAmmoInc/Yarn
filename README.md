@@ -6,7 +6,7 @@ Dialogue editor created for "Night in the Woods" (and other projects) by @NoelFB
 
 # Builds
 
-Browser: http://infiniteammo.com/yarn/
+Browser: http://infiniteammo.com/yarn/ (warning: saving not working quite right yet)
 
 Win64: http://infiniteammo.com/Yarn/Yarn-2015-04-09-win.zip
 
