@@ -56,8 +56,10 @@ var data =
 	openFile: function(e, filename)
 	{
 		data.readFile(e, filename, true);
-
+		var file_path = filename.split('\\');
+		$('#story-title').val(file_path[file_path.length-1]);
 		app.refreshWindowTitle(filename);
+
 	},
 
 	openFolder: function(e, foldername)
@@ -244,15 +246,27 @@ var data =
 
 	saveTo: function(path, content)
 	{
+		var fdialogs = require('./lib/fdialog');
+		var content = new Buffer("Hello world!", 'utf-8');
+
+		fdialogs.saveFile(content, function (err, path) {
+
+			console.log("File saved in", path);
+
+		});
+
+
 		if (app.fs != undefined)
 		{
-			app.fs.writeFile(path, content, {encoding: 'utf-8'}, function(err) 
+
+			app.fs.writeFile(path, content, {encoding: 'utf-8'}, function(err)
 			{
 				data.editingPath(path);
 				if(err)
 					alert("Error Saving Data to " + path + ": " + err);
 			});
 		}
+
 	},
 
 	openFileDialog: function(dialog, callback)
@@ -294,18 +308,27 @@ var data =
 		}
 		else
 		{
+			var $b = $('body');
+			var blob = new Blob([content], { type: 'application/octet-stream' });
+
+			// strip the filename of any extension
+			var filename = $('#story-title').val().replace('.json', '').replace('.xml','').replace('.txt', '').replace('.tw', '').replace('.twee','');
+
 			switch(type) {
 				case 'json':
-					content = "data:text/json," + content;
+					filename += '.json';
 					break;
 				case 'xml':
-					content = "data:text/xml," + content;
+					filename += '.xml';
 					break;
 				default:
-					content = "data:text/plain," + content;
+					filename += '.txt';
 					break;
 			}
-			window.open(content, "_blank");
+			if ($b.hasClass('safari'))
+				window.location.href = URL.createObjectURL(blob);
+			else
+				saveAs(blob, filename );
 		}
 	},
 

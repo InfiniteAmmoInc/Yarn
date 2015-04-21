@@ -25,6 +25,7 @@ var App = function(name, version)
 	{
 		this.gui = require('nw.gui');
 		this.fs = require('fs');
+		//this.fsd = require('node-webkit-fdialogs');
 	}
 
 	this.run = function()

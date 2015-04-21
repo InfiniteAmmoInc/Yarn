@@ -195,6 +195,19 @@ a:hover { color: #000;}
 	padding: 10px 20px 10px 10px;
 }
 
+.app-name
+{
+	float: left;
+	display: inline;
+
+	background: #fff;
+	border-radius: 2px;
+	box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.5);
+	padding: 10px 20px 10px 10px;
+}
+
+.app-name input { padding: 4px 8px 4px 8px; font-family: "Lucida Console", Monaco, monospace; margin-left: 10px; margin-right: 8px; }
+
 .app-search input { padding: 4px 8px 4px 8px; font-family: "Lucida Console", Monaco, monospace; margin-left: 10px; margin-right: 8px; }
 .app-search .search-field { margin-left: 0px; margin-right: 0px; }
 .app-search input[type="checkbox"] { cursor: pointer; }
