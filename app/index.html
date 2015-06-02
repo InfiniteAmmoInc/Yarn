@@ -13,6 +13,8 @@
 		<script type="text/javascript" src="js/libs/knockout-3.3.0.js"></script>
 		<script type="text/javascript" src="js/libs/knockout.ace.js"></script>
 		<script type="text/javascript" src="js/libs/ace.js"></script>
+		<script type="text/javascript" src="js/libs/typo.js"></script>
+		<script type="text/javascript" src="js/libs/spellcheck_ace.js"></script>
 		<script type="text/javascript" src="js/libs/theme-yarn.js"></script>
 		<script type="text/javascript" src="js/libs/mode-yarn.js"></script>
 
@@ -128,7 +130,7 @@
 					<input type="text" class="title" data-bind="value: app.editing().title">
 					<input type="text" data-bind="value: app.editing().tags">
 					<div class="editor-container">
-						<div class="editor" 
+						<div class="editor" id="editor"
 							data-bind="
 							ace: app.editing().body, 
 							aceOptions: { mode: 'yarn', theme: 'yarn', showPrintMargin: false }">
