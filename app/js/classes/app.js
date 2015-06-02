@@ -49,7 +49,9 @@ var App = function(name, version)
 		{
 			var win = self.gui.Window.get();
 			var nativeMenuBar = new self.gui.Menu({ type: "menubar" });
-			nativeMenuBar.createMacBuiltin("Yarn");
+            if(nativeMenuBar.createMacBuiltin) {
+    			nativeMenuBar.createMacBuiltin("Yarn");
+            }
 			win.menu = nativeMenuBar;
 		}
 
