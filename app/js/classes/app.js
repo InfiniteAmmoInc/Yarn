@@ -253,6 +253,10 @@ var App = function(name, version)
 
 			$(".node-editor").css({ opacity: 0 }).transition({ opacity: 1 }, 250);
 			$(".node-editor .form").css({ y: "-100" }).transition({ y: "0" }, 250);
+
+            enable_spellcheck();
+            contents_modified = true;
+            spell_check();
 		}
 	}
 
