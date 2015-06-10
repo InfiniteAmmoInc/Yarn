@@ -12,6 +12,7 @@ var App = function(name, version)
 	this.cachedScale = 1;
 	this.canvas;
 	this.context;
+	this.nodeHistory = [];
 	this.editingHistory = [];
 	//this.appleCmdKey = false;
 	this.editingSaveHistoryTimeout = null;
@@ -160,6 +161,13 @@ var App = function(name, version)
 		    return true; 
 		  }); 
 
+		$(document).on('keydown', function(e){
+			//global ctrl+z
+			if((e.metaKey || e.ctrlKey) && e.keyCode == 90)
+			{
+				self.undoNodeHistory();
+			}
+		});
 		// apple command key
 		//$(window).on('keydown', function(e) { if (e.keyCode == 91 || e.keyCode == 93) { self.appleCmdKey = true; } });
 		//$(window).on('keyup', function(e) { if (e.keyCode == 91 || e.keyCode == 93) { self.appleCmdKey = false; } });
@@ -213,12 +221,40 @@ var App = function(name, version)
 		win.title = "Yarn - [" + editingPath + "] ";// + (self.dirty?"*":"");
 	}
 
+	this.undoNodeHistory = function()
+	{
+		var latest = self.nodeHistory.pop();
+
+		if(latest.history === "created")
+		{
+			//permanently remove the node (for now)
+			var index = self.nodes.indexOf(latest.node);
+			if  (index >= 0)
+			{
+				self.nodes.splice(index, 1);
+				globalNodeIndex--; //this isn't good because it's defined elsewhere
+				delete latest.node;
+			}
+
+			self.updateNodeLinks();
+		}
+		else if(latest.history === "removed")
+		{
+			self.nodes.push(latest.node);
+			latest.node.moveTo(latest.lastX, latest.lastY+80);
+			self.updateNodeLinks();
+		}
+	}
+
 	this.newNode = function(updateArrows)
 	{
 		var node = new Node();
 		self.nodes.push(node);
 		if (updateArrows == undefined || updateArrows == true)
 			self.updateNodeLinks();
+		
+		self.nodeHistory.push({history:"created", node: node});
+
 		return node;
 	}
 
@@ -241,8 +277,9 @@ var App = function(name, version)
 		var index = self.nodes.indexOf(node);
 		if  (index >= 0)
 		{
+			self.nodeHistory.push({history:"removed", node: node, lastX: node.x(), lastY: node.y()})
 			self.nodes.splice(index, 1);
-			delete node;
+			//delete node;
 		}
 		self.updateNodeLinks();
 	}
