@@ -167,7 +167,7 @@ var App = function(name, version)
 
 		$(document).on('keydown', function(e){
 			//global ctrl+z
-			if((e.metaKey || e.ctrlKey))
+			if((e.metaKey || e.ctrlKey) && !self.editing())
 			{
 				switch(e.keyCode)
 				{
@@ -339,6 +339,7 @@ var App = function(name, version)
 		node.x(x-100);
 		node.y(y-100);
 		self.updateNodeLinks();
+		self.recordNodeAction("created", node);
 
 		return node;
 	}
