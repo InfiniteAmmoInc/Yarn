@@ -107,6 +107,8 @@ var App = function(name, version)
 
 			$(".nodes").on("mousedown", function(e)
 			{
+				
+
 				dragging = true;
 				offset.x = e.pageX;
 				offset.y = e.pageY;
@@ -129,6 +131,7 @@ var App = function(name, version)
 
 			$(".nodes").on("mouseup", function(e)
 			{
+				console.log("finished dragging");
 				dragging = false;
 			});
 		})();
@@ -168,9 +171,9 @@ var App = function(name, version)
 			{
 				switch(e.keyCode)
 				{
-					case 90: self.undoNodeHistory();
+					case 90: self.historyDirection("undo");
 					break;
-					case 89: self.redoNodeHistory();
+					case 89: self.historyDirection("redo");
 					break;
 				}
 			}
@@ -238,61 +241,80 @@ var App = function(name, version)
 				var future = self.nodeFuture.pop();
 				delete future.node;
 			};
+
+			delete self.nodeFuture;
+			self.nodeFuture = [];
 		}
 
-		self.nodeHistory.push({action: action, node: node, lastX: node.x(), lastY: node.y()});
+		var historyItem = {action: action, node: node, lastX: node.x(), lastY: node.y()};
+
+		if(action == "removed")
+		{
+			historyItem.lastY+=80;
+		}
+
+		self.nodeHistory.push(historyItem);
 	}
 
-	this.undoNodeHistory = function()
+	this.historyDirection = function(direction)
 	{
-		console.log("undo node history");
-		var latest = self.nodeHistory.pop();
-
-		if(!latest)
-			return;
-
-		if(latest.action == "created")
-		{
-			var index = self.nodes.indexOf(latest.node);
+		function removeNode(node){
+			var index = self.nodes.indexOf(node);
 			if  (index >= 0)
 			{
 				self.nodes.splice(index, 1);
-				globalNodeIndex--; //this isn't good because it's defined elsewhere
+			}
+			self.updateNodeLinks();
+		}
+
+		var historyItem = null;
+
+		if(direction == "undo") 
+			historyItem = self.nodeHistory.pop();
+		else
+			historyItem = self.nodeFuture.pop();
+		
+		if(!historyItem) return;
+
+		var action = historyItem.action;
+		var node = historyItem.node;
+
+		
+		if(direction == "undo") //undo actions
+		{
+			if(action == "created")
+			{
+				historyItem.lastX = node.x();
+				historyItem.lastY = node.y();
+				removeNode(node);
+			}
+			else if(action == "removed")
+			{
+				self.recreateNode(node, historyItem.lastX, historyItem.lastY);
 			}
 
+			self.nodeFuture.push(historyItem);
 		}
-		else if(latest.action == "removed")
+		else //redo undone actions
 		{
-			this.recreateNode(latest.node, latest.lastX, latest.lastY);
-		}
-		
-		self.nodeFuture.push(latest);
-	}
+			if(action == "created")
+			{
+				self.recreateNode(node, historyItem.lastX, historyItem.lastY);
+			}
+			else if(action == "removed")
+			{
+				removeNode(node);
+			}
 
-	this.redoNodeHistory = function()
-	{
-		console.log("redo node history");
-		var future = self.nodeFuture.pop();
-		
-		if(!future)
-			return;
-
-		if(future.action == "created")
-		{
-			self.recreateNode(future.node, future.lastX, future.lastY);
-			self.nodeHistory.push(future);
-		}
-		else if(future.action == "removed")
-		{
-			self.removeNode(future.node);
-		}
+			self.nodeHistory.push(historyItem);
+		}		
 	}
 
 	this.recreateNode = function(node, x, y)
 	{
 		self.nodes.push(node);
-		node.moveTo(x, y); //+80 is because there's some offset thing happening
-		self.updateNodeLinks();
+		node.moveTo(x, y);
+		self.updateNodeLinks(); 
 	}
 
 	this.newNode = function(updateArrows)
