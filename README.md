@@ -51,7 +51,9 @@ MacOS: Place source code in a new folder named "app.nw" inside the extracted nwj
 
 # How to Run Your Dialogue in Unity
 
-Unity example project coming soon!
+You can find basic Yarn parsing and playback example code here:
+
+https://github.com/InfiniteAmmoInc/yarn-test
 
 # Yarn Icon
 
