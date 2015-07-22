@@ -12,6 +12,8 @@ var App = function(name, version)
 	this.cachedScale = 1;
 	this.canvas;
 	this.context;
+	this.nodeHistory = [];
+	this.nodeFuture = [];
 	this.editingHistory = [];
 	//this.appleCmdKey = false;
 	this.editingSaveHistoryTimeout = null;
@@ -49,15 +51,15 @@ var App = function(name, version)
 		{
 			var win = self.gui.Window.get();
 			var nativeMenuBar = new self.gui.Menu({ type: "menubar" });
-            if(nativeMenuBar.createMacBuiltin) {
-    			nativeMenuBar.createMacBuiltin("Yarn");
-            }
+			if(nativeMenuBar.createMacBuiltin) {
+				nativeMenuBar.createMacBuiltin("Yarn");
+			}
 			win.menu = nativeMenuBar;
 		}
 
 		// search field enter
 		$(".search-field").on("keydown", function (e)
-			{
+		{
 				// enter
 				if (e.keyCode == 13)
 					self.searchZoom();
@@ -105,6 +107,8 @@ var App = function(name, version)
 
 			$(".nodes").on("mousedown", function(e)
 			{
+				
+
 				dragging = true;
 				offset.x = e.pageX;
 				offset.y = e.pageY;
@@ -127,6 +131,7 @@ var App = function(name, version)
 
 			$(".nodes").on("mouseup", function(e)
 			{
+				console.log("finished dragging");
 				dragging = false;
 			});
 		})();
@@ -153,13 +158,26 @@ var App = function(name, version)
 		$(document).on('keyup keydown', function(e) { self.shifted = e.shiftKey; } );
 
 		$(document).mousedown(function(e){ 
-		    if( e.button == 2 )
-		    {
-		    	self.newNodeAt(e.pageX / self.cachedScale, e.pageY / self.cachedScale); 
-		    } 
-		    return true; 
-		  }); 
+			if( e.button == 2 )
+			{
+				self.newNodeAt(e.pageX / self.cachedScale, e.pageY / self.cachedScale); 
+			} 
+			return true; 
+		}); 
 
+		$(document).on('keydown', function(e){
+			//global ctrl+z
+			if((e.metaKey || e.ctrlKey) && !self.editing())
+			{
+				switch(e.keyCode)
+				{
+					case 90: self.historyDirection("undo");
+					break;
+					case 89: self.historyDirection("redo");
+					break;
+				}
+			}
+		});
 		// apple command key
 		//$(window).on('keydown', function(e) { if (e.keyCode == 91 || e.keyCode == 93) { self.appleCmdKey = true; } });
 		//$(window).on('keyup', function(e) { if (e.keyCode == 91 || e.keyCode == 93) { self.appleCmdKey = false; } });
@@ -213,12 +231,101 @@ var App = function(name, version)
 		win.title = "Yarn - [" + editingPath + "] ";// + (self.dirty?"*":"");
 	}
 
+	this.recordNodeAction = function(action, node)
+	{
+		//we can't go forward in 'time' when
+		//new actions have been made
+		if(self.nodeFuture.length > 0)
+		{
+			for (var i = 0; i < self.nodeFuture.length; i++) {
+				var future = self.nodeFuture.pop();
+				delete future.node;
+			};
+
+			delete self.nodeFuture;
+			self.nodeFuture = [];
+		}
+
+		var historyItem = {action: action, node: node, lastX: node.x(), lastY: node.y()};
+
+		if(action == "removed")
+		{
+			historyItem.lastY+=80;
+		}
+
+		self.nodeHistory.push(historyItem);
+	}
+
+	this.historyDirection = function(direction)
+	{
+		function removeNode(node){
+			var index = self.nodes.indexOf(node);
+			if  (index >= 0)
+			{
+				self.nodes.splice(index, 1);
+			}
+			self.updateNodeLinks();
+		}
+
+		var historyItem = null;
+
+		if(direction == "undo") 
+			historyItem = self.nodeHistory.pop();
+		else
+			historyItem = self.nodeFuture.pop();
+		
+		if(!historyItem) return;
+
+		var action = historyItem.action;
+		var node = historyItem.node;
+
+		
+		if(direction == "undo") //undo actions
+		{
+			if(action == "created")
+			{
+				historyItem.lastX = node.x();
+				historyItem.lastY = node.y();
+				removeNode(node);
+			}
+			else if(action == "removed")
+			{
+				self.recreateNode(node, historyItem.lastX, historyItem.lastY);
+			}
+
+			self.nodeFuture.push(historyItem);
+		}
+		else //redo undone actions
+		{
+			if(action == "created")
+			{
+				self.recreateNode(node, historyItem.lastX, historyItem.lastY);
+			}
+			else if(action == "removed")
+			{
+				removeNode(node);
+			}
+
+			self.nodeHistory.push(historyItem);
+		}		
+	}
+
+	this.recreateNode = function(node, x, y)
+	{
+		self.nodes.push(node);
+		node.moveTo(x, y);
+		self.updateNodeLinks(); 
+	}
+
 	this.newNode = function(updateArrows)
 	{
 		var node = new Node();
 		self.nodes.push(node);
 		if (updateArrows == undefined || updateArrows == true)
 			self.updateNodeLinks();
+		
+		self.recordNodeAction("created", node);
+
 		return node;
 	}
 
@@ -232,6 +339,7 @@ var App = function(name, version)
 		node.x(x-100);
 		node.y(y-100);
 		self.updateNodeLinks();
+		self.recordNodeAction("created", node);
 
 		return node;
 	}
@@ -241,8 +349,8 @@ var App = function(name, version)
 		var index = self.nodes.indexOf(node);
 		if  (index >= 0)
 		{
+			self.recordNodeAction("removed", node);
 			self.nodes.splice(index, 1);
-			delete node;
 		}
 		self.updateNodeLinks();
 	}
@@ -256,15 +364,15 @@ var App = function(name, version)
 			$(".node-editor").css({ opacity: 0 }).transition({ opacity: 1 }, 250);
 			$(".node-editor .form").css({ y: "-100" }).transition({ y: "0" }, 250);
 
-            enable_spellcheck();
-            contents_modified = true;
-            spell_check();
+			enable_spellcheck();
+			contents_modified = true;
+			spell_check();
 		}
 	}
 
 	this.trim = function(x)
 	{
-    	return x.replace(/^\s+|\s+$/gm,'');
+		return x.replace(/^\s+|\s+$/gm,'');
 	}
 
 	this.saveNode = function()
@@ -451,7 +559,7 @@ var App = function(name, version)
 		for (var i = 0; i < Math.max(1, lines.length); i ++)
 		{
 			if (i == 0 || i < lines.length - 1 || lines[i].length > 0)
-			lineNumbers += (i + 1) + "<br />";
+				lineNumbers += (i + 1) + "<br />";
 		}
 		$(".editor-container .lines").html(lineNumbers);
 	}
@@ -620,16 +728,16 @@ var App = function(name, version)
 		switch (zoomLevel)
 		{
 			case 1:
-				self.cachedScale = 0.25;
+			self.cachedScale = 0.25;
 			break;
 			case 2:
-				self.cachedScale = 0.5;
+			self.cachedScale = 0.5;
 			break;
 			case 3:
-				self.cachedScale = 0.75;
+			self.cachedScale = 0.75;
 			break;
 			case 4:
-				self.cachedScale = 1;
+			self.cachedScale = 1;
 			break;
 		}
 		$(".nodes-holder").transition({ scale: self.cachedScale }, duration);

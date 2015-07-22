@@ -44,7 +44,7 @@ Note: This method of importing will not preserve node locations, just each node'
 
 Download http://nwjs.io/ for your platform and extract the contents.
 
-Win64: ...
+Win64: Download the latest nwjs for Windows 64bit. Extract the content to wherever you like. Drag the yarn folder into nw.exe and it should run yarn! (if not ensure that the yarn folder has package.json in it). Alternitavely run nw.exe and navigate to C:/path_to_yarn/Yarn/app/index.html 
 
 MacOS: Place source code in a new folder named "app.nw" inside the extracted nwjs.app's "Contents/Resources/" folder.
 (to explore an app's folder structure, right click and select "Show Package Contents")
