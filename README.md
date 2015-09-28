@@ -38,6 +38,12 @@ Node connections work similar to Twine.
 
 ![Screenshot](http://infiniteammo.com/Yarn/NodeConnections.jpg)
 
+# Shortcut Options
+
+Shortcut options are a new method of creating dialogue branches that does not require creating new nodes.
+
+![Screenshot](http://infiniteammo.com/Yarn/shortcut-options.jpg)
+
 # How to Import Twine Files
 
 One way to import Twine files into Yarn is to export a "Twee" file from Twine. (txt format) Open this txt file in Yarn as you would any other file.
