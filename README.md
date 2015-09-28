@@ -69,4 +69,4 @@ https://github.com/InfiniteAmmoInc/yarn-test
 
 Yarn logo/icon created by @Mr_Alistair.
 
-![Icon](http://infiniteammo.com/Yarn/YarnIcon.png)
+![Icon](http://infiniteammo.com/Yarn/yarn-icon.png)
