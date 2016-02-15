@@ -28,7 +28,7 @@ Unnamed by George Batcher (@georgebatch)
 
 ![Screenshot](http://infiniteammo.com/Yarn/unnamed.jpg)
 
-YarnTest: http://infiniteammo.com/YarnTest/  
+YarnTest: http://infiniteammo.com/YarnTest/
 
 Test drive your Yarn files here ^
 
@@ -50,7 +50,17 @@ One way to import Twine files into Yarn is to export a "Twee" file from Twine. (
 
 Note: This method of importing will not preserve node locations, just each node's title, body and tags.
 
-# How to Run Source as an App
+# How to Run Your Dialogue in Unity
+
+You can find basic Yarn parsing and playback example code here:
+
+https://github.com/InfiniteAmmoInc/yarn-test
+
+You can find a more advanced Yarn interpreter here: 
+
+https://github.com/thesecretlab/YarnSpinner
+
+# How to Run the Yarn Source as an App
 
 Download http://nwjs.io/ for your platform and extract the contents.
 
@@ -58,12 +68,6 @@ Win64: Download the latest nwjs for Windows 64bit. Extract the content to wherev
 
 MacOS: Place source code in a new folder named "app.nw" inside the extracted nwjs.app's "Contents/Resources/" folder.
 (to explore an app's folder structure, right click and select "Show Package Contents")
-
-# How to Run Your Dialogue in Unity
-
-You can find basic Yarn parsing and playback example code here:
-
-https://github.com/InfiniteAmmoInc/yarn-test
 
 # Yarn Icon
 
