@@ -20,6 +20,10 @@ Lost Constellation: http://finji.itch.io/lost-constellation
 
 ![Screenshot](http://infiniteammo.com/Yarn/lost-constellation.jpg)
 
+Knights and Bikes: https://www.kickstarter.com/projects/foamsword/knights-and-bikes
+
+![Screenshot](http://infiniteammo.com/Yarn/knights-and-bikes.jpg)
+
 Sunflower (Demo): http://infiniteammo.com/Sunflower
 
 ![Screenshot](http://infiniteammo.com/Yarn/sunflower.jpg)
