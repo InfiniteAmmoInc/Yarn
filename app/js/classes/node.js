@@ -21,6 +21,7 @@ var Node = function()
 	this.style;
 	this.colorID = ko.observable(0);
 	this.checked = false;
+	this.selected = false;
 
 	// clipped values for display
 	this.clippedTags = ko.computed(function() 
@@ -74,6 +75,33 @@ var Node = function()
 			if (self.canDoubleClick)
 				app.editNode(self);
 		});
+
+		$(self.element).on("click", function(e)
+		{
+			if(e.ctrlKey)
+			{
+				if(self.selected)
+					app.removeNodeSelection(self);
+				else
+					app.addNodeSelected(self);
+			}
+		});
+	}
+
+	this.setSelected = function(select)
+	{
+		self.selected = select;
+		
+		if(self.selected) 
+			$(self.element).css({border: "1px solid #49eff1"});
+		else 
+			$(self.element).css({border: "none"});
+		
+	}
+
+	this.toggleSelected = function()
+	{
+		self.setSelected(!self.selected);
 	}
 
 	this.x = function(inX)
@@ -114,7 +142,8 @@ var Node = function()
 		if (app.shifted)
 			app.matchConnectedColorID(self);
 
-		
+		if(self.selected)
+			app.setSelectedColors(self);
 	}
 
 	this.cycleColorUp = function()
@@ -127,7 +156,8 @@ var Node = function()
 		if (app.shifted)
 			app.matchConnectedColorID(self);
 
-		
+		if(self.selected)
+			app.setSelectedColors(self);
 	}
 
 	this.doCycleColorDown = function()
@@ -157,6 +187,7 @@ var Node = function()
 	{
 		var dragging = false;
 		var groupDragging = false;
+
 		var offset = [0, 0];
 
 		$(document.body).on("mousemove", function(e) 
@@ -174,7 +205,17 @@ var Node = function()
 
 				if (groupDragging)
 				{
-					var nodes = app.getNodesConnectedTo(self);
+					var nodes = [];
+					if(self.selected)
+					{
+						nodes = app.getSelectedNodes();
+						nodes.splice(nodes.indexOf(self), 1);
+					}	
+					else
+					{
+						nodes = app.getNodesConnectedTo(self);
+					}
+					
 					if (nodes.length > 0)
 					{
 						for (var i in nodes)
@@ -184,6 +225,7 @@ var Node = function()
 						}
 					}
 				}
+
 
 				//app.refresh();
 			}
@@ -197,7 +239,7 @@ var Node = function()
 
 				dragging = true;
 
-				if (app.shifted)
+				if (app.shifted || self.selected)
 				{
 					groupDragging = true;
 				}

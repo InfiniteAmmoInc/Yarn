@@ -22,6 +22,8 @@ var App = function(name, version)
 	this.shifted = false;
 	//this.editingPath = ko.observable(null);
 
+	this.nodeSelection = [];
+
 	// node-webkit
 	if (typeof(require) == "function")
 	{
@@ -31,6 +33,9 @@ var App = function(name, version)
 
 	this.run = function()
 	{
+		//TODO(Al):
+		// delete mutliple nodes at the same time
+
 		var osName = "Unknown OS";
 		if (navigator.platform.indexOf("Win")!=-1) osName="Windows";
 		if (navigator.platform.indexOf("Mac")!=-1) osName="MacOS";
@@ -104,35 +109,144 @@ var App = function(name, version)
 		{
 			var dragging = false;
 			var offset = { x: 0, y: 0 };
+			var MarqueeOn = false;
+			var MarqueeSelection = [];
+			var MarqRect = {x1:0,y1:0,x2:0,y2:0};
+			var MarqueeOffset = [0, 0];
 
 			$(".nodes").on("mousedown", function(e)
 			{
-				
-
+				$("#marquee").css({x:0, y:0, width:0, height:0});
 				dragging = true;
 				offset.x = e.pageX;
 				offset.y = e.pageY;
+				MarqueeSelection = [];
+				MarqRect = {x1:0,y1:0,x2:0,y2:0};
+
+				var scale = $(".nodes-holder").css("scale");
+
+				MarqueeOffset[0] = 0;
+				MarqueeOffset[1] = 0;
 			});
 
 			$(".nodes").on("mousemove", function(e)
 			{
+				
 				if (dragging)
 				{
-					var nodes = self.nodes();
-					for (var i in nodes)
-					{
-						nodes[i].x(nodes[i].x() + (e.pageX - offset.x) / self.cachedScale);
-						nodes[i].y(nodes[i].y() + (e.pageY - offset.y) / self.cachedScale);
+					if(e.ctrlKey)
+					{	
+						MarqueeOn = true;
+
+						var scale = $(".nodes-holder").css("scale");
+
+						if(e.pageX > offset.x && e.pageY < offset.y) 
+						{
+							MarqRect.x1 = offset.x;
+							MarqRect.y1 = e.pageY;
+							MarqRect.x2 = e.pageX;
+							MarqRect.y2 = offset.y;
+						}
+						else if(e.pageX > offset.x && e.pageY > offset.y)
+						{
+							MarqRect.x1 = offset.x;
+							MarqRect.y1 = offset.y;
+							MarqRect.x2 = e.pageX;
+							MarqRect.y2 = e.pageY;
+						}
+						else if(e.pageX < offset.x && e.pageY < offset.y)
+						{
+							MarqRect.x1 = e.pageX;
+							MarqRect.y1 = e.pageY;
+							MarqRect.x2 = offset.x;
+							MarqRect.y2 = offset.y;
+						}
+						else
+						{
+							MarqRect.x1 = e.pageX;
+							MarqRect.y1 = offset.y;
+							MarqRect.x2 = offset.x;
+							MarqRect.y2 = e.pageY;	
+						}
+
+						$("#marquee").css({ x:MarqRect.x1, 
+							y:MarqRect.y1,
+							width:Math.abs(MarqRect.x1-MarqRect.x2),
+							height:Math.abs(MarqRect.y1-MarqRect.y2)});
+
+						//Select nodes which are within the marquee
+						// MarqueeSelection is used to prevent it from deselecting already
+						// selected nodes and deselecting onces which have been selected
+						// by the marquee 
+						var nodes = self.nodes();
+						for(var i in nodes)
+						{
+							var index = MarqueeSelection.indexOf(nodes[i]);
+							var inMarqueeSelection = (index >= 0);
+
+							//test the Marque scaled to the nodes x,y values
+
+							var holder = $(".nodes-holder").offset(); 
+							var marqueeOverNode = (MarqRect.x2 - holder.left) / scale > nodes[i].x()  
+											   && (MarqRect.x1 - holder.left) / scale < nodes[i].x() + nodes[i].tempWidth
+        									   && (MarqRect.y2 - holder.top) / scale > nodes[i].y()   
+        									   && (MarqRect.y1 - holder.top) / scale < nodes[i].y() + nodes[i].tempHeight;
+
+							if(marqueeOverNode)
+							{
+								if(!inMarqueeSelection)
+								{
+									self.addNodeSelected(nodes[i]);
+									MarqueeSelection.push(nodes[i]);
+								}
+							}
+							else
+							{
+								if(inMarqueeSelection)
+								{
+									self.removeNodeSelection(nodes[i]);
+									MarqueeSelection.splice(index, 1);
+								}
+
+							}
+						}
 					}
-					offset.x = e.pageX;
-					offset.y = e.pageY;
+					else
+					{
+						//prevents jumping straight back to standard dragging
+						if(MarqueeOn)
+						{
+							MarqueeSelection = [];
+							MarqRect = {x1:0,y1:0,x2:0,y2:0};
+							$("#marquee").css({x:0, y:0, width:0, height:0});
+						}
+						else
+						{
+							var nodes = self.nodes();
+							for (var i in nodes)
+							{
+								nodes[i].x(nodes[i].x() + (e.pageX - offset.x) / self.cachedScale);
+								nodes[i].y(nodes[i].y() + (e.pageY - offset.y) / self.cachedScale);
+							}
+							offset.x = e.pageX;
+							offset.y = e.pageY;
+						}
+
+					}
 				}
+
 			});
 
 			$(".nodes").on("mouseup", function(e)
 			{
 				console.log("finished dragging");
 				dragging = false;
+
+				MarqueeSelection = [];
+				MarqRect = {x1:0,y1:0,x2:0,y2:0};
+				$("#marquee").css({x:0, y:0, width:0, height:0});
+				MarqueeOn = false;
+
 			});
 		})();
 
@@ -152,7 +266,7 @@ var App = function(name, version)
 			if (self.cachedScale < .25)
 				self.cachedScale = .25;
 			$(".nodes-holder").transition({ scale: self.cachedScale }, 0);
-		    //console.log(event.deltaX, event.deltaY, event.deltaFactor);
+
 		});
 
 		$(document).on('keyup keydown', function(e) { self.shifted = e.shiftKey; } );
@@ -175,6 +289,7 @@ var App = function(name, version)
 					break;
 					case 89: self.historyDirection("redo");
 					break;
+					case 68: self.deselectAllNodes();
 				}
 			}
 		});
@@ -315,6 +430,56 @@ var App = function(name, version)
 		self.nodes.push(node);
 		node.moveTo(x, y);
 		self.updateNodeLinks(); 
+	}
+
+	this.setSelectedColors = function(node)
+	{
+		var nodes = self.getSelectedNodes();
+		nodes.splice(nodes.indexOf(node), 1);
+
+		for(var i in nodes)
+			nodes[i].colorID(node.colorID());		
+	}
+
+	this.getSelectedNodes = function()
+	{
+		var selectedNode = [];
+
+		for(var i in self.nodeSelection)
+		{
+			selectedNode.push(self.nodeSelection[i]);
+		}
+
+		return selectedNode;
+	}
+
+	this.deselectAllNodes = function()
+	{
+		var nodes = self.nodes();
+		for (var i in nodes)
+		{
+			self.removeNodeSelection(nodes[i]);
+		}
+	}
+
+	this.addNodeSelected = function(node)
+	{
+		var index = self.nodeSelection.indexOf(node);
+		if(index < 0)
+		{
+			self.nodeSelection.push(node);
+			node.setSelected(true);
+		}
+	}
+
+	this.removeNodeSelection = function(node)
+	{
+		var index = self.nodeSelection.indexOf(node);
+		if  (index >= 0)
+		{
+			self.nodeSelection.splice(index, 1);
+			node.setSelected(false);
+		}
 	}
 
 	this.newNode = function(updateArrows)
