@@ -81,9 +81,9 @@ var Node = function()
 			if(e.ctrlKey)
 			{
 				if(self.selected)
-					app.removeSelectedNode(self);
+					app.removeNodeSelection(self);
 				else
-					app.addSelectedNode(self);
+					app.addNodeSelected(self);
 			}
 		});
 	}
@@ -142,7 +142,8 @@ var Node = function()
 		if (app.shifted)
 			app.matchConnectedColorID(self);
 
-		
+		if(self.selected)
+			app.setSelectedColors(self);
 	}
 
 	this.cycleColorUp = function()
@@ -155,7 +156,8 @@ var Node = function()
 		if (app.shifted)
 			app.matchConnectedColorID(self);
 
-		
+		if(self.selected)
+			app.setSelectedColors(self);
 	}
 
 	this.doCycleColorDown = function()
@@ -185,6 +187,7 @@ var Node = function()
 	{
 		var dragging = false;
 		var groupDragging = false;
+
 		var offset = [0, 0];
 
 		$(document.body).on("mousemove", function(e) 
@@ -202,7 +205,17 @@ var Node = function()
 
 				if (groupDragging)
 				{
-					var nodes = app.getNodesConnectedTo(self);
+					var nodes = [];
+					if(self.selected)
+					{
+						nodes = app.getSelectedNodes();
+						nodes.splice(nodes.indexOf(self), 1);
+					}	
+					else
+					{
+						nodes = app.getNodesConnectedTo(self);
+					}
+					
 					if (nodes.length > 0)
 					{
 						for (var i in nodes)
@@ -212,6 +225,7 @@ var Node = function()
 						}
 					}
 				}
+
 
 				//app.refresh();
 			}
@@ -225,7 +239,7 @@ var Node = function()
 
 				dragging = true;
 
-				if (app.shifted)
+				if (app.shifted || self.selected)
 				{
 					groupDragging = true;
 				}

@@ -33,16 +33,9 @@ var App = function(name, version)
 
 	this.run = function()
 	{
-
-		//we want:
-		// - a selection function and data to hold the nodes we have selected
-		// - a multiple selection function & data (using ctrl+click)
-		// - a marquee tool using ctrl+mousedown-drag
-
-		//when nodes are selected:
-		// if the background or non-selected node is clicked, deselect all
-		// if one of the selected nodes is dragged, drag all selected nodes
-		// if ctrl+click on selected node color changer, change color for all selected nodes?
+		//TODO(Al):
+		// delete mutliple nodes at the same time
+		// fix issues with zoom and scale
 
 		var osName = "Unknown OS";
 		if (navigator.platform.indexOf("Win")!=-1) osName="Windows";
@@ -117,6 +110,7 @@ var App = function(name, version)
 		{
 			var dragging = false;
 			var offset = { x: 0, y: 0 };
+			var MarqueeOn = false;
 			var MarqueeSelection = [];
 			var MarqRect = {x1:0,y1:0,x2:0,y2:0};
 
@@ -136,7 +130,8 @@ var App = function(name, version)
 				if (dragging)
 				{
 					if(e.ctrlKey)
-					{
+					{	
+						MarqueeOn = true;
 						if(e.pageX > offset.x && e.pageY < offset.y) 
 						{
 							MarqRect.x1 = offset.x;
@@ -167,9 +162,9 @@ var App = function(name, version)
 						}
 
 						$("#marquee").css({top:MarqRect.y1, 
-								  		   left:MarqRect.x1,
-								  		   width:Math.abs(MarqRect.x1-MarqRect.x2),
-								  		   height:Math.abs(MarqRect.y1-MarqRect.y2)});
+							left:MarqRect.x1,
+							width:Math.abs(MarqRect.x1-MarqRect.x2),
+							height:Math.abs(MarqRect.y1-MarqRect.y2)});
 
 						//Select nodes which are within the marquee
 						// MarqueeSelection is used to prevent it from deselecting already
@@ -180,13 +175,13 @@ var App = function(name, version)
 						{
 							var index = MarqueeSelection.indexOf(nodes[i]);
 							var inMarqueeSelection = (index >= 0);
-						
+
 							if (MarqRect.x1 < (nodes[i].x()+nodes[i].tempWidth) && MarqRect.x2 > nodes[i].x() 
-							&&  MarqRect.y1 < (nodes[i].y()+nodes[i].tempHeight) && MarqRect.y2 > nodes[i].y()) 
+								&&  MarqRect.y1 < (nodes[i].y()+nodes[i].tempHeight) && MarqRect.y2 > nodes[i].y()) 
 							{
 								if(!inMarqueeSelection)
 								{
-									self.addSelectedNode(nodes[i]);
+									self.addNodeSelected(nodes[i]);
 									MarqueeSelection.push(nodes[i]);
 								}
 							}
@@ -194,7 +189,7 @@ var App = function(name, version)
 							{
 								if(inMarqueeSelection)
 								{
-									self.removeSelectedNode(nodes[i]);
+									self.removeNodeSelection(nodes[i]);
 									MarqueeSelection.splice(index, 1);
 								}
 
@@ -203,14 +198,25 @@ var App = function(name, version)
 					}
 					else
 					{
-						var nodes = self.nodes();
-						for (var i in nodes)
+						//prevents jumping straight back to standard dragging
+						if(MarqueeOn)
 						{
-							nodes[i].x(nodes[i].x() + (e.pageX - offset.x) / self.cachedScale);
-							nodes[i].y(nodes[i].y() + (e.pageY - offset.y) / self.cachedScale);
+							MarqueeSelection = [];
+							MarqRect = {x1:0,y1:0,x2:0,y2:0};
+							$("#marquee").css({top:0, left:0, width:0, height:0});
 						}
-						offset.x = e.pageX;
-						offset.y = e.pageY;
+						else
+						{
+							var nodes = self.nodes();
+							for (var i in nodes)
+							{
+								nodes[i].x(nodes[i].x() + (e.pageX - offset.x) / self.cachedScale);
+								nodes[i].y(nodes[i].y() + (e.pageY - offset.y) / self.cachedScale);
+							}
+							offset.x = e.pageX;
+							offset.y = e.pageY;
+						}
+
 					}
 				}
 
@@ -220,7 +226,10 @@ var App = function(name, version)
 			{
 				console.log("finished dragging");
 				dragging = false;
+				MarqueeSelection = [];
+				MarqRect = {x1:0,y1:0,x2:0,y2:0};
 				$("#marquee").css({top:0, left:0, width:0, height:0});
+				MarqueeOn = false;
 			});
 		})();
 
@@ -240,6 +249,10 @@ var App = function(name, version)
 			if (self.cachedScale < .25)
 				self.cachedScale = .25;
 			$(".nodes-holder").transition({ scale: self.cachedScale }, 0);
+
+			
+			// $("#marquee").transition({ scale: self.cachedScale }, 0);
+			// $("#marquee").css({ transformOrigin: ""+$(window).width()/2+"px "+$(window).height()/2+"px" });
 		    //console.log(event.deltaX, event.deltaY, event.deltaFactor);
 		});
 
@@ -263,6 +276,7 @@ var App = function(name, version)
 					break;
 					case 89: self.historyDirection("redo");
 					break;
+					case 68: self.deselectAllNodes();
 				}
 			}
 		});
@@ -405,7 +419,37 @@ var App = function(name, version)
 		self.updateNodeLinks(); 
 	}
 
-	this.addSelectedNode = function(node)
+	this.setSelectedColors = function(node)
+	{
+		var nodes = self.getSelectedNodes();
+		nodes.splice(nodes.indexOf(node), 1);
+
+		for(var i in nodes)
+			nodes[i].colorID(node.colorID());		
+	}
+
+	this.getSelectedNodes = function()
+	{
+		var selectedNode = [];
+
+		for(var i in self.nodeSelection)
+		{
+			selectedNode.push(self.nodeSelection[i]);
+		}
+
+		return selectedNode;
+	}
+
+	this.deselectAllNodes = function()
+	{
+		var nodes = self.nodes();
+		for (var i in nodes)
+		{
+			self.removeNodeSelection(nodes[i]);
+		}
+	}
+
+	this.addNodeSelected = function(node)
 	{
 		var index = self.nodeSelection.indexOf(node);
 		if(index < 0)
@@ -415,7 +459,7 @@ var App = function(name, version)
 		}
 	}
 
-	this.removeSelectedNode = function(node)
+	this.removeNodeSelection = function(node)
 	{
 		var index = self.nodeSelection.indexOf(node);
 		if  (index >= 0)
