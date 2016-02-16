@@ -35,7 +35,6 @@ var App = function(name, version)
 	{
 		//TODO(Al):
 		// delete mutliple nodes at the same time
-		// fix issues with zoom and scale
 
 		var osName = "Unknown OS";
 		if (navigator.platform.indexOf("Win")!=-1) osName="Windows";
@@ -126,8 +125,8 @@ var App = function(name, version)
 
 				var scale = $(".nodes-holder").css("scale");
 
-				MarqueeOffset[0] = 0;//(e.pageX/scale);
-				MarqueeOffset[1] = 0;//(e.pageY/scale);
+				MarqueeOffset[0] = 0;
+				MarqueeOffset[1] = 0;
 			});
 
 			$(".nodes").on("mousemove", function(e)
@@ -268,10 +267,6 @@ var App = function(name, version)
 				self.cachedScale = .25;
 			$(".nodes-holder").transition({ scale: self.cachedScale }, 0);
 
-			
-			// $("#marquee").transition({ scale: self.cachedScale }, 0);
-			// $("#marquee").css({ transformOrigin: ""+$(window).width()/2+"px "+$(window).height()/2+"px" });
-		    //console.log(event.deltaX, event.deltaY, event.deltaFactor);
 		});
 
 		$(document).on('keyup keydown', function(e) { self.shifted = e.shiftKey; } );
