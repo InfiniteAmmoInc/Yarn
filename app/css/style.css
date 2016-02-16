@@ -546,3 +546,15 @@ a:hover { color: #000;}
 	margin-top: 50px;
 	background-position: -64px 0px;
 }
+
+/* --- MARQUEE --- */
+
+#marquee
+{
+	z-index: 10000;
+	display: block;
+	position: absolute;
+	pointer-events: none;
+	border: 1px solid #49eff1;
+	background-color: rgba(29, 94, 95, 0.2);
+}

@@ -21,6 +21,7 @@ var Node = function()
 	this.style;
 	this.colorID = ko.observable(0);
 	this.checked = false;
+	this.selected = false;
 
 	// clipped values for display
 	this.clippedTags = ko.computed(function() 
@@ -74,6 +75,33 @@ var Node = function()
 			if (self.canDoubleClick)
 				app.editNode(self);
 		});
+
+		$(self.element).on("click", function(e)
+		{
+			if(e.ctrlKey)
+			{
+				if(self.selected)
+					app.removeSelectedNode(self);
+				else
+					app.addSelectedNode(self);
+			}
+		});
+	}
+
+	this.setSelected = function(select)
+	{
+		self.selected = select;
+		
+		if(self.selected) 
+			$(self.element).css({border: "1px solid #49eff1"});
+		else 
+			$(self.element).css({border: "none"});
+		
+	}
+
+	this.toggleSelected = function()
+	{
+		self.setSelected(!self.selected);
 	}
 
 	this.x = function(inX)
