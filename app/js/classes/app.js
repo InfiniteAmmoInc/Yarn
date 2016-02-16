@@ -113,15 +113,21 @@ var App = function(name, version)
 			var MarqueeOn = false;
 			var MarqueeSelection = [];
 			var MarqRect = {x1:0,y1:0,x2:0,y2:0};
+			var MarqueeOffset = [0, 0];
 
 			$(".nodes").on("mousedown", function(e)
 			{
-				$("#marquee").css({top:0, left:0, width:0, height:0});
+				$("#marquee").css({x:0, y:0, width:0, height:0});
 				dragging = true;
 				offset.x = e.pageX;
 				offset.y = e.pageY;
 				MarqueeSelection = [];
 				MarqRect = {x1:0,y1:0,x2:0,y2:0};
+
+				var scale = $(".nodes-holder").css("scale");
+
+				MarqueeOffset[0] = 0;//(e.pageX/scale);
+				MarqueeOffset[1] = 0;//(e.pageY/scale);
 			});
 
 			$(".nodes").on("mousemove", function(e)
@@ -132,6 +138,9 @@ var App = function(name, version)
 					if(e.ctrlKey)
 					{	
 						MarqueeOn = true;
+
+						var scale = $(".nodes-holder").css("scale");
+
 						if(e.pageX > offset.x && e.pageY < offset.y) 
 						{
 							MarqRect.x1 = offset.x;
@@ -161,8 +170,8 @@ var App = function(name, version)
 							MarqRect.y2 = e.pageY;	
 						}
 
-						$("#marquee").css({top:MarqRect.y1, 
-							left:MarqRect.x1,
+						$("#marquee").css({ x:MarqRect.x1, 
+							y:MarqRect.y1,
 							width:Math.abs(MarqRect.x1-MarqRect.x2),
 							height:Math.abs(MarqRect.y1-MarqRect.y2)});
 
@@ -176,8 +185,15 @@ var App = function(name, version)
 							var index = MarqueeSelection.indexOf(nodes[i]);
 							var inMarqueeSelection = (index >= 0);
 
-							if (MarqRect.x1 < (nodes[i].x()+nodes[i].tempWidth) && MarqRect.x2 > nodes[i].x() 
-								&&  MarqRect.y1 < (nodes[i].y()+nodes[i].tempHeight) && MarqRect.y2 > nodes[i].y()) 
+							//test the Marque scaled to the nodes x,y values
+
+							var holder = $(".nodes-holder").offset(); 
+							var marqueeOverNode = (MarqRect.x2 - holder.left) / scale > nodes[i].x()  
+											   && (MarqRect.x1 - holder.left) / scale < nodes[i].x() + nodes[i].tempWidth
+        									   && (MarqRect.y2 - holder.top) / scale > nodes[i].y()   
+        									   && (MarqRect.y1 - holder.top) / scale < nodes[i].y() + nodes[i].tempHeight;
+
+							if(marqueeOverNode)
 							{
 								if(!inMarqueeSelection)
 								{
@@ -203,7 +219,7 @@ var App = function(name, version)
 						{
 							MarqueeSelection = [];
 							MarqRect = {x1:0,y1:0,x2:0,y2:0};
-							$("#marquee").css({top:0, left:0, width:0, height:0});
+							$("#marquee").css({x:0, y:0, width:0, height:0});
 						}
 						else
 						{
@@ -226,10 +242,12 @@ var App = function(name, version)
 			{
 				console.log("finished dragging");
 				dragging = false;
+
 				MarqueeSelection = [];
 				MarqRect = {x1:0,y1:0,x2:0,y2:0};
-				$("#marquee").css({top:0, left:0, width:0, height:0});
+				$("#marquee").css({x:0, y:0, width:0, height:0});
 				MarqueeOn = false;
+
 			});
 		})();
 
