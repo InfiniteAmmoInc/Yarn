@@ -242,6 +242,11 @@ var App = function(name, version)
 				console.log("finished dragging");
 				dragging = false;
 
+				if(MarqueeOn && MarqueeSelection.length == 0)
+				{
+					self.deselectAllNodes();
+				}
+
 				MarqueeSelection = [];
 				MarqRect = {x1:0,y1:0,x2:0,y2:0};
 				$("#marquee").css({x:0, y:0, width:0, height:0});
