@@ -487,6 +487,16 @@ var App = function(name, version)
 		}
 	}
 
+	this.deleteSelectedNodes = function()
+	{
+		var nodes = self.getSelectedNodes();
+		for(var i in nodes)
+		{
+			self.removeNodeSelection(nodes[i]);
+			nodes[i].remove();
+		}
+	}
+
 	this.newNode = function(updateArrows)
 	{
 		var node = new Node();
@@ -502,7 +512,6 @@ var App = function(name, version)
 	this.newNodeAt = function(x, y)
 	{
 		var node = new Node();
-		//alert("x, y: " + x + ", " + y);
 		
 		self.nodes.push(node);
 
@@ -515,7 +524,11 @@ var App = function(name, version)
 	}
 
 	this.removeNode = function(node)
-	{
+	{	
+		if(node.selected)
+		{
+			self.deleteSelectedNodes();
+		}
 		var index = self.nodes.indexOf(node);
 		if  (index >= 0)
 		{
