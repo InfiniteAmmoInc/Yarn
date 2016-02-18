@@ -242,6 +242,11 @@ var App = function(name, version)
 				console.log("finished dragging");
 				dragging = false;
 
+				if(MarqueeOn && MarqueeSelection.length == 0)
+				{
+					self.deselectAllNodes();
+				}
+
 				MarqueeSelection = [];
 				MarqRect = {x1:0,y1:0,x2:0,y2:0};
 				$("#marquee").css({x:0, y:0, width:0, height:0});
@@ -482,6 +487,16 @@ var App = function(name, version)
 		}
 	}
 
+	this.deleteSelectedNodes = function()
+	{
+		var nodes = self.getSelectedNodes();
+		for(var i in nodes)
+		{
+			self.removeNodeSelection(nodes[i]);
+			nodes[i].remove();
+		}
+	}
+
 	this.newNode = function(updateArrows)
 	{
 		var node = new Node();
@@ -497,7 +512,6 @@ var App = function(name, version)
 	this.newNodeAt = function(x, y)
 	{
 		var node = new Node();
-		//alert("x, y: " + x + ", " + y);
 		
 		self.nodes.push(node);
 
@@ -510,7 +524,11 @@ var App = function(name, version)
 	}
 
 	this.removeNode = function(node)
-	{
+	{	
+		if(node.selected)
+		{
+			self.deleteSelectedNodes();
+		}
 		var index = self.nodes.indexOf(node);
 		if  (index >= 0)
 		{

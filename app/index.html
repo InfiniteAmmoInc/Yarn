@@ -146,7 +146,15 @@
 			<div class="node-delete" data-bind="click: function() { app.deleting(null); }">
 
 				<div class="form" data-bind="preventBubble: 'click'">
+					<!-- ko if: (app.deleting().selected && (app.getSelectedNodes().length > 1)) -->
+					<div>Remove all selected</div>
+					<!-- /ko -->
+					<!-- ko ifnot: (app.deleting().selected) -->
 					<div>Remove <span data-bind="text: app.deleting().title"></span>?</div>
+					<!-- /ko -->
+					<!-- ko if: (app.deleting().selected && (app.getSelectedNodes().length == 1)) -->
+					<div>Remove <span data-bind="text: app.deleting().title"></span>?</div>
+					<!-- /ko -->
 					<div class="icon close" data-bind="click:app.deleting().remove;"></div>
 				</div>
 
