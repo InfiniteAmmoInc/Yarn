@@ -333,7 +333,10 @@ var App = function(name, version)
 
 	this.mouseDownOnNode = function()
 	{
-		self.deselectAllNodes();
+	}
+
+	this.mouseUpOnNode = function()
+	{
 	}
 
 	this.matchConnectedColorID = function(fromNode)

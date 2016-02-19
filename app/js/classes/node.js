@@ -260,6 +260,8 @@ var Node = function()
 		{
 			dragging = false;
 			groupDragging = false;
+
+			app.mouseUpOnNode();
 		});
 	}
 
