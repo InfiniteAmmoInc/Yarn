@@ -189,6 +189,7 @@ var Node = function()
 		var groupDragging = false;
 
 		var offset = [0, 0];
+		var moved = false;
 
 		$(document.body).on("mousemove", function(e) 
 		{
@@ -200,6 +201,7 @@ var Node = function()
 				var movedX = newX - self.x();
 				var movedY = newY - self.y();
 
+				moved = true;
 				self.x(newX);
 				self.y(newY);
 
@@ -237,8 +239,6 @@ var Node = function()
 			{
 				var parent = $(self.element).parent();
 
-				app.mouseDownOnNode();
-
 				dragging = true;
 
 				if (app.shifted || self.selected)
@@ -256,12 +256,20 @@ var Node = function()
 			e.stopPropagation();
 		});
 
+		$(self.element).on("mouseup", function (e)
+		{
+			if (!moved)
+				app.mouseUpOnNodeNotMoved();
+
+			moved = false;
+		});
+
 		$(document.body).on("mouseup", function (e) 
 		{
 			dragging = false;
 			groupDragging = false;
+			moved = false;
 
-			app.mouseUpOnNode();
 		});
 	}
 

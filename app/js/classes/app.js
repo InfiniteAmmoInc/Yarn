@@ -331,12 +331,9 @@ var App = function(name, version)
 		return connectedNodes;
 	}
 
-	this.mouseDownOnNode = function()
+	this.mouseUpOnNodeNotMoved = function()
 	{
-	}
-
-	this.mouseUpOnNode = function()
-	{
+		self.deselectAllNodes();
 	}
 
 	this.matchConnectedColorID = function(fromNode)
