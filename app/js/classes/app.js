@@ -127,6 +127,9 @@ var App = function(name, version)
 
 				MarqueeOffset[0] = 0;
 				MarqueeOffset[1] = 0;
+
+				if (!e.altKey)
+					self.deselectAllNodes();
 			});
 
 			$(".nodes").on("mousemove", function(e)
