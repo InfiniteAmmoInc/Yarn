@@ -128,7 +128,7 @@ var App = function(name, version)
 				MarqueeOffset[0] = 0;
 				MarqueeOffset[1] = 0;
 
-				if (!e.altKey)
+				if (!e.altKey && !e.shiftKey)
 					self.deselectAllNodes();
 			});
 
