@@ -237,6 +237,8 @@ var Node = function()
 			{
 				var parent = $(self.element).parent();
 
+				app.mouseDownOnNode();
+
 				dragging = true;
 
 				if (app.shifted || self.selected)
