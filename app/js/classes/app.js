@@ -280,12 +280,12 @@ var App = function(name, version)
 
 		$(document).on('keyup keydown', function(e) { self.shifted = e.shiftKey; } );
 
-		$(document).mousedown(function(e){ 
+		$(document).contextmenu( function(e){ 
 			if( e.button == 2 )
-			{
+			{console.log("Executed"); 
 				self.newNodeAt(e.pageX / self.cachedScale, e.pageY / self.cachedScale); 
 			} 
-			return true; 
+			return false; 
 		}); 
 
 		$(document).on('keydown', function(e){
