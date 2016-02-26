@@ -258,6 +258,7 @@ var Node = function()
 
 		$(self.element).on("mouseup", function (e)
 		{
+			//alert("" + e.target.nodeName);
 			if (!moved)
 				app.mouseUpOnNodeNotMoved();
 

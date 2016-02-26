@@ -28,7 +28,7 @@ Sunflower (Demo): http://infiniteammo.com/Sunflower
 
 ![Screenshot](http://infiniteammo.com/Yarn/sunflower.jpg)
 
-Unnamed by George Batcher (@georgebatch)
+Unnamed by George Batchelor (@georgebatch)
 
 ![Screenshot](http://infiniteammo.com/Yarn/unnamed.jpg)
 
