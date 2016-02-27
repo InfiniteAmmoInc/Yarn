@@ -28,9 +28,9 @@ Sunflower (Demo): http://infiniteammo.com/Sunflower
 
 ![Screenshot](http://infiniteammo.com/Yarn/sunflower.jpg)
 
-Unnamed by George Batchelor (@georgebatch)
+Far From Noise by George Batchelor (@georgebatch): http://www.georgebatchelor.com/#!far-from-noise/c1ceg
 
-![Screenshot](http://infiniteammo.com/Yarn/unnamed.jpg)
+![Screenshot](http://infiniteammo.com/Yarn/far-from-noise.png)
 
 YarnTest: http://infiniteammo.com/YarnTest/
 
