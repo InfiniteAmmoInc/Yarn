@@ -8,7 +8,7 @@ Dialogue editor created for "Night in the Woods" (and other projects) by @NoelFB
 
 Browser: http://infiniteammo.com/yarn/ (warning: saving not working quite right yet)
 
-Win64: http://infiniteammo.com/Yarn/Yarn-2015-04-09-win.zip
+Win64: http://infiniteammo.com/Yarn/Yarn-2016-02-27-win.zip
 
 MacOS: http://infiniteammo.com/Yarn/Yarn-2016-02-18-mac.zip
 
