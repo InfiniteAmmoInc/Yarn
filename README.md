@@ -10,7 +10,7 @@ Browser: http://infiniteammo.com/yarn/ (warning: saving not working quite right 
 
 Win64: http://infiniteammo.com/Yarn/Yarn-2015-04-09-win.zip
 
-MacOS: http://infiniteammo.com/Yarn/Yarn-2015-04-11-mac.zip
+MacOS: http://infiniteammo.com/Yarn/Yarn-2016-02-18-mac.zip
 
 # Examples
 
