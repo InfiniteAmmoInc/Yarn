@@ -23,18 +23,6 @@
 		<script type="text/javascript" src="js/classes/data.js"></script>
 		<script type="text/javascript" src="js/classes/utils.js"></script>
 		<script type="text/javascript" src="js/classes/node.js"></script>
-
-		<!-- start it all up! -->
-		<script type="text/javascript">
-
-			var app = new App("Yarn", "0.1.0");
-
-			$(document).ready(function()
-			{
-				app.run();
-			});
-
-		</script>
 	</head>
 	<body>
 
@@ -182,6 +170,12 @@
 		<!-- templates container (they get loaded into this) -->
 		<div class="templates">
 		</div>
+
+		<!-- start it all up! -->
+		<script type="text/javascript">
+			var app = new App("Yarn", "0.1.0");
+			app.run();
+		</script>
 
 	</bosy>
 </html>
