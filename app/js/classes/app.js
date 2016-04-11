@@ -299,8 +299,13 @@ var App = function(name, version)
 
 		$(document).on('keyup keydown', function(e) { self.shifted = e.shiftKey; } );
 
-		$(document).contextmenu( function(e){ 
-			if( e.button == 2 )
+		$(document).contextmenu( function(e){
+			var isAllowedEl = (
+					$(e.target).hasClass('nodes') ||
+					$(e.target).parents('.nodes').length
+				);
+
+			if( e.button == 2 && isAllowedEl )
 			{
 				var x = self.transformOrigin[0] * -1 / self.cachedScale,
 					y = self.transformOrigin[1] * -1 / self.cachedScale;
@@ -310,7 +315,8 @@ var App = function(name, version)
 
 				self.newNodeAt(x, y); 
 			} 
-			return false; 
+
+			return !isAllowedEl; 
 		}); 
 
 		$(document).on('keydown', function(e){
@@ -956,6 +962,27 @@ var App = function(name, version)
 		}
 
 
+	}
+
+	this.zoom = function(zoomLevel)
+	{
+		switch (zoomLevel)
+		{
+			case 1:
+				self.cachedScale = 0.25;
+				break;
+			case 2:
+				self.cachedScale = 0.5;
+				break;
+			case 3:
+				self.cachedScale = 0.75;
+				break;
+			case 4:
+				self.cachedScale = 1;
+				break;
+		}
+
+		self.translate(200);
 	}
 
 	this.translate = function(speed)
