@@ -299,7 +299,7 @@ var App = function(name, version)
 
 		$(document).on('keyup keydown', function(e) { self.shifted = e.shiftKey; } );
 
-		$(document).mousedown(function(e){ 
+		$(document).contextmenu( function(e){ 
 			if( e.button == 2 )
 			{
 				var x = self.transformOrigin[0] * -1 / self.cachedScale,
@@ -310,7 +310,7 @@ var App = function(name, version)
 
 				self.newNodeAt(x, y); 
 			} 
-			return true; 
+			return false; 
 		}); 
 
 		$(document).on('keydown', function(e){
