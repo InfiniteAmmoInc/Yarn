@@ -19,10 +19,16 @@ var App = function(name, version)
 	this.editingSaveHistoryTimeout = null;
 	this.dirty = false;
 	this.zoomSpeed = .005;
+	this.transformOrigin = [
+		0,
+		0
+	];
 	this.shifted = false;
 	//this.editingPath = ko.observable(null);
 
 	this.nodeSelection = [];
+
+	this.$searchField = $(".search-field");
 
 	// node-webkit
 	if (typeof(require) == "function")
@@ -63,7 +69,7 @@ var App = function(name, version)
 		}
 
 		// search field enter
-		$(".search-field").on("keydown", function (e)
+		self.$searchField.on("keydown", function (e)
 		{
 				// enter
 				if (e.keyCode == 13)
@@ -123,7 +129,7 @@ var App = function(name, version)
 				MarqueeSelection = [];
 				MarqRect = {x1:0,y1:0,x2:0,y2:0};
 
-				var scale = $(".nodes-holder").css("scale");
+				var scale = self.cachedScale;
 
 				MarqueeOffset[0] = 0;
 				MarqueeOffset[1] = 0;
@@ -163,7 +169,7 @@ var App = function(name, version)
 					{	
 						MarqueeOn = true;
 
-						var scale = $(".nodes-holder").css("scale");
+						var scale = self.cachedScale;
 
 						if(e.pageX > offset.x && e.pageY < offset.y) 
 						{
@@ -260,32 +266,51 @@ var App = function(name, version)
 		})();
 
 		// search field
-		$(".search-field").on('input', self.updateSearch);
+		self.$searchField.on('input', self.updateSearch);
 		$(".search-title input").click(self.updateSearch);
 		$(".search-body input").click(self.updateSearch);
 		$(".search-tags input").click(self.updateSearch);
 
 		// using the event helper
 		$('.nodes').mousewheel(function(event) {
-			self.cachedScale += event.deltaY * self.zoomSpeed * self.cachedScale;
+			var lastZoom = self.cachedScale,
+				scaleChange = event.deltaY * self.zoomSpeed * self.cachedScale;
 
-			$(".nodes-holder").css({ transformOrigin: ""+$(window).width()/2+"px "+$(window).height()/2+"px" });
-			if (self.cachedScale > 1)
+			if (self.cachedScale + scaleChange > 1) {
 				self.cachedScale = 1;
-			if (self.cachedScale < .25)
-				self.cachedScale = .25;
-			$(".nodes-holder").transition({ scale: self.cachedScale }, 0);
+			} else if (self.cachedScale + scaleChange < .025) {
+				self.cachedScale = .025;
+			} else {
+				self.cachedScale += scaleChange;
+			};
 
+			var mouseX = event.pageX - self.transformOrigin[0],
+				mouseY = event.pageY - self.transformOrigin[1],
+				newX = mouseX * (self.cachedScale / lastZoom),
+				newY = mouseY * (self.cachedScale / lastZoom),
+				deltaX = (mouseX - newX),
+				deltaY = (mouseY - newY);
+
+			self.transformOrigin[0] += deltaX;
+			self.transformOrigin[1] += deltaY;
+
+			self.translate();
 		});
 
 		$(document).on('keyup keydown', function(e) { self.shifted = e.shiftKey; } );
 
-		$(document).mousedown(function(e){ 
+		$(document).contextmenu( function(e){ 
 			if( e.button == 2 )
 			{
-				self.newNodeAt(e.pageX / self.cachedScale, e.pageY / self.cachedScale); 
+				var x = self.transformOrigin[0] * -1 / self.cachedScale,
+					y = self.transformOrigin[1] * -1 / self.cachedScale;
+
+				x += event.pageX / self.cachedScale;
+				y += event.pageY / self.cachedScale;
+
+				self.newNodeAt(x, y); 
 			} 
-			return true; 
+			return false; 
 		}); 
 
 		$(document).on('keydown', function(e){
@@ -302,6 +327,25 @@ var App = function(name, version)
 				}
 			}
 		});
+
+		$(document).on('keydown', function(e) {
+			if (self.editing() || self.$searchField.is(':focus')) return;
+
+			var scale = self.cachedScale || 1,
+				movement = scale * 500;
+
+			if (e.keyCode === 65 || e.keyCode === 37) {  // a or left arrow
+				self.transformOrigin[0] += movement;
+			} else if (e.keyCode === 68 || e.keyCode === 39) {  // d or right arrow
+				self.transformOrigin[0] -= movement;
+			} else if (e.keyCode === 87 || e.keyCode === 38) {  // w or up arrow
+				self.transformOrigin[1] += movement;
+			} else if (e.keyCode === 83 || e.keyCode === 40) {  // w or down arrow
+				self.transformOrigin[1] -= movement;
+			}
+
+			self.translate(100);
+		} );
 		// apple command key
 		//$(window).on('keydown', function(e) { if (e.keyCode == 91 || e.keyCode == 93) { self.appleCmdKey = true; } });
 		//$(window).on('keyup', function(e) { if (e.keyCode == 91 || e.keyCode == 93) { self.appleCmdKey = false; } });
@@ -354,6 +398,9 @@ var App = function(name, version)
 	this.refreshWindowTitle = function(editingPath)
 	{
 		var gui = require('nw.gui');
+
+		if (!gui) return;
+
 		// Get the current window
 		var win = gui.Window.get();
 
@@ -587,7 +634,7 @@ var App = function(name, version)
 
 	this.updateSearch = function()
 	{
-		var search = $(".search-field").val().toLowerCase();
+		var search = self.$searchField.val().toLowerCase();
 		var title = $(".search-title input").is(':checked');
 		var body = $(".search-body input").is(':checked');
 		var tags = $(".search-tags input").is(':checked');
@@ -639,7 +686,7 @@ var App = function(name, version)
 		self.canvas.width = $(window).width();
 		self.canvas.height = $(window).height();
 
-		var scale = $(".nodes-holder").css("scale");
+		var scale = self.cachedScale;
 		var offset = $(".nodes-holder").offset();
 
 		self.context.clearRect(0, 0, $(window).width(), $(window).height());
@@ -911,28 +958,18 @@ var App = function(name, version)
 
 	}
 
-	this.zoom = function(zoomLevel)
+	this.translate = function(speed)
 	{
-		const duration = 200;
-
-		$(".nodes-holder").css({ transformOrigin: ""+$(window).width()/2+"px "+$(window).height()/2+"px" });
-
-		switch (zoomLevel)
-		{
-			case 1:
-			self.cachedScale = 0.25;
-			break;
-			case 2:
-			self.cachedScale = 0.5;
-			break;
-			case 3:
-			self.cachedScale = 0.75;
-			break;
-			case 4:
-			self.cachedScale = 1;
-			break;
-		}
-		$(".nodes-holder").transition({ scale: self.cachedScale }, duration);
+		$(".nodes-holder").transition({
+			transform: (
+				"matrix(" +
+					self.cachedScale + ",0,0," +
+					self.cachedScale + "," +
+					self.transformOrigin[0] +"," +
+					self.transformOrigin[1] +
+				")"
+			)
+		}, speed || 0);
 	}
 
 	this.arrangeGrid = function()
@@ -975,15 +1012,22 @@ var App = function(name, version)
 
 	this.searchZoom = function()
 	{
-		var search = $(".search-field").val().toLowerCase();
+		var search = self.$searchField.val().toLowerCase();
 		for (var i in self.nodes())
 		{
 			var node = self.nodes()[i];
 			if (node.title().toLowerCase() == search)
 			{
-				var centerX = $(window).width()/2;
-				var centerY = $(window).height()/2;
-				self.moveNodes(centerX - node.x() - node.tempWidth/2, centerY - node.y() - node.tempHeight/2);
+				var nodeXScaled = -( node.x() * self.cachedScale ),
+					nodeYScaled = -( node.y() * self.cachedScale ),
+					winXCenter = $(window).width() / 2,
+					winYCenter = $(window).height() / 2,
+					nodeWidthShift = node.tempWidth * self.cachedScale / 2,
+					nodeHeightShift = node.tempHeight * self.cachedScale / 2;
+
+				self.transformOrigin[0] = nodeXScaled + winXCenter - nodeWidthShift;
+				self.transformOrigin[1] = nodeYScaled + winYCenter - nodeHeightShift;
+				self.translate(100);
 				break;
 			}
 		}
@@ -991,7 +1035,7 @@ var App = function(name, version)
 
 	this.clearSearch = function()
 	{
-		$(".search-field").val("");
+		self.$searchField.val("");
 		self.updateSearch();
 	}
 }

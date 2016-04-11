@@ -40,13 +40,13 @@ input[type='checkbox'] { width: 20px; height: 20px; margin: 0; padding: 0; line-
 a { color: #2f919a; text-decoration: none; transition: color 0.25s; }
 a:hover { color: #000;}
 
-::-webkit-scrollbar	
-{ 
-	background: -webkit-linear-gradient(top, #eee, #f4f4f4 50%, #eee); 
-	border-radius: 12px; 
+::-webkit-scrollbar
+{
+	background: -webkit-linear-gradient(top, #eee, #f4f4f4 50%, #eee);
+	border-radius: 12px;
 	border: 1px solid #e8e8e8;
-	border-top: 1px solid #ccc; 
-	border-bottom: 1px solid #ccc; 
+	border-top: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
 	cursor: pointer;
 }
 ::-webkit-scrollbar-button { display: none; }
@@ -106,20 +106,12 @@ a:hover { color: #000;}
 
 /* --- MENU --- */
 
-.app-controller
+.app-menu
 {
 	position: absolute;
 	top: 20px;
-	left: 20px;
 	right: 20px;
 	z-index: 100;
-	float: left;
-}
-
-.app-menu
-{
-	float: right;
-	display: inline;
 }
 
 .app-menu .menu
@@ -135,6 +127,10 @@ a:hover { color: #000;}
 	text-transform: uppercase;
 	background: #fff;
 	cursor: pointer;
+}
+
+.app-menu .menu:first-child {
+	margin-left: 0;
 }
 
 .app-menu .title
@@ -186,8 +182,10 @@ a:hover { color: #000;}
 
 .app-search
 {
-	float: left;
-	display: inline;
+	position: absolute;
+	top: 20px;
+	left: 20px;
+	z-index: 100;
 
 	background: #fff;
 	border-radius: 2px;
@@ -557,4 +555,18 @@ a:hover { color: #000;}
 	pointer-events: none;
 	border: 1px solid #49eff1;
 	background-color: rgba(29, 94, 95, 0.2);
+}
+
+/* --- MEDIA --- */
+
+@media (max-width: 830px) {
+	.app-search {
+		position: relative;
+		float: left;
+	}
+	.app-menu {
+		position: relative;
+		float: right;
+		margin-top: 20px;
+	}
 }

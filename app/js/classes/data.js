@@ -45,7 +45,7 @@ var data =
 						data.loadData(contents, type, clearNodes);
 				}
 			}
-			reader.readAsBinaryString(e.target.files[0]);
+			reader.readAsText(e.target.files[0], "UTF-8");
 		}
 		else
 		{
