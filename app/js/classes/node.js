@@ -196,8 +196,8 @@ var Node = function()
 			if (dragging)
 			{
 				var parent = $(self.element).parent();
-				var newX = (e.pageX / parent.css("scale") - offset[0]);
-				var newY = (e.pageY / parent.css("scale") - offset[1]);
+				var newX = (e.pageX / self.getScale() - offset[0]);
+				var newY = (e.pageY / self.getScale() - offset[1]);
 				var movedX = newX - self.x();
 				var movedY = newY - self.y();
 
@@ -246,8 +246,8 @@ var Node = function()
 					groupDragging = true;
 				}
 
-				offset[0] = (e.pageX / parent.css("scale") - self.x());
-				offset[1] = (e.pageY / parent.css("scale") - self.y());
+				offset[0] = (e.pageX / self.getScale() - self.x());
+				offset[1] = (e.pageY / self.getScale() - self.y());
 			}
 		});
 
@@ -331,6 +331,14 @@ var Node = function()
 					if (other != self && other.title().toLowerCase() == links[i])
 						self.linkedTo.push(other);
 			}
+		}
+	}
+
+	this.getScale = function() {
+		if (app && typeof app.cachedScale === 'number') {
+			return app.cachedScale;
+		} else {
+			return 1;
 		}
 	}
 }
