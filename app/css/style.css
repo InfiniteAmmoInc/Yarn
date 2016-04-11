@@ -108,10 +108,10 @@ a:hover { color: #000;}
 
 .app-menu
 {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    z-index: 100;
+	position: absolute;
+	top: 20px;
+	right: 20px;
+	z-index: 100;
 }
 
 .app-menu .menu
@@ -183,9 +183,9 @@ a:hover { color: #000;}
 .app-search
 {
 	position: absolute;
-    top: 20px;
-    left: 20px;
-    z-index: 100;
+	top: 20px;
+	left: 20px;
+	z-index: 100;
 
 	background: #fff;
 	border-radius: 2px;
