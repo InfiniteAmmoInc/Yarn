@@ -964,6 +964,27 @@ var App = function(name, version)
 
 	}
 
+	this.zoom = function(zoomLevel)
+	{
+		switch (zoomLevel)
+		{
+			case 1:
+				self.cachedScale = 0.25;
+				break;
+			case 2:
+				self.cachedScale = 0.5;
+				break;
+			case 3:
+				self.cachedScale = 0.75;
+				break;
+			case 4:
+				self.cachedScale = 1;
+				break;
+		}
+
+		self.translate(200);
+	}
+
 	this.translate = function(speed)
 	{
 		$(".nodes-holder").transition({
