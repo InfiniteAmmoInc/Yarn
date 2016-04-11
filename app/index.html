@@ -32,53 +32,51 @@
 		<!-- Entry Point / Container -->
 		<div id="app">
 
-			<div class="app-controller">
-				<!-- search form -->
-				<div class="app-search">
-					<input type="text" class="search-field"/>
-					<span class="search-title"><input type="checkbox" checked="checked"> Title</span>
-					<span class="search-body"><input type="checkbox"> Body</span>
-					<span class="search-tags"><input type="checkbox"> Tags</span>
+			<!-- search form -->
+			<div class="app-search">
+				<input type="text" class="search-field"/>
+				<span class="search-title"><input type="checkbox" checked="checked"> Title</span>
+				<span class="search-body"><input type="checkbox"> Body</span>
+				<span class="search-tags"><input type="checkbox"> Tags</span>
+			</div>
+
+			<!-- zoom controls -->
+			<!--
+			<div class="app-zoom">
+				<span data-bind="click: function() { app.zoom(4); }"></span>
+				<span data-bind="click: function() { app.zoom(3); }"></span>
+				<span data-bind="click: function() { app.zoom(2); }"></span>
+				<span data-bind="click: function() { app.zoom(1); }"></span>
+			</div>
+			-->
+
+			<!--
+			<div class="app-sort">
+				<span data-bind="click: function() { app.arrangeGrid(); }">G</span>
+				<span data-bind="click: function() { app.arrangeSpiral(); }">S</span>
+				<span data-bind="click: function() { app.sortAlphabetical(); }">A</span>
+			</div>
+			-->
+
+			<!-- navigation / menu -->
+			<div class="app-menu">
+				<div class="menu">
+					<span class="title" data-bind="click:app.newNode">+ Node</span>
 				</div>
 
-				<!-- zoom controls -->
-				<!--
-				<div class="app-zoom">
-					<span data-bind="click: function() { app.zoom(4); }"></span>
-					<span data-bind="click: function() { app.zoom(3); }"></span>
-					<span data-bind="click: function() { app.zoom(2); }"></span>
-					<span data-bind="click: function() { app.zoom(1); }"></span>
-				</div>
-				-->
-
-				<!--
-				<div class="app-sort">
-					<span data-bind="click: function() { app.arrangeGrid(); }">G</span>
-					<span data-bind="click: function() { app.arrangeSpiral(); }">S</span>
-					<span data-bind="click: function() { app.sortAlphabetical(); }">A</span>
-				</div>
-				-->
-
-				<!-- navigation / menu -->
-				<div class="app-menu">
-					<div class="menu">
-						<span class="title" data-bind="click:app.newNode">+ Node</span>
-					</div>
-
-					<div class="menu">
-						<span class="title">File</span>
-						<div class="dropdown">
-							<span class="item" data-bind="click: data.tryOpenFile">Open...</span>
-							<!--<span class="item" data-bind="click: data.tryOpenFolder">Open Folder...</span>-->
-							<span class="item" data-bind="click: data.tryAppend">Append...</span>
-							<!-- ko if:data.editingPath() != null -->
-							<span class="item" data-bind="click: data.trySaveCurrent">Save</span>
-							<!-- /ko -->
-							<span class="item" data-bind="click: function() { data.trySave(FILETYPE.JSON); }">Save As Json...</span>
-							<span class="item" data-bind="click: function() { data.trySave(FILETYPE.TWEE); }">Save As Twee...</span>
-							<span class="item" data-bind="click: function() { data.trySave(FILETYPE.XML); }">Save As Xml...</span>
-							<!--<span class="item" data-bind="click: app.quit">Close</span>-->
-						</div>
+				<div class="menu">
+					<span class="title">File</span>
+					<div class="dropdown">
+						<span class="item" data-bind="click: data.tryOpenFile">Open...</span>
+						<!--<span class="item" data-bind="click: data.tryOpenFolder">Open Folder...</span>-->
+						<span class="item" data-bind="click: data.tryAppend">Append...</span>
+						<!-- ko if:data.editingPath() != null -->
+						<span class="item" data-bind="click: data.trySaveCurrent">Save</span>
+						<!-- /ko -->
+						<span class="item" data-bind="click: function() { data.trySave(FILETYPE.JSON); }">Save As Json...</span>
+						<span class="item" data-bind="click: function() { data.trySave(FILETYPE.TWEE); }">Save As Twee...</span>
+						<span class="item" data-bind="click: function() { data.trySave(FILETYPE.XML); }">Save As Xml...</span>
+						<!--<span class="item" data-bind="click: app.quit">Close</span>-->
 					</div>
 				</div>
 			</div>
