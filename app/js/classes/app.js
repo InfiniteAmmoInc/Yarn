@@ -1005,7 +1005,7 @@ var App = function(name, version)
 	{
 		for (var i in self.nodes())
 		{
-			var node = self.nodes()[i];console.log(offX, offY);
+			var node = self.nodes()[i];
 			node.moveTo(node.x() + offX, node.y() + offY);
 		}
 	}
