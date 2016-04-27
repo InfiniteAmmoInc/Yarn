@@ -1037,13 +1037,12 @@ var App = function(name, version)
 		}
 	}
 
-	this.searchZoom = function()
+	this.warpToFirstNode = function()
 	{
-		var search = self.$searchField.val().toLowerCase();
 		for (var i in self.nodes())
 		{
 			var node = self.nodes()[i];
-			if (node.title().toLowerCase() == search)
+			if (true)
 			{
 				var nodeXScaled = -( node.x() * self.cachedScale ),
 					nodeYScaled = -( node.y() * self.cachedScale ),
@@ -1056,6 +1055,38 @@ var App = function(name, version)
 				self.transformOrigin[1] = nodeYScaled + winYCenter - nodeHeightShift;
 				self.translate(100);
 				break;
+			}
+		}
+	}
+
+	this.searchZoom = function()
+	{
+		// if search field is empty
+		if (self.$searchField.val() == "")
+		{
+			// warp to the first node
+			self.warpToFirstNode();
+		}
+		else
+		{
+			var search = self.$searchField.val().toLowerCase();
+			for (var i in self.nodes())
+			{
+				var node = self.nodes()[i];
+				if (node.title().toLowerCase() == search)
+				{
+					var nodeXScaled = -( node.x() * self.cachedScale ),
+						nodeYScaled = -( node.y() * self.cachedScale ),
+						winXCenter = $(window).width() / 2,
+						winYCenter = $(window).height() / 2,
+						nodeWidthShift = node.tempWidth * self.cachedScale / 2,
+						nodeHeightShift = node.tempHeight * self.cachedScale / 2;
+
+					self.transformOrigin[0] = nodeXScaled + winXCenter - nodeWidthShift;
+					self.transformOrigin[1] = nodeYScaled + winYCenter - nodeHeightShift;
+					self.translate(100);
+					return;
+				}
 			}
 		}
 	}
