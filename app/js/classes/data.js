@@ -167,6 +167,8 @@ var data =
 					objects.push(content[i]);
 		}
 
+		var avgX = 0, avgY = 0;
+		var numAvg = 0;
 		for (var i = 0; i < objects.length; i ++)
 		{
 			var node = new Node();
@@ -180,11 +182,23 @@ var data =
 			if (object.tags != undefined)
 				node.tags(object.tags);
 			if (object.position != undefined && object.position.x != undefined)
+			{
 				node.x(object.position.x);
+				avgX += object.position.x;
+				numAvg ++;
+			}	
 			if (object.position != undefined && object.position.y != undefined)
+			{
 				node.y(object.position.y);
+				avgY += object.position.y;
+			}
 			if (object.colorID != undefined)
 				node.colorID(object.colorID);
+		}
+
+		if (numAvg > 0)
+		{
+			app.warpToNodeXY(avgX/numAvg, avgY/numAvg);
 		}
 
 		$(".arrows").css({ opacity: 0 }).transition({ opacity: 1 }, 500);

@@ -66,8 +66,8 @@ var Node = function()
 		self.y(-parent.offset().top + $(window).height() / 2 - 100);
 
 		$(self.element)
-			.css({opacity: 0, scale: 0.8, y: "-=80px", rotate: "45deg"})
-			.transition({opacity: 1, scale: 1, y: "+=80px", rotate: "0deg"}, 250, "easeInQuad");
+			.css({opacity: 0, scale: 0.8, rotate: "45deg"})
+			.transition({opacity: 1, scale: 1, rotate: "0deg"}, 250, "easeInQuad");
 		self.drag();
 
 		$(self.element).on("dblclick", function()
@@ -274,11 +274,13 @@ var Node = function()
 		});
 	}
 
+	/*
 	this.moveTo = function(newX, newY)
 	{
 		$(self.element).clearQueue();
 		$(self.element).transition({x:newX, y:newY}, 500);
 	}
+	*/
 
 	this.isConnectedTo = function(otherNode, checkBack)
 	{

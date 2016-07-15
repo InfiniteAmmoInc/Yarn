@@ -73,7 +73,7 @@ var App = function(name, version)
 		{
 				// enter
 				if (e.keyCode == 13)
-					self.searchZoom();
+					self.searchWarp();
 
 				// escape
 				if (e.keyCode == 27)
@@ -960,8 +960,6 @@ var App = function(name, version)
 			sel.removeAllRanges();
 			sel.addRange(range);
 		}
-
-
 	}
 
 	this.zoom = function(zoomLevel)
@@ -1039,27 +1037,33 @@ var App = function(name, version)
 
 	this.warpToFirstNode = function()
 	{
-		for (var i in self.nodes())
+		if (self.nodes().length > 0)
 		{
-			var node = self.nodes()[i];
-			if (true)
-			{
-				var nodeXScaled = -( node.x() * self.cachedScale ),
-					nodeYScaled = -( node.y() * self.cachedScale ),
-					winXCenter = $(window).width() / 2,
-					winYCenter = $(window).height() / 2,
-					nodeWidthShift = node.tempWidth * self.cachedScale / 2,
-					nodeHeightShift = node.tempHeight * self.cachedScale / 2;
-
-				self.transformOrigin[0] = nodeXScaled + winXCenter - nodeWidthShift;
-				self.transformOrigin[1] = nodeYScaled + winYCenter - nodeHeightShift;
-				self.translate(100);
-				break;
-			}
+			//alert("warping to first node x:" + self.nodes()[0].x() + " cachedScale: " + self.cachedScale + " !");
+			var node = self.nodes()[0];
+			this.warpToNodeXY(node.x(), node.y());
 		}
 	}
 
-	this.searchZoom = function()
+	this.warpToNodeXY = function(x, y)
+	{
+		//alert("warp to x, y: " + x + ", " + y);
+		const nodeWidth = 100, nodeHeight = 100;
+		var nodeXScaled = -( x * self.cachedScale ),
+			nodeYScaled = -( y * self.cachedScale ),
+			winXCenter = $(window).width() / 2,
+			winYCenter = $(window).height() / 2,
+			nodeWidthShift = nodeWidth * self.cachedScale / 2,
+			nodeHeightShift = nodeHeight * self.cachedScale / 2;
+
+		self.transformOrigin[0] = nodeXScaled + winXCenter - nodeWidthShift;
+		self.transformOrigin[1] = nodeYScaled + winYCenter - nodeHeightShift;
+
+		//alert("self.transformOrigin[0]: " + self.transformOrigin[0]);
+		self.translate(100);
+	}
+
+	this.searchWarp = function()
 	{
 		// if search field is empty
 		if (self.$searchField.val() == "")
