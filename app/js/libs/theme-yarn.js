@@ -16,7 +16,7 @@ color: #44fe66;\
 font-style: italic;\
 }\
 .ace-yarn .ace_hashtag {\
-color: #aaa;\
+color: #ccc;\
 }\
 .ace-yarn .ace_variable.ace_language  {\
 color: #0086B3;\
