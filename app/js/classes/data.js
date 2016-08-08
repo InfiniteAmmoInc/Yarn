@@ -19,7 +19,6 @@ var data =
 				else
 				{
 					var type = data.getFileType(filename);
-					alert("type(1): " + type);
 					if (type == FILETYPE.UNKNOWN)
 						alert("Unknown filetype!");
 					else
@@ -167,7 +166,6 @@ var data =
 						if (obj == null)
 							obj = {}
 						obj.colorID = Number(lines[i].substr(9, lines[i].length-9).trim());
-						alert("colorID: " + obj.colorID);
 					}
 					else if (lines[i].indexOf("tags:") > -1)
 					{
