@@ -312,7 +312,12 @@ var data =
 				output += "tags: " + content[i].tags + "\n";
 				output += "colorID: " + content[i].colorID + "\n";
 				output += "---\n";
-				output += content[i].body+"\n";
+				output += content[i].body;
+				var body = content[i].body
+				if (!(body.length > 0 && body[body.length-1] == '\n'))
+				{
+					output += "\n";
+				}
 				output += "===\n";
 			}
 		}
