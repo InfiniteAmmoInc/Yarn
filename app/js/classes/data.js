@@ -1,4 +1,4 @@
-var FILETYPE = { JSON: "json", XML: "xml", TWEE: "twee", UNKNOWN: "none" };
+var FILETYPE = { JSON: "json", XML: "xml", TWEE: "twee", UNKNOWN: "none", YARNTEXT: "yarn.txt" };
 
 var data =
 {
@@ -18,7 +18,8 @@ var data =
 				}
 				else
 				{
-					var type = data.getFileType(contents);
+					var type = data.getFileType(filename);
+					alert("type(1): " + type);
 					if (type == FILETYPE.UNKNOWN)
 						alert("Unknown filetype!");
 					else
@@ -30,6 +31,11 @@ var data =
 				}
 			}));
 		}
+		else
+		{
+			alert("Unable to load file from your browser");
+		}
+		/*
 		else if (window.File && window.FileReader && window.FileList && window.Blob && e.target && e.target.files && e.target.files.length > 0)
 		{
 			var reader  = new FileReader();
@@ -39,6 +45,7 @@ var data =
 				{
 					var contents = e.srcElement.result;
 					var type = data.getFileType(contents);
+					alert("type(2): " + type);
 					if (type == FILETYPE.UNKNOWN)
 						alert("Unknown filetype!");
 					else
@@ -47,10 +54,7 @@ var data =
 			}
 			reader.readAsText(e.target.files[0], "UTF-8");
 		}
-		else
-		{
-			alert("Unable to load file from your browser");
-		}
+		*/
 	},
 
 	openFile: function(e, filename)
@@ -71,9 +75,21 @@ var data =
 		data.readFile(e, filename, false);
 	},
 
-	getFileType: function(content)
+	getFileType: function(filename)
 	{
-		var clone = content;
+		var clone = filename;
+
+		if (filename.toLowerCase().indexOf(".json") > -1)
+			return FILETYPE.JSON;
+		else if (filename.toLowerCase().indexOf(".yarn.txt") > -1)
+			return FILETYPE.YARNTEXT;
+		else if (filename.toLowerCase().indexOf(".xml") > -1)
+			return FILETYPE.XML;
+		else if (filename.toLowerCase().indexOf(".txt") > -1)
+			return FILETYPE.TWEE;
+
+		return FILETYPE.UNKNOWN;
+		/*
 		// is json?
 		if (/^[\],:{}\s]*$/.test(clone.replace(/\\["\\\/bfnrtu]/g, '@').
 			replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']').
@@ -92,6 +108,7 @@ var data =
 		if (content.trim().substr(0, 2) == "::")
 			return FILETYPE.TWEE;
 		return FILETYPE.UNKNOWN;
+		*/
 	},
 
 	loadData: function(content, type, clearNodes)
@@ -107,6 +124,68 @@ var data =
 			content = JSON.parse(content);
 			for (i = 0; i < content.length; i ++)
 				objects.push(content[i]);
+		}
+		else if (type == FILETYPE.YARNTEXT)
+		{
+			var lines = content.split("\n");
+			var obj = null;
+			var index  = 0;
+			var readingBody = false;
+			for  (var i = 0; i < lines.length; i ++)
+			{
+
+				if (lines[i].trim() == "===")
+				{
+					readingBody = false;
+					if (obj != null)
+					{
+						objects.push(obj);
+						obj = null;
+					}
+				}
+				else if (readingBody)
+				{
+					obj.body += lines[i] + "\n";
+				}
+				else
+				{
+					if (lines[i].indexOf("title:") > -1)
+					{
+						if (obj == null)
+							obj = {};
+						obj.title = lines[i].substr(7, lines[i].length-7);
+					}
+					else if (lines[i].indexOf("position:") > -1)
+					{
+						if (obj == null)
+							obj = {}
+						var xy = lines[i].substr(9, lines[i].length-9).split(',');
+						obj.position = { x: Number(xy[0].trim()), y: Number(xy[1].trim()) }
+					}
+					else if (lines[i].indexOf("colorID:") > -1)
+					{
+						if (obj == null)
+							obj = {}
+						obj.colorID = Number(lines[i].substr(9, lines[i].length-9).trim());
+						alert("colorID: " + obj.colorID);
+					}
+					else if (lines[i].indexOf("tags:") > -1)
+					{
+						if (obj == null)
+							obj = {}
+						obj.tags = lines[i].substr(6, lines[i].length-6);
+					}
+					else if (lines[i].trim() == "---")
+					{
+						readingBody = true;
+						obj.body = "";
+					}
+				}
+			}
+			if (obj != null)
+			{
+				objects.push(obj);
+			}
 		}
 		else if (type == FILETYPE.TWEE)
 		{
@@ -225,6 +304,19 @@ var data =
 		if (type == FILETYPE.JSON)
 		{
 			output = JSON.stringify(content, null, "\t");
+		}
+		else if (type == FILETYPE.YARNTEXT)
+		{
+			for (i = 0; i < content.length; i++)
+			{
+				output += "title: " + content[i].title + "\n";
+				output += "position: " + content[i].position.x + "," + content[i].position.y + "\n";
+				output += "tags: " + content[i].tags + "\n";
+				output += "colorID: " + content[i].colorID + "\n";
+				output += "---\n";
+				output += content[i].body+"\n";
+				output += "===\n";
+			}
 		}
 		else if (type == FILETYPE.TWEE)
 		{
