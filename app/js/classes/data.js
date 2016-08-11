@@ -308,9 +308,9 @@ var data =
 			for (i = 0; i < content.length; i++)
 			{
 				output += "title: " + content[i].title + "\n";
-				output += "position: " + content[i].position.x + "," + content[i].position.y + "\n";
 				output += "tags: " + content[i].tags + "\n";
 				output += "colorID: " + content[i].colorID + "\n";
+				output += "position: " + content[i].position.x + "," + content[i].position.y + "\n";
 				output += "---\n";
 				output += content[i].body;
 				var body = content[i].body

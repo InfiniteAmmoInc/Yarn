@@ -155,6 +155,15 @@ var App = function(name, version)
 						}
 						else
 						{
+							self.transformOrigin[0] += e.pageX - offset.x;
+							self.transformOrigin[1] += e.pageY - offset.y;
+
+							self.translate();
+
+							offset.x = e.pageX;
+							offset.y = e.pageY;
+
+							/*
 							var nodes = self.nodes();
 							for (var i in nodes)
 							{
@@ -163,6 +172,7 @@ var App = function(name, version)
 							}
 							offset.x = e.pageX;
 							offset.y = e.pageY;
+							*/
 						}
 					}
 					else
