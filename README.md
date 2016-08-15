@@ -6,9 +6,9 @@ Dialogue editor created for "Night in the Woods" (and other projects) by @NoelFB
 
 # Builds
 
-Win64: http://infiniteammo.com/Yarn/Yarn-2016-07-15-win.zip
+Win64: http://infiniteammo.com/Yarn/Yarn-2016-08-15-win.zip
 
-MacOS: http://infiniteammo.com/Yarn/Yarn-2016-07-15-mac.zip
+MacOS: http://infiniteammo.com/Yarn/Yarn-2016-08-15-mac.zip
 
 # Examples
 
