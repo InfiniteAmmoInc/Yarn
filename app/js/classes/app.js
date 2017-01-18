@@ -19,7 +19,7 @@ var App = function(name, version)
 	this.editingSaveHistoryTimeout = null;
 	this.dirty = false;
 	this.zoomSpeed = .005;
-	this.zoomLimitMin = .025;
+	this.zoomLimitMin = .05;
 	this.zoomLimitMax = 1;
 	this.transformOrigin = [
 		0,
