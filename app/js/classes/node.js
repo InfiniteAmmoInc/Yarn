@@ -65,9 +65,25 @@ var Node = function()
 		self.x(-parent.offset().left + $(window).width() / 2 - 100);
 		self.y(-parent.offset().top + $(window).height() / 2 - 100);
 
+
+		var updateArrowsInterval = setInterval(app.updateArrowsThrottled, 16);
+
 		$(self.element)
 			.css({opacity: 0, scale: 0.8, y: "-=80px", rotate: "45deg"})
-			.transition({opacity: 1, scale: 1, y: "+=80px", rotate: "0deg"}, 250, "easeInQuad");
+			.transition(
+				{
+					opacity: 1,
+					scale: 1,
+					y: "+=80px",
+					rotate: "0deg"
+				},
+				250,
+				"easeInQuad",
+				function() {
+					clearInterval(updateArrowsInterval);
+					app.updateArrowsThrottled();
+				}
+			);
 		self.drag();
 
 		$(self.element).on("dblclick", function()
@@ -179,6 +195,7 @@ var Node = function()
 		$(self.element).transition({opacity: 0, scale: 0.8, y: "-=80px", rotate: "-45deg"}, 250, "easeInQuad", function()
 		{
 			app.removeNode(self);
+			app.updateArrowsThrottled();
 		});
 		app.deleting(null);
 	}
@@ -230,6 +247,7 @@ var Node = function()
 
 
 				//app.refresh();
+				app.updateArrowsThrottled();
 			}
 		});
 
@@ -271,6 +289,7 @@ var Node = function()
 			groupDragging = false;
 			moved = false;
 
+			app.updateArrowsThrottled();
 		});
 	}
 
