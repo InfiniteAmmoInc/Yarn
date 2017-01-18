@@ -296,7 +296,14 @@ var Node = function()
 	this.moveTo = function(newX, newY)
 	{
 		$(self.element).clearQueue();
-		$(self.element).transition({x:newX, y:newY}, 500);
+		$(self.element).transition(
+			{
+				x: newX,
+				y: newY
+			},
+			app.updateArrowsThrottled,
+			500
+		);
 	}
 
 	this.isConnectedTo = function(otherNode, checkBack)

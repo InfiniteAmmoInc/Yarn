@@ -1043,6 +1043,7 @@ var App = function(name, version)
 			referenceNode = selectedNodes.shift();
 
 		if (!selectedNodes.length) {
+			alert('Select nodes to align');
 			return;
 		}
 
