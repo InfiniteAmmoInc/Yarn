@@ -293,13 +293,11 @@ var Node = function()
 		});
 	}
 
-	/*
 	this.moveTo = function(newX, newY)
 	{
 		$(self.element).clearQueue();
 		$(self.element).transition({x:newX, y:newY}, 500);
 	}
-	*/
 
 	this.isConnectedTo = function(otherNode, checkBack)
 	{
