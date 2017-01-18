@@ -76,7 +76,7 @@ var App = function(name, version)
 		{
 				// enter
 				if (e.keyCode == 13)
-					self.searchZoom();
+					self.searchWarp();
 
 				// escape
 				if (e.keyCode == 27)
@@ -158,6 +158,15 @@ var App = function(name, version)
 						}
 						else
 						{
+							self.transformOrigin[0] += e.pageX - offset.x;
+							self.transformOrigin[1] += e.pageY - offset.y;
+
+							self.translate();
+
+							offset.x = e.pageX;
+							offset.y = e.pageY;
+
+							/*
 							var nodes = self.nodes();
 							for (var i in nodes)
 							{
@@ -166,6 +175,7 @@ var App = function(name, version)
 							}
 							offset.x = e.pageX;
 							offset.y = e.pageY;
+							*/
 						}
 					}
 					else
@@ -968,8 +978,27 @@ var App = function(name, version)
 			sel.removeAllRanges();
 			sel.addRange(range);
 		}
+	}
 
+	this.zoom = function(zoomLevel)
+	{
+		switch (zoomLevel)
+		{
+			case 1:
+				self.cachedScale = 0.25;
+				break;
+			case 2:
+				self.cachedScale = 0.5;
+				break;
+			case 3:
+				self.cachedScale = 0.75;
+				break;
+			case 4:
+				self.cachedScale = 1;
+				break;
+		}
 
+		self.translate(200);
 	}
 
 	this.translate = function(speed)
@@ -1077,25 +1106,62 @@ var App = function(name, version)
 		}
 	}
 
-	this.searchZoom = function()
+	this.warpToFirstNode = function()
 	{
-		var search = self.$searchField.val().toLowerCase();
-		for (var i in self.nodes())
+		if (self.nodes().length > 0)
 		{
-			var node = self.nodes()[i];
-			if (node.title().toLowerCase() == search)
-			{
-				var nodeXScaled = -( node.x() * self.cachedScale ),
-					nodeYScaled = -( node.y() * self.cachedScale ),
-					winXCenter = $(window).width() / 2,
-					winYCenter = $(window).height() / 2,
-					nodeWidthShift = node.tempWidth * self.cachedScale / 2,
-					nodeHeightShift = node.tempHeight * self.cachedScale / 2;
+			//alert("warping to first node x:" + self.nodes()[0].x() + " cachedScale: " + self.cachedScale + " !");
+			var node = self.nodes()[0];
+			this.warpToNodeXY(node.x(), node.y());
+		}
+	}
 
-				self.transformOrigin[0] = nodeXScaled + winXCenter - nodeWidthShift;
-				self.transformOrigin[1] = nodeYScaled + winYCenter - nodeHeightShift;
-				self.translate(100);
-				break;
+	this.warpToNodeXY = function(x, y)
+	{
+		//alert("warp to x, y: " + x + ", " + y);
+		const nodeWidth = 100, nodeHeight = 100;
+		var nodeXScaled = -( x * self.cachedScale ),
+			nodeYScaled = -( y * self.cachedScale ),
+			winXCenter = $(window).width() / 2,
+			winYCenter = $(window).height() / 2,
+			nodeWidthShift = nodeWidth * self.cachedScale / 2,
+			nodeHeightShift = nodeHeight * self.cachedScale / 2;
+
+		self.transformOrigin[0] = nodeXScaled + winXCenter - nodeWidthShift;
+		self.transformOrigin[1] = nodeYScaled + winYCenter - nodeHeightShift;
+
+		//alert("self.transformOrigin[0]: " + self.transformOrigin[0]);
+		self.translate(100);
+	}
+
+	this.searchWarp = function()
+	{
+		// if search field is empty
+		if (self.$searchField.val() == "")
+		{
+			// warp to the first node
+			self.warpToFirstNode();
+		}
+		else
+		{
+			var search = self.$searchField.val().toLowerCase();
+			for (var i in self.nodes())
+			{
+				var node = self.nodes()[i];
+				if (node.title().toLowerCase() == search)
+				{
+					var nodeXScaled = -( node.x() * self.cachedScale ),
+						nodeYScaled = -( node.y() * self.cachedScale ),
+						winXCenter = $(window).width() / 2,
+						winYCenter = $(window).height() / 2,
+						nodeWidthShift = node.tempWidth * self.cachedScale / 2,
+						nodeHeightShift = node.tempHeight * self.cachedScale / 2;
+
+					self.transformOrigin[0] = nodeXScaled + winXCenter - nodeWidthShift;
+					self.transformOrigin[1] = nodeYScaled + winYCenter - nodeHeightShift;
+					self.translate(100);
+					return;
+				}
 			}
 		}
 	}
