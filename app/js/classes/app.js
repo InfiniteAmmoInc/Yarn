@@ -19,6 +19,8 @@ var App = function(name, version)
 	this.editingSaveHistoryTimeout = null;
 	this.dirty = false;
 	this.zoomSpeed = .005;
+	this.zoomLimitMin = .025;
+	this.zoomLimitMax = 1;
 	this.transformOrigin = [
 		0,
 		0
@@ -289,10 +291,10 @@ var App = function(name, version)
 			var lastZoom = self.cachedScale,
 				scaleChange = event.deltaY * self.zoomSpeed * self.cachedScale;
 
-			if (self.cachedScale + scaleChange > 1) {
-				self.cachedScale = 1;
-			} else if (self.cachedScale + scaleChange < .025) {
-				self.cachedScale = .025;
+			if (self.cachedScale + scaleChange > self.zoomLimitMax) {
+				self.cachedScale = self.zoomLimitMax;
+			} else if (self.cachedScale + scaleChange < self.zoomLimitMin) {
+				self.cachedScale = self.zoomLimitMin;
 			} else {
 				self.cachedScale += scaleChange;
 			};
