@@ -21,6 +21,7 @@ var App = function(name, version)
 	this.zoomSpeed = .005;
 	this.zoomLimitMin = .05;
 	this.zoomLimitMax = 1;
+	this.isNodeScrollOff = false;
 	this.transformOrigin = [
 		0,
 		0
@@ -288,6 +289,20 @@ var App = function(name, version)
 
 		// using the event helper
 		$('.nodes').mousewheel(function(event) {
+			// https://github.com/InfiniteAmmoInc/Yarn/issues/40
+			if (event.ctrlKey) {
+				if (self.isNodeScrollOff) {
+					$(document.body).removeClass('node-scroll-off');
+					self.isNodeScrollOff = false;
+				}
+				return;
+			}
+
+			if (!self.isNodeScrollOff) {
+				$(document.body).addClass('node-scroll-off');
+				self.isNodeScrollOff = true;
+			}
+
 			var lastZoom = self.cachedScale,
 				scaleChange = event.deltaY * self.zoomSpeed * self.cachedScale;
 
