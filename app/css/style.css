@@ -358,11 +358,6 @@ a:hover { color: #000;}
 	overflow: auto;
 }
 
-.node-scroll-off .node:hover .body
-{
-	overflow: hidden;
-}
-
 .node .tags
 {
 	position: absolute;
