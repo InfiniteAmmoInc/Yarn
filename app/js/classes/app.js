@@ -289,7 +289,7 @@ var App = function(name, version)
 		// using the event helper
 		$('.nodes').mousewheel(function(event) {
 			// https://github.com/InfiniteAmmoInc/Yarn/issues/40
-			if (event.ctrlKey) {
+			if (event.altKey) {
 				return;
 			} else {
 				event.preventDefault();
