@@ -76,6 +76,7 @@
 						<span class="item" data-bind="click: function() { data.trySave(FILETYPE.JSON); }">Save As Json...</span>
 						<span class="item" data-bind="click: function() { data.trySave(FILETYPE.YARNTEXT); }">Save As Yarn...</span>
 						<span class="item" data-bind="click: function() { data.trySave(FILETYPE.TWEE); }">Save As Twee...</span>
+						<span class="item" data-bind="click: function() { data.trySave(FILETYPE.TWEE2); }">Save As Twee2...</span>
 						<span class="item" data-bind="click: function() { data.trySave(FILETYPE.XML); }">Save As Xml...</span>
 						<!--<span class="item" data-bind="click: app.quit">Close</span>-->
 					</div>
@@ -161,7 +162,7 @@
 
 		<!-- Hidden fields, file dialogs, and elements -->
 		<div class="hidden">
-			<input type="file" id="open-file" accept=".txt,.xml,.json,.twee"/>
+			<input type="file" id="open-file" accept=".txt,.xml,.json,.twee,.tw2"/>
 			<input type="file" id="open-folder" webkitdirectory directory/>
 			<input type="file" id="save-file" nwsaveas="filename.txt" />
 		</div>
