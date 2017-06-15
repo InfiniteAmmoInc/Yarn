@@ -1,4 +1,4 @@
-var FILETYPE = { JSON: "json", XML: "xml", TWEE: "twee", UNKNOWN: "none", YARNTEXT: "yarn.txt" };
+var FILETYPE = { JSON: "json", XML: "xml", TWEE: "twee", TWEE2: "tw2", UNKNOWN: "none", YARNTEXT: "yarn.txt" };
 
 var data =
 {
@@ -86,7 +86,8 @@ var data =
 			return FILETYPE.XML;
 		else if (filename.toLowerCase().indexOf(".txt") > -1)
 			return FILETYPE.TWEE;
-
+        else if (filename.toLowerCase().indexOf(".tw2") > -1)
+            return FILETYPE.TWEE2;
 		return FILETYPE.UNKNOWN;
 		/*
 		// is json?
@@ -185,7 +186,7 @@ var data =
 				objects.push(obj);
 			}
 		}
-		else if (type == FILETYPE.TWEE)
+		else if (type == FILETYPE.TWEE || type == FILETYPE.TWEE2)
 		{
 			var lines = content.split("\n");
 			var obj = null;
@@ -203,24 +204,48 @@ var data =
 
 					var title = "";
 					var tags = "";
+					var position = {x: index * 80, y: index * 80};
 
 					// check if there are tags
 					var openBracket = lines[i].indexOf("[");
 					var closeBracket = lines[i].indexOf("]");
-					if (openBracket > 0 && closeBracket > 0)
+                    if (openBracket > 0 && closeBracket > 0)
 					{
-						title = lines[i].substr(3, openBracket - 3);
 						tags = lines[i].substr(openBracket + 1, closeBracket - openBracket - 1);
 					}
-					else
-					{
-						title = lines[i].substr(3);
-					}
+
+                    // check if there are positions (Twee2)
+                    var openPosition = lines[i].indexOf("<");
+                    var closePosition = lines[i].indexOf(">");
+
+					if (openPosition > 0 && closePosition > 0)
+                    {
+                        var coordinates = lines[i].substr(openPosition + 1, closePosition - openPosition - 1).split(',');
+                        position.x = parseInt(coordinates[0]);
+                        position.y = parseInt(coordinates[1]);
+                    }
+
+                    var metaStart = 0;
+					if (openBracket > 0) {
+						metaStart = openBracket;
+					} else if (openPosition > 0) {
+                        // Twee2 dictates that tags must come before position, so we'll only care about this if we don't
+						// have any tags for this Passage
+                        metaStart = openPosition
+                    }
+
+                    console.log(openBracket, openPosition, metaStart);
+
+                    if (metaStart) {
+                        title = lines[i].substr(3, metaStart - 3);
+                    } else {
+                        title = lines[i].substr(3);
+                    }
 
 					obj.title = title;
 					obj.tags = tags;
 					obj.body = "";
-					obj.position = { x: index * 80, y: index * 80 };
+                    obj.position = position;
 				}
 				else if (obj != null)
 				{
@@ -332,6 +357,18 @@ var data =
 				output += content[i].body + "\n\n";
 			}
 		}
+        else if (type == FILETYPE.TWEE2)
+        {
+            for (i = 0; i < content.length; i ++)
+            {
+                var tags = "";
+                if (content[i].tags.length > 0)
+                    tags = " [" + content[i].tags + "]"
+				var position = " <" + content[i].position.x + "," + content[i].position.y + ">";
+                output += ":: " + content[i].title + tags + position + "\n";
+                output += content[i].body + "\n\n";
+            }
+        }
 		else if (type == FILETYPE.XML)
 		{
 			output += '<nodes>\n';
