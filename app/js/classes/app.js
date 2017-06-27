@@ -350,6 +350,10 @@ var App = function(name, version)
 			var scale = self.cachedScale || 1,
 				movement = scale * 500;
 
+			if(e.shiftKey) {
+				movement = scale * 100;
+			}
+
 			if (e.keyCode === 65 || e.keyCode === 37) {  // a or left arrow
 				self.transformOrigin[0] += movement;
 			} else if (e.keyCode === 68 || e.keyCode === 39) {  // d or right arrow
