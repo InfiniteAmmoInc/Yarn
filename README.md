@@ -71,6 +71,8 @@ Win64: Download the latest nwjs for Windows 64bit. Extract the content to wherev
 MacOS: Place source code in a new folder named "app.nw" inside the extracted nwjs.app's "Contents/Resources/" folder.
 (to explore an app's folder structure, right click and select "Show Package Contents")
 
+Linux: Download latest nwjs for linux. Extract the content to wherver you like. In that folder make a new folder named "package.nw". Clone yarn into the package.nw folder so that readme, licence and most imporatantly package.json are in the package.nw folder. Now open terminal, navigate to the folder where you extracted nwjs and run the "nw" executable.
+
 # Yarn Icon
 
 Yarn logo/icon created by @Mr_Alistair.
