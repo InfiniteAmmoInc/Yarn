@@ -35,9 +35,18 @@
 			<!-- search form -->
 			<div class="app-search">
 				<input type="text" class="search-field"/>
-				<span class="search-title"><input type="checkbox" checked="checked"> Title</span>
-				<span class="search-body"><input type="checkbox"> Body</span>
-				<span class="search-tags"><input type="checkbox"> Tags</span>
+				<div class="search-title search-item">
+					<input type="checkbox" checked="checked" id="search-title" />
+					<label for="search-title">Title</label>
+				</div>
+				<div class="search-body search-item">
+					<input type="checkbox" id="search-body" />
+					<label for="search-body">Body</label>
+				</div>
+				<div class="search-tags search-item">
+					<input type="checkbox" id="search-tags" />
+					<label for="search-tags">Tags</label>
+				</div>
 			</div>
 
 			<!-- zoom controls -->
@@ -50,13 +59,12 @@
 			</div>
 			-->
 
-			<!--
 			<div class="app-sort">
-				<span data-bind="click: function() { app.arrangeGrid(); }">G</span>
-				<span data-bind="click: function() { app.arrangeSpiral(); }">S</span>
-				<span data-bind="click: function() { app.sortAlphabetical(); }">A</span>
+				<span data-bind="click: app.arrangeX"></span>
+				<span data-bind="click: app.arrangeY"></span>
+				<!-- <span data-bind="click: app.arrangeSpiral"></span> -->
+				<!-- <span data-bind="click: app.sortAlphabetical"></span> -->
 			</div>
-			-->
 
 			<!-- navigation / menu -->
 			<div class="app-menu">

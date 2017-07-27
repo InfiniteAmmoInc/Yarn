@@ -19,11 +19,16 @@ var App = function(name, version)
 	this.editingSaveHistoryTimeout = null;
 	this.dirty = false;
 	this.zoomSpeed = .005;
+	this.zoomLimitMin = .05;
+	this.zoomLimitMax = 1;
 	this.transformOrigin = [
 		0,
 		0
 	];
 	this.shifted = false;
+
+	this.UPDATE_ARROWS_THROTTLE_MS = 25;
+
 	//this.editingPath = ko.observable(null);
 
 	this.nodeSelection = [];
@@ -108,7 +113,7 @@ var App = function(name, version)
 		};
 
 		// updateArrows
-		setInterval(function() { self.updateArrows(); }, 16);
+		// setInterval(function() { self.updateArrows(); }, 16);
 
 		// drag node holder around
 		(function()
@@ -283,13 +288,20 @@ var App = function(name, version)
 
 		// using the event helper
 		$('.nodes').mousewheel(function(event) {
+			// https://github.com/InfiniteAmmoInc/Yarn/issues/40
+			if (event.altKey) {
+				return;
+			} else {
+				event.preventDefault();
+			}
+
 			var lastZoom = self.cachedScale,
 				scaleChange = event.deltaY * self.zoomSpeed * self.cachedScale;
 
-			if (self.cachedScale + scaleChange > 1) {
-				self.cachedScale = 1;
-			} else if (self.cachedScale + scaleChange < .025) {
-				self.cachedScale = .025;
+			if (self.cachedScale + scaleChange > self.zoomLimitMax) {
+				self.cachedScale = self.zoomLimitMax;
+			} else if (self.cachedScale + scaleChange < self.zoomLimitMin) {
+				self.cachedScale = self.zoomLimitMin;
 			} else {
 				self.cachedScale += scaleChange;
 			};
@@ -366,6 +378,9 @@ var App = function(name, version)
 
 			self.translate(100);
 		} );
+
+		$(window).on('resize', self.updateArrowsThrottled);
+
 		// apple command key
 		//$(window).on('keydown', function(e) { if (e.keyCode == 91 || e.keyCode == 93) { self.appleCmdKey = true; } });
 		//$(window).on('keyup', function(e) { if (e.keyCode == 91 || e.keyCode == 93) { self.appleCmdKey = false; } });
@@ -767,6 +782,8 @@ var App = function(name, version)
 		}
 	}
 
+	this.updateArrowsThrottled = Utils.throttle(this.updateArrows, this.UPDATE_ARROWS_THROTTLE_MS);
+
 	this.getHighlightedText = function(text)
 	{
 		text = text.replace(/\</g, '&lt;');
@@ -999,28 +1016,82 @@ var App = function(name, version)
 
 	this.translate = function(speed)
 	{
-		$(".nodes-holder").transition({
-			transform: (
-				"matrix(" +
-					self.cachedScale + ",0,0," +
-					self.cachedScale + "," +
-					self.transformOrigin[0] +"," +
-					self.transformOrigin[1] +
-				")"
-			)
-		}, speed || 0);
+		var updateArrowsInterval = setInterval(self.updateArrowsThrottled, 16);
+
+		$(".nodes-holder").transition(
+			{
+				transform: (
+					"matrix(" +
+						self.cachedScale + ",0,0," +
+						self.cachedScale + "," +
+						self.transformOrigin[0] +"," +
+						self.transformOrigin[1] +
+					")"
+				)
+			},
+			speed || 0,
+			"easeInQuad",
+			function() {
+				clearInterval(updateArrowsInterval);
+				self.updateArrowsThrottled();
+			}
+		);
 	}
 
-	this.arrangeGrid = function()
+	/**
+	 * Align selected nodes relative to a node with the lowest x-value
+	 */
+	this.arrangeX = function()
 	{
-		for (var i in self.nodes())
-		{
-			var node = self.nodes()[i];
-			var y = Math.floor(i / 10);
-			var x = i - (y*10);
-			var spacing = 250;
-			node.moveTo(x * spacing, y * spacing);
+		var SPACING = 250;
+
+		var selectedNodes = self.nodes().filter(function(el) {
+				return el.selected;
+			})
+			.sort(function(a, b) {
+				if (a.x() > b.x()) return 1;
+				if (a.x() < b.x()) return -1;
+				return 0;
+			}),
+			referenceNode = selectedNodes.shift();
+
+		if (!selectedNodes.length) {
+			alert('Select nodes to align');
+			return;
 		}
+
+		selectedNodes.forEach(function(node, i) {
+			var x = referenceNode.x() + (SPACING * (i + 1));
+			node.moveTo(x, referenceNode.y());
+		});
+	}
+
+	/**
+	 * Align selected nodes relative to a node with the lowest y-value
+	 */
+	this.arrangeY = function()
+	{
+		var SPACING = 250;
+
+		var selectedNodes = self.nodes().filter(function(el) {
+				return el.selected;
+			})
+			.sort(function(a, b) {
+				if (a.y() > b.y()) return 1;
+				if (a.y() < b.y()) return -1;
+				return 0;
+			}),
+			referenceNode = selectedNodes.shift();
+
+		if (!selectedNodes.length) {
+			alert('Select nodes to align');
+			return;
+		}
+
+		selectedNodes.forEach(function(node, i) {
+			var y = referenceNode.y() + (SPACING * (i + 1));
+			node.moveTo(referenceNode.x(), y);
+		});
 	}
 
 	this.arrangeSpiral = function()
