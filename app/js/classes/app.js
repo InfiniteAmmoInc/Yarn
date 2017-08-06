@@ -18,6 +18,7 @@ var App = function(name, version)
 	//this.appleCmdKey = false;
 	this.editingSaveHistoryTimeout = null;
 	this.dirty = false;
+	this.focusedNodeIdx = -1;
 	this.zoomSpeed = .005;
 	this.zoomLimitMin = .05;
 	this.zoomLimitMax = 1;
@@ -374,6 +375,31 @@ var App = function(name, version)
 				self.transformOrigin[1] += movement;
 			} else if (e.keyCode === 83 || e.keyCode === 40) {  // w or down arrow
 				self.transformOrigin[1] -= movement;
+			} else if (e.keyCode === 32) {
+				var selectedNodes = self.getSelectedNodes();
+				var nodes = selectedNodes.length > 0
+							? selectedNodes
+							: self.nodes();
+				var isNodeSelected = selectedNodes.length > 0;
+				if (self.focusedNodeIdx > -1 && nodes.length > self.focusedNodeIdx
+					&& (self.transformOrigin[0] != -nodes[self.focusedNodeIdx].x() + $(window).width() / 2 - $(nodes[self.focusedNodeIdx].element).width() / 2
+						|| self.transformOrigin[1] != -nodes[self.focusedNodeIdx].y() + $(window).height() / 2 - $(nodes[self.focusedNodeIdx].element).height() / 2))
+				{
+					self.focusedNodeIdx = -1;
+				}
+				
+				if (++self.focusedNodeIdx >= nodes.length) {
+					self.focusedNodeIdx = 0;
+				}
+				self.cachedScale = 1;
+				if (isNodeSelected)
+				{
+					self.warpToSelectedNodeIdx(self.focusedNodeIdx);
+				}
+				else
+				{
+					self.warpToNodeIdx(self.focusedNodeIdx);
+				}
 			}
 
 			self.translate(100);
@@ -1120,13 +1146,41 @@ var App = function(name, version)
 		}
 	}
 
-	this.warpToFirstNode = function()
+	this.warpToNodeIdx = function(idx)
 	{
-		if (self.nodes().length > 0)
+		if (self.nodes().length > idx)
 		{
-			//alert("warping to first node x:" + self.nodes()[0].x() + " cachedScale: " + self.cachedScale + " !");
-			var node = self.nodes()[0];
-			this.warpToNodeXY(node.x(), node.y());
+			var node = self.nodes()[idx];
+			var nodeXScaled = -( node.x() * self.cachedScale ),
+				nodeYScaled = -( node.y() * self.cachedScale ),
+				winXCenter = $(window).width() / 2,
+				winYCenter = $(window).height() / 2,
+				nodeWidthShift = node.tempWidth * self.cachedScale / 2,
+				nodeHeightShift = node.tempHeight * self.cachedScale / 2;
+
+			self.transformOrigin[0] = nodeXScaled + winXCenter - nodeWidthShift;
+			self.transformOrigin[1] = nodeYScaled + winYCenter - nodeHeightShift;
+			self.translate(100);
+			self.focusedNodeIdx = idx;
+		}
+	}
+
+	this.warpToSelectedNodeIdx = function(idx)
+	{
+		if (self.getSelectedNodes().length > idx)
+		{
+			var node = self.getSelectedNodes()[idx];
+			var nodeXScaled = -( node.x() * self.cachedScale ),
+				nodeYScaled = -( node.y() * self.cachedScale ),
+				winXCenter = $(window).width() / 2,
+				winYCenter = $(window).height() / 2,
+				nodeWidthShift = node.tempWidth * self.cachedScale / 2,
+				nodeHeightShift = node.tempHeight * self.cachedScale / 2;
+
+			self.transformOrigin[0] = nodeXScaled + winXCenter - nodeWidthShift;
+			self.transformOrigin[1] = nodeYScaled + winYCenter - nodeHeightShift;
+			self.translate(100);
+			self.focusedNodeIdx = idx;
 		}
 	}
 
@@ -1154,7 +1208,7 @@ var App = function(name, version)
 		if (self.$searchField.val() == "")
 		{
 			// warp to the first node
-			self.warpToFirstNode();
+			self.warpToNodeIdx(0);
 		}
 		else
 		{
@@ -1164,16 +1218,7 @@ var App = function(name, version)
 				var node = self.nodes()[i];
 				if (node.title().toLowerCase() == search)
 				{
-					var nodeXScaled = -( node.x() * self.cachedScale ),
-						nodeYScaled = -( node.y() * self.cachedScale ),
-						winXCenter = $(window).width() / 2,
-						winYCenter = $(window).height() / 2,
-						nodeWidthShift = node.tempWidth * self.cachedScale / 2,
-						nodeHeightShift = node.tempHeight * self.cachedScale / 2;
-
-					self.transformOrigin[0] = nodeXScaled + winXCenter - nodeWidthShift;
-					self.transformOrigin[1] = nodeYScaled + winYCenter - nodeHeightShift;
-					self.translate(100);
+					self.warpToNodeIdx(i);
 					return;
 				}
 			}
