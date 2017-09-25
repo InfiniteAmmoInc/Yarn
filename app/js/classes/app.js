@@ -757,6 +757,14 @@ var App = function(name, version)
 			$(".node-editor .form").transition({ y: "-100" }, 250, function()
 			{
 				let quickreplies = self.editing().quickreplies().split(" ");
+				quickreplies = quickreplies.filter(function(a){return a !== ''});
+
+				var nodes = self.nodes();
+				var childs = self.editing().childs;
+				console.log(nodes,childs);
+
+				//TODO Save only new quickreplies
+
 				if (quickreplies.length >0 )
 				{
 					for (var i = 0; i < quickreplies.length; i++) {
