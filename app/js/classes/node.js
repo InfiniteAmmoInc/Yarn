@@ -1,16 +1,42 @@
-var globalNodeIndex = 0;
+var globalRootNodeIndex = 0;
+var globalChildNodeIndex = 0;
+var globalFallbackNodeIndex = 0;
 const NodeExpandWidth = 300;
 const NodeExpandHeight = 150;
 const ClipNodeTextLength = 1024;
 
-var Node = function()
+var Node = function(NodeType, userInput)
 {
 	var self = this;
 
 	// primary values
-	this.index = ko.observable(globalNodeIndex++);
-	this.title = ko.observable("Node" + this.index());
-	this.tags = ko.observable("")
+	if (NodeType == "child") {
+		// this.index = ko.observable(globalChildNodeIndex++ + ' c');
+		this.index = globalChildNodeIndex++ + ' c';
+		this.childs = [];
+	}
+	if (NodeType == "root") {
+		// this.index = ko.observable(globalRootNodeIndex++ + ' r');
+		this.index = globalRootNodeIndex++ + ' r';
+		this.childs = [];
+	}
+	if (NodeType == "fallback") {
+		// this.index = ko.observable(globalFallbackNodeIndex++ + ' f');
+		this.index = globalFallbackNodeIndex++ + ' f';
+		this.childs = [];
+	}
+	else if (NodeType == undefined)
+	{
+		this.index = ko.observable(globalRootNodeIndex++);
+	}
+
+	if (userInput != undefined) {
+		this.title =ko.observable(userInput);
+	}
+	else {
+		this.title = ko.observable("Node " + this.index);
+	}
+	this.quickreplies = ko.observable("");
 	this.body = ko.observable("Empty Text");
 	//this.x = ko.observable(128);
 	//this.y = ko.observable(128);
@@ -24,19 +50,19 @@ var Node = function()
 	this.selected = false;
 
 	// clipped values for display
-	this.clippedTags = ko.computed(function() 
+	this.clippedQuickReplies = ko.computed(function()
 	{
-		var tags = this.tags().split(" ");
+		var quickreplies = this.quickreplies().split(" ");
 		var output = "";
-		if (this.tags().length > 0)
+		if (this.quickreplies().length > 0)
 		{
-			for (var i = 0; i < tags.length; i ++)
-				output += '<span>' + tags[i] + '</span>';
+			for (var i = 0; i < quickreplies.length; i ++)
+				output += '<span>' + quickreplies[i] + '</span>';
 		}
         return output;
     }, this);
 
-	this.clippedBody = ko.computed(function() 
+	this.clippedBody = ko.computed(function()
 	{
 		var result = app.getHighlightedText(this.body());
 		while (result.indexOf("\n") >= 0)
@@ -100,6 +126,15 @@ var Node = function()
 					app.removeNodeSelection(self);
 				else
 					app.addNodeSelected(self);
+					self.setSelected(true);
+			}
+			else {
+				if(self.selected)
+					app.removeNodeSelection(self);
+				else
+					app.deselectAllNodes();
+					self.setSelected(true);
+					app.addNodeSelected(self);
 			}
 		});
 	}
@@ -107,12 +142,12 @@ var Node = function()
 	this.setSelected = function(select)
 	{
 		self.selected = select;
-		
-		if(self.selected) 
+
+		if(self.selected)
 			$(self.element).css({border: "1px solid #49eff1"});
-		else 
+		else
 			$(self.element).css({border: "none"});
-		
+
 	}
 
 	this.toggleSelected = function()
@@ -163,7 +198,7 @@ var Node = function()
 	}
 
 	this.cycleColorUp = function()
-	{	
+	{
 		self.doCycleColorUp();
 
 		setTimeout(self.resetDoubleClick, 500);
@@ -189,7 +224,7 @@ var Node = function()
 		if (self.colorID() > 6)
 			self.colorID(0);
 	}
-	
+
 	this.remove = function()
 	{
 		$(self.element).transition({opacity: 0, scale: 0.8, y: "-=80px", rotate: "-45deg"}, 250, "easeInQuad", function()
@@ -208,7 +243,7 @@ var Node = function()
 		var offset = [0, 0];
 		var moved = false;
 
-		$(document.body).on("mousemove", function(e) 
+		$(document.body).on("mousemove", function(e)
 		{
 			if (dragging)
 			{
@@ -229,12 +264,12 @@ var Node = function()
 					{
 						nodes = app.getSelectedNodes();
 						nodes.splice(nodes.indexOf(self), 1);
-					}	
+					}
 					else
 					{
 						nodes = app.getNodesConnectedTo(self);
 					}
-					
+
 					if (nodes.length > 0)
 					{
 						for (var i in nodes)
@@ -251,7 +286,7 @@ var Node = function()
 			}
 		});
 
-		$(self.element).on("mousedown", function (e) 
+		$(self.element).on("mousedown", function (e)
 		{
 			if (!dragging && self.active())
 			{
@@ -283,7 +318,7 @@ var Node = function()
 			moved = false;
 		});
 
-		$(document.body).on("mouseup", function (e) 
+		$(document.body).on("mouseup", function (e)
 		{
 			dragging = false;
 			groupDragging = false;
@@ -332,20 +367,23 @@ var Node = function()
 		self.linkedTo.removeAll();
 
 		// find all the links
-		var links = self.body().match(/\[\[(.*?)\]\]/g);
+		var links = self.childs;
+
+		if (self.fallback != undefined) {
+			links.push(self.fallback);
+		}
+
+
 		if (links != undefined)
 		{
 			var exists = {};
 			for (var i = links.length - 1; i >= 0; i --)
 			{
-				links[i] = links[i].substr(2, links[i].length - 4).toLowerCase();
+				links[i] = links[i].toLowerCase();
 
-				if (links[i].indexOf("|") >= 0)
-					links[i] = links[i].split("|")[1];
+				// if (exists[links[i]] != undefined)
+				// 	links.splice(i, 1);
 
-				if (exists[links[i]] != undefined)
-					links.splice(i, 1);
-				
 				exists[links[i]] = true;
 			}
 
@@ -354,7 +392,7 @@ var Node = function()
 			{
 				var other = app.nodes()[index];
 				for (var i = 0; i < links.length; i ++)
-					if (other != self && other.title().toLowerCase() == links[i])
+					if (other != self && other.index.toLowerCase() == links[i])
 						self.linkedTo.push(other);
 			}
 		}
@@ -369,15 +407,15 @@ var Node = function()
 	}
 }
 
-ko.bindingHandlers.nodeBind = 
+ko.bindingHandlers.nodeBind =
 {
-	init: function(element, valueAccessor, allBindings, viewModel, bindingContext) 
+	init: function(element, valueAccessor, allBindings, viewModel, bindingContext)
 	{
 		bindingContext.$rawData.element = element;
 		bindingContext.$rawData.create();
 	},
 
-	update: function(element, valueAccessor, allBindings, viewModel, bindingContext) 
+	update: function(element, valueAccessor, allBindings, viewModel, bindingContext)
 	{
 		$(element).on("mousedown", function() { Utils.pushToTop($(element)); });
 	}

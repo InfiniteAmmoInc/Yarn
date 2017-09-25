@@ -38,7 +38,7 @@ var data =
 		else if (window.File && window.FileReader && window.FileList && window.Blob && e.target && e.target.files && e.target.files.length > 0)
 		{
 			var reader  = new FileReader();
-			reader.onloadend = function(e) 
+			reader.onloadend = function(e)
 			{
 				if (e.srcElement && e.srcElement.result && e.srcElement.result.length > 0)
 				{
@@ -93,7 +93,7 @@ var data =
 		// is json?
 		if (/^[\],:{}\s]*$/.test(clone.replace(/\\["\\\/bfnrtu]/g, '@').
 			replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']').
-			replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) 
+			replace(/(?:^|:|,)(?:\s*\[)+/g, '')))
 			return FILETYPE.JSON;
 
 		// is xml?
@@ -168,11 +168,11 @@ var data =
 							obj = {}
 						obj.colorID = Number(lines[i].substr(9, lines[i].length-9).trim());
 					}
-					else if (lines[i].indexOf("tags:") > -1)
+					else if (lines[i].indexOf("quickreplies:") > -1)
 					{
 						if (obj == null)
 							obj = {}
-						obj.tags = lines[i].substr(6, lines[i].length-6);
+						obj.quickreplies = lines[i].substr(6, lines[i].length-6);
 					}
 					else if (lines[i].trim() == "---")
 					{
@@ -203,15 +203,15 @@ var data =
 					index ++;
 
 					var title = "";
-					var tags = "";
+					var quickreplies = "";
 					var position = {x: index * 80, y: index * 80};
 
-					// check if there are tags
+					// check if there are quickreplies
 					var openBracket = lines[i].indexOf("[");
 					var closeBracket = lines[i].indexOf("]");
                     if (openBracket > 0 && closeBracket > 0)
 					{
-						tags = lines[i].substr(openBracket + 1, closeBracket - openBracket - 1);
+						quickreplies = lines[i].substr(openBracket + 1, closeBracket - openBracket - 1);
 					}
 
                     // check if there are positions (Twee2)
@@ -229,8 +229,8 @@ var data =
 					if (openBracket > 0) {
 						metaStart = openBracket;
 					} else if (openPosition > 0) {
-                        // Twee2 dictates that tags must come before position, so we'll only care about this if we don't
-						// have any tags for this Passage
+                        // Twee2 dictates that quickreplies must come before position, so we'll only care about this if we don't
+						// have any quickreplies for this Passage
                         metaStart = openPosition
                     }
 
@@ -243,7 +243,7 @@ var data =
                     }
 
 					obj.title = title;
-					obj.tags = tags;
+					obj.quickreplies = quickreplies;
 					obj.body = "";
                     obj.position = position;
 				}
@@ -275,20 +275,20 @@ var data =
 		{
 			var node = new Node();
 			app.nodes.push(node);
-			
+
 			var object = objects[i]
 			if (object.title != undefined)
 				node.title(object.title);
 			if (object.body != undefined)
 				node.body(object.body);
-			if (object.tags != undefined)
-				node.tags(object.tags);
+			if (object.quickreplies != undefined)
+				node.quickreplies(object.quickreplies);
 			if (object.position != undefined && object.position.x != undefined)
 			{
 				node.x(object.position.x);
 				avgX += object.position.x;
 				numAvg ++;
-			}	
+			}
 			if (object.position != undefined && object.position.y != undefined)
 			{
 				node.y(object.position.y);
@@ -316,8 +316,8 @@ var data =
 		for (var i = 0; i < nodes.length; i ++)
 		{
 			content.push({
-				"title": nodes[i].title(), 
-				"tags": nodes[i].tags(), 
+				"title": nodes[i].title(),
+				"quickreplies": nodes[i].quickreplies(),
 				"body": nodes[i].body(),
 				"position": { "x": nodes[i].x(), "y": nodes[i].y() },
 				"colorID": nodes[i].colorID()
@@ -333,7 +333,7 @@ var data =
 			for (i = 0; i < content.length; i++)
 			{
 				output += "title: " + content[i].title + "\n";
-				output += "tags: " + content[i].tags + "\n";
+				output += "quickreplies: " + content[i].quickreplies + "\n";
 				output += "colorID: " + content[i].colorID + "\n";
 				output += "position: " + content[i].position.x + "," + content[i].position.y + "\n";
 				output += "---\n";
@@ -350,10 +350,10 @@ var data =
 		{
 			for (i = 0; i < content.length; i ++)
 			{
-				var tags = "";
-				if (content[i].tags.length > 0)
-					tags = " [" + content[i].tags + "]"
-				output += ":: " + content[i].title + tags + "\n";
+				var quickreplies = "";
+				if (content[i].quickreplies.length > 0)
+					quickreplies = " [" + content[i].quickreplies + "]"
+				output += ":: " + content[i].title + quickreplies + "\n";
 				output += content[i].body + "\n\n";
 			}
 		}
@@ -361,11 +361,11 @@ var data =
         {
             for (i = 0; i < content.length; i ++)
             {
-                var tags = "";
-                if (content[i].tags.length > 0)
-                    tags = " [" + content[i].tags + "]"
+                var quickreplies = "";
+                if (content[i].quickreplies.length > 0)
+                    quickreplies = " [" + content[i].quickreplies + "]"
 				var position = " <" + content[i].position.x + "," + content[i].position.y + ">";
-                output += ":: " + content[i].title + tags + position + "\n";
+                output += ":: " + content[i].title + quickreplies + position + "\n";
                 output += content[i].body + "\n\n";
             }
         }
@@ -376,7 +376,7 @@ var data =
 			{
 				output += "\t<node>\n";
 				output += "\t\t<title>" + content[i].title + "</title>\n";
-				output += "\t\t<tags>" + content[i].tags + "</tags>\n";
+				output += "\t\t<quickreplies>" + content[i].quickreplies + "</quickreplies>\n";
 				output += "\t\t<body>" + content[i].body + "</body>\n";
 				output += '\t\t<position x="' + content[i].position.x + '" y="' + content[i].position.y + '"></position>\n';
 				output += '\t\t<colorID>' + content[i].colorID + '</colorID>\n';
@@ -392,7 +392,7 @@ var data =
 	{
 		if (app.fs != undefined)
 		{
-			app.fs.writeFile(path, content, {encoding: 'utf-8'}, function(err) 
+			app.fs.writeFile(path, content, {encoding: 'utf-8'}, function(err)
 			{
 				data.editingPath(path);
 				if(err)
