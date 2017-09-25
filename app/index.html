@@ -43,9 +43,9 @@
 					<input type="checkbox" id="search-body" />
 					<label for="search-body">Body</label>
 				</div>
-				<div class="search-tags search-item">
-					<input type="checkbox" id="search-tags" />
-					<label for="search-tags">Tags</label>
+				<div class="search-quickreplies search-item">
+					<input type="checkbox" id="search-quickreplies" />
+					<label for="search-quickreplies">QuickReplies</label>
 				</div>
 			</div>
 
@@ -69,7 +69,15 @@
 			<!-- navigation / menu -->
 			<div class="app-menu">
 				<div class="menu">
-					<span class="title" data-bind="click:app.newNode">+ Node</span>
+					<span class="title" data-bind="click:app.newRootNode">+ Root Node</span>
+				</div>
+
+				<div class="menu">
+					<span class="title" data-bind="click:app.newChildNode">+ Child Node</span>
+				</div>
+
+				<div class="menu">
+					<span class="title" data-bind="click:app.newFallbackNode">+ Fallback Node</span>
 				</div>
 
 				<div class="menu">
@@ -100,6 +108,7 @@
 			<div class="nodes">
 				<div class="nodes-holder" data-bind="foreach: { data: app.nodes, as: 'node' }">
 					<div class="node" data-bind="nodeBind: true, css: { inactive: !node.active()}" >
+						<div class="hidden" data-bind="html: node.index"></div>
 						<div class="title" data-bind="text: node.title, style: {background:
 						node.colorID() == 1 ? '#6EA5E0' :
 						node.colorID() == 2 ? '#9EDE74' :
@@ -109,7 +118,7 @@
 						node.colorID() == 6 ? '#97E1E9' :
 						'#eee'}"></div>
 						<div class="body" data-bind="html: node.clippedBody"></div>
-						<div class="tags" data-bind="html: node.clippedTags"></div>
+						<div class="quickreplies" data-bind="html: node.clippedQuickReplies"></div>
 						<div class="icon colorDown" data-bind="click: node.cycleColorDown"></div>
 						<div class="icon colorUp" data-bind="click: node.cycleColorUp"></div>
 						<!--<div class="icon edit" data-bind="click: function() { app.editNode(node); }"></div>-->
@@ -124,13 +133,13 @@
 
 				<div class="form" data-bind="preventBubble: 'click', preventBubble: 'mousedown'">
 					<input type="text" class="title" data-bind="value: app.editing().title">
-					<input type="text" data-bind="value: app.editing().tags">
+					<input type="text" data-bind="value: app.editing().quickreplies">
 					<div class="editor-container">
 						<div class="editor" id="editor"
 							data-bind="
-							ace: app.editing().body, 
+							ace: app.editing().body,
 							aceOptions: { mode: 'yarn', theme: 'yarn', showPrintMargin: false }">
-						</div> 
+						</div>
 					</div>
 					<!--<div class="icon close" data-bind="click:app.saveNode"></div>-->
 				</div>
