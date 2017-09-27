@@ -643,25 +643,39 @@ var App = function(name, version)
 	this.newChildNode = function(userInput)
 	{
 		var selectedNodes = self.getSelectedNodes();
+		var add_it = false;
 		if (selectedNodes.length == 0)
 			alert("Select the parent node");
 		else if (selectedNodes.length > 1)
 			alert("Too many nodes selected");
 		else
 			{
-				let childNode = new Node("child", userInput);
-				let selectedNodeIndex = selectedNodes[0].index;
-				for (var i = 0; i < self.nodes().length; i++) {
-					if (self.nodes()[i].index == selectedNodeIndex) {
-						self.nodes()[i].childs.push(childNode.index);
-						break;
+				let childs = selectedNodes[0].childs;
+				if (childs.length > 0) {
+					childsTitles =[];
+					for (var i = 0; i < childs.length; i++) {
+						childsTitles.push(childs[i].title());
+					}
+					if (childsTitles.includes(userInput)) {
+						return true;
 					}
 				}
-				self.nodes.push(childNode);
-				self.updateNodeLinks();
-				self.recordNodeAction("created", childNode);
+				if (childs.length == 0 || childsTitles != undefined) {
+					let childNode = new Node("child", userInput);
+					let selectedNodeIndex = selectedNodes[0].index;
+					for (var i = 0; i < self.nodes().length; i++) {
+						if (self.nodes()[i].index == selectedNodeIndex) {
+							self.nodes()[i].childs.push(childNode);
+							break;
+						}
+					}
+					self.nodes.push(childNode);
+					self.updateNodeLinks();
+					self.recordNodeAction("created", childNode);
 
-				return childNode;
+					return childNode;
+				}
+
 			}
 	}
 
@@ -680,19 +694,26 @@ var App = function(name, version)
 			alert("Too many nodes selected");
 		else
 			{
-				let fallbackNode = new Node("fallback");
-				let selectedNodeIndex = selectedNodes[0].index;
-				for (var i = 0; i < self.nodes().length; i++) {
-					if (self.nodes()[i].index == selectedNodeIndex) {
-						self.nodes()[i].fallback = fallbackNode.index;
-						break;
+				if (selectedNodes[0].fallback == undefined) {
+					let fallbackNode = new Node("fallback");
+					let selectedNodeIndex = selectedNodes[0].index;
+					for (var i = 0; i < self.nodes().length; i++) {
+						if (self.nodes()[i].index == selectedNodeIndex) {
+							self.nodes()[i].fallback = fallbackNode;
+							break;
+						}
 					}
-				}
-				self.nodes.push(fallbackNode);
-				self.updateNodeLinks();
-				self.recordNodeAction("created", fallbackNode);
+					self.nodes.push(fallbackNode);
+					self.updateNodeLinks();
+					self.recordNodeAction("created", fallbackNode);
 
-				return fallbackNode;
+					return fallbackNode;
+				}
+				else {
+					alert("A node can't have more than one fallback")
+				}
+
+
 			}
 	}
 
@@ -749,6 +770,7 @@ var App = function(name, version)
 	{
 		if (self.editing() != null)
 		{
+			console.log(self.editing().body());
 			self.updateNodeLinks();
 
 			self.editing().title(self.trim(self.editing().title()));
@@ -759,16 +781,10 @@ var App = function(name, version)
 				let quickreplies = self.editing().quickreplies().split(" ");
 				quickreplies = quickreplies.filter(function(a){return a !== ''});
 
-				var nodes = self.nodes();
-				var childs = self.editing().childs;
-				console.log(nodes,childs);
-
-				//TODO Save only new quickreplies
-
-				if (quickreplies.length >0 )
+				if ( quickreplies.length >0 )
 				{
 					for (var i = 0; i < quickreplies.length; i++) {
-						self.newChildNode(quickreplies[i]);
+						let stop = self.newChildNode(quickreplies[i]);
 					}
 				}
 				self.editing(null);

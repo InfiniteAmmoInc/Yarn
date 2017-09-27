@@ -13,24 +13,21 @@ var Node = function(NodeType, userInput)
 	if (NodeType == "child") {
 		// this.index = ko.observable(globalChildNodeIndex++ + ' c');
 		this.index = globalChildNodeIndex++ + ' c';
-		this.childs = [];
 	}
 	if (NodeType == "root") {
 		// this.index = ko.observable(globalRootNodeIndex++ + ' r');
 		this.index = globalRootNodeIndex++ + ' r';
-		this.childs = [];
 	}
 	if (NodeType == "fallback") {
 		// this.index = ko.observable(globalFallbackNodeIndex++ + ' f');
 		this.index = globalFallbackNodeIndex++ + ' f';
-		this.childs = [];
 	}
 	else if (NodeType == undefined)
 	{
 		this.index = ko.observable(globalRootNodeIndex++);
 	}
 
-	if (userInput != undefined) {
+	if (userInput != undefined  && typeof(userInput) == "string") {
 		this.title =ko.observable(userInput);
 	}
 	else {
@@ -48,11 +45,13 @@ var Node = function(NodeType, userInput)
 	this.colorID = ko.observable(0);
 	this.checked = false;
 	this.selected = false;
+	this.childs = [];
 
 	// clipped values for display
 	this.clippedQuickReplies = ko.computed(function()
 	{
-		var quickreplies = this.quickreplies().split(" ");
+		var unfiltered_quickreplies = this.quickreplies().split(" ");
+		var quickreplies = unfiltered_quickreplies.filter(function(word){return word != ""});
 		var output = "";
 		if (this.quickreplies().length > 0)
 		{
@@ -366,11 +365,15 @@ var Node = function(NodeType, userInput)
 		// clear existing links
 		self.linkedTo.removeAll();
 
+		var links = [];
+
 		// find all the links
-		var links = self.childs;
+		for (var i = 0; i < self.childs.length; i++) {
+			links.push(self.childs[i].index)
+		}
 
 		if (self.fallback != undefined) {
-			links.push(self.fallback);
+			links.push(self.fallback.index);
 		}
 
 
