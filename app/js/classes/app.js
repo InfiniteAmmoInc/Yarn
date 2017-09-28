@@ -150,7 +150,7 @@ var App = function(name, version)
 				if (dragging)
 				{
 					//if(e.ctrlKey)
-					if (e.altKey)
+					if (e.altKey || e.button === 1)
 					{
 						//prevents jumping straight back to standard dragging
 						if(MarqueeOn)
