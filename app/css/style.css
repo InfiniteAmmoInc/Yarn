@@ -168,6 +168,12 @@ a:hover { color: #000;}
 	color: #000;
 }
 
+.app-menu .dropdown .item:active
+{
+    background: #ddd;
+    color: #555;
+}
+
 .app-menu .menu:hover .dropdown
 {
 	max-height: 400px;
@@ -176,6 +182,12 @@ a:hover { color: #000;}
 .app-menu .menu:hover .title
 {
 	background: #f4f4f4;
+}
+
+.app-menu .menu:active .title
+{
+    background: #ddd;
+    color: #555;
 }
 
 /* --- NODE SEARCH--- */
