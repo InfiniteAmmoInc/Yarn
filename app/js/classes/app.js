@@ -27,7 +27,7 @@ var App = function(name, version)
 		0
 	];
 	this.shifted = false;
-
+	
 	this.UPDATE_ARROWS_THROTTLE_MS = 25;
 
 	//this.editingPath = ko.observable(null);
@@ -407,6 +407,12 @@ var App = function(name, version)
 
 		$(window).on('resize', self.updateArrowsThrottled);
 
+		$(document).on('keyup keydown mousedown mouseup', function(e) {
+			if(self.editing() != null)
+			{
+				self.updateEditorStats();
+			}
+		});
 		// apple command key
 		//$(window).on('keydown', function(e) { if (e.keyCode == 91 || e.keyCode == 93) { self.appleCmdKey = true; } });
 		//$(window).on('keyup', function(e) { if (e.keyCode == 91 || e.keyCode == 93) { self.appleCmdKey = false; } });
@@ -667,6 +673,8 @@ var App = function(name, version)
 			//enable_spellcheck();
 			contents_modified = true;
 			//spell_check();
+
+			self.updateEditorStats();
 		}
 	}
 
@@ -1229,5 +1237,20 @@ var App = function(name, version)
 	{
 		self.$searchField.val("");
 		self.updateSearch();
+	}
+
+
+	this.updateEditorStats = function()
+	{
+		var editor = ace.edit('editor');
+		var text = editor.getSession().getValue();
+		var cursor = editor.getCursorPosition();
+
+		var lines = text.split("\n");
+
+		$(".editor-footer .character-count").html(text.length);
+		$(".editor-footer .line-count").html(lines.length);
+		$(".editor-footer .row-index").html(cursor.row);
+		$(".editor-footer .column-index").html(cursor.column);
 	}
 }
