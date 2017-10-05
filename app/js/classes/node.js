@@ -13,28 +13,35 @@ var Node = function(NodeType, userInput)
 	if (NodeType == "child") {
 		// this.index = ko.observable(globalChildNodeIndex++ + ' c');
 		this.index = globalChildNodeIndex++ + ' c';
+		this.colorID = ko.observable(1);
 	}
-	if (NodeType == "root") {
+	if (NodeType == "root" || NodeType == undefined ) {
 		// this.index = ko.observable(globalRootNodeIndex++ + ' r');
 		this.index = globalRootNodeIndex++ + ' r';
+		this.colorID = ko.observable(1);
 	}
 	if (NodeType == "fallback") {
 		// this.index = ko.observable(globalFallbackNodeIndex++ + ' f');
 		this.index = globalFallbackNodeIndex++ + ' f';
-	}
-	else if (NodeType == undefined)
-	{
-		this.index = ko.observable(globalRootNodeIndex++);
+		this.colorID = ko.observable(3);
 	}
 
-	if (userInput != undefined  && typeof(userInput) == "string") {
-		this.title =ko.observable(userInput);
+	if (userInput != undefined ) {
+		if (typeof(userInput) == "string") {
+			this.title = ko.observable(userInput);
+		}
+		if (typeof(userInput) == "function") {
+			this.title = userInput;
+		}
 	}
 	else {
+		console.log(userInput);
+		console.log(this.index);
 		this.title = ko.observable("Node " + this.index);
 	}
-	this.quickreplies = ko.observable("");
-	this.body = ko.observable("Empty Text");
+
+	this.quickreplies = ko.observableArray();
+	this.body = ko.observableArray();
 	//this.x = ko.observable(128);
 	//this.y = ko.observable(128);
 	this.active = ko.observable(true);
@@ -42,34 +49,43 @@ var Node = function(NodeType, userInput)
 	this.tempHeight;
 	this.tempOpacity;
 	this.style;
-	this.colorID = ko.observable(0);
+	// this.colorID = ko.observable(0);
 	this.checked = false;
 	this.selected = false;
 	this.childs = [];
+	this.fallback = "";
 
 	// clipped values for display
 	this.clippedQuickReplies = ko.computed(function()
 	{
-		var unfiltered_quickreplies = this.quickreplies().split(" ");
-		var quickreplies = unfiltered_quickreplies.filter(function(word){return word != ""});
+		var quickreplies = this.quickreplies();
+		// var quickreplies = unfiltered_quickreplies.filter(function(word){return word != ""});
 		var output = "";
 		if (this.quickreplies().length > 0)
 		{
-			for (var i = 0; i < quickreplies.length; i ++)
-				output += '<span>' + quickreplies[i] + '</span>';
+			for (var i = 0; i < quickreplies.length; i ++) {
+				output += '<span>' + quickreplies[i].id() + '</span>';}
 		}
         return output;
     }, this);
 
+
+
 	this.clippedBody = ko.computed(function()
 	{
-		var result = app.getHighlightedText(this.body());
-		while (result.indexOf("\n") >= 0)
-			result = result.replace("\n", "<br />");
-		while (result.indexOf("\r") >= 0)
-			result = result.replace("\r", "<br />");
-		result = result.substr(0, ClipNodeTextLength);
-        return result;
+		// var result = app.getHighlightedText(this.body());
+		// while (result.indexOf("\n") >= 0)
+		// 	result = result.replace("\n", "<br />");
+		// while (result.indexOf("\r") >= 0)
+		// 	result = result.replace("\r", "<br />");
+		// result = result.substr(0, ClipNodeTextLength);
+    //     return result;
+		var result ="";
+		var body = this.body();
+		for (var i = 0; i < body.length; i++) {
+			result = result + body[i].id() + "<br />";
+		}
+		return result;
     }, this);
 
 	// internal cache
@@ -372,7 +388,7 @@ var Node = function(NodeType, userInput)
 			links.push(self.childs[i].index)
 		}
 
-		if (self.fallback != undefined) {
+		if (self.fallback != undefined && self.fallback != "") {
 			links.push(self.fallback.index);
 		}
 

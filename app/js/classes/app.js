@@ -86,6 +86,19 @@ var App = function(name, version)
 					self.clearSearch();
 			});
 
+		ko.bindingHandlers.editableText = {
+	    init: function(element, valueAccessor) {
+	        $(element).on('blur', function() {
+	            var observable = valueAccessor();
+	            observable( $(this).text() );
+	        });
+	    },
+	    update: function(element, valueAccessor) {
+	        var value = ko.utils.unwrapObservable(valueAccessor());
+	        $(element).text(value);
+	    }
+		};
+
 		// prevent click bubbling
 		ko.bindingHandlers.preventBubble =
 		{
@@ -405,6 +418,7 @@ var App = function(name, version)
 			self.translate(100);
 		} );
 
+
 		$(window).on('resize', self.updateArrowsThrottled);
 
 		// apple command key
@@ -643,7 +657,6 @@ var App = function(name, version)
 	this.newChildNode = function(userInput)
 	{
 		var selectedNodes = self.getSelectedNodes();
-		var add_it = false;
 		if (selectedNodes.length == 0)
 			alert("Select the parent node");
 		else if (selectedNodes.length > 1)
@@ -657,11 +670,13 @@ var App = function(name, version)
 						childsTitles.push(childs[i].title());
 					}
 					if (childsTitles.includes(userInput)) {
+						alert("You can't have more than one child with the same name")
 						return true;
 					}
 				}
 				if (childs.length == 0 || childsTitles != undefined) {
 					let childNode = new Node("child", userInput);
+					childNode.parent = selectedNodes[0].index;
 					let selectedNodeIndex = selectedNodes[0].index;
 					for (var i = 0; i < self.nodes().length; i++) {
 						if (self.nodes()[i].index == selectedNodeIndex) {
@@ -694,8 +709,9 @@ var App = function(name, version)
 			alert("Too many nodes selected");
 		else
 			{
-				if (selectedNodes[0].fallback == undefined) {
+				if (selectedNodes[0].fallback == "") {
 					let fallbackNode = new Node("fallback");
+					fallbackNode.parent = selectedNodes[0].index;
 					let selectedNodeIndex = selectedNodes[0].index;
 					for (var i = 0; i < self.nodes().length; i++) {
 						if (self.nodes()[i].index == selectedNodeIndex) {
@@ -752,8 +768,8 @@ var App = function(name, version)
 		{
 			self.editing(node);
 
-			$(".node-editor").css({ opacity: 0 }).transition({ opacity: 1 }, 250);
-			$(".node-editor .form").css({ y: "-100" }).transition({ y: "0" }, 250);
+			$(".node-editor").css({ opacity: 0.8 }).transition({ opacity: 1 }, 400);
+			$(".node-editor .form").css({ x: "400" }).transition({ x: "0" }, 400);
 
 			//enable_spellcheck();
 			contents_modified = true;
@@ -766,27 +782,51 @@ var App = function(name, version)
 		return x.replace(/^\s+|\s+$/gm,'');
 	}
 
+	this.addQuickReply = function(){
+		if (self.editing() != null)
+		{
+			self.editing().quickreplies.push({'id': ko.observable("New QuickReply")});
+			let add_node = confirm("Do you want to add a node corresponding to this Quick Reply?");
+			console.log(add_node);
+			if (add_node) {
+				self.newChildNode(self.editing().quickreplies()[self.editing().quickreplies().length -1].id);
+			}
+		}
+	}
+
+	this.removeQuickReply = function(quickreply_name){
+		if (self.editing() != null)
+		{
+			self.editing().quickreplies.remove(function (quickreply) { return quickreply.id == quickreply_name })
+		}
+	}
+
+	this.addBotAnswer = function(){
+		if (self.editing() != null)
+		{
+			self.editing().body.push({'id': ko.observable("New Empty text")});
+		}
+	}
+
+	this.removeBotAnswer = function(Bot_Answer_name){
+		if (self.editing() != null)
+		{
+			self.editing().body.remove(function (BotAnswer) { return BotAnswer.id == Bot_Answer_name })
+		}
+	}
+
 	this.saveNode = function()
 	{
 		if (self.editing() != null)
 		{
-			console.log(self.editing().body());
 			self.updateNodeLinks();
+			// console.log(self.editing().body());
 
 			self.editing().title(self.trim(self.editing().title()));
 
-			$(".node-editor").transition({ opacity: 0 }, 250);
-			$(".node-editor .form").transition({ y: "-100" }, 250, function()
+			$(".node-editor").transition({ opacity: 0.8 }, 400);
+			$(".node-editor .form").transition({ x: "500" }, 400, function()
 			{
-				let quickreplies = self.editing().quickreplies().split(" ");
-				quickreplies = quickreplies.filter(function(a){return a !== ''});
-
-				if ( quickreplies.length >0 )
-				{
-					for (var i = 0; i < quickreplies.length; i++) {
-						let stop = self.newChildNode(quickreplies[i]);
-					}
-				}
 				self.editing(null);
 			});
 
@@ -799,7 +839,7 @@ var App = function(name, version)
 		var search = self.$searchField.val().toLowerCase();
 		var title = $(".search-title input").is(':checked');
 		var body = $(".search-body input").is(':checked');
-		var tags = $(".search-tags input").is(':checked');
+		var quickreplies = $(".search-quickreply input").is(':checked');
 
 		var on = 1;
 		var off = 0.25;
@@ -809,13 +849,22 @@ var App = function(name, version)
 			var node = app.nodes()[i];
 			var element = $(node.element);
 
+			var node_body = "";
+			node.body().forEach(function(bubble) {
+				node_body += ' '+ bubble.id();
+			})
+			var node_quickreplies="";
+			node.quickreplies().forEach(function(quickreply) {
+				node_quickreplies += ' '+ quickreply.id();
+			})
+
 			if (search.length > 0 && (title || body || tags))
 			{
 				var matchTitle = (title && node.title().toLowerCase().indexOf(search) >= 0);
-				var matchBody = (body && node.body().toLowerCase().indexOf(search) >= 0);
-				var matchTags = (tags && node.tags().toLowerCase().indexOf(search) >= 0);
+				var matchBody = (body && node_body.toLowerCase().indexOf(search) >= 0);
+				var matchQuickReplies = (quickreplies && node_quickreplies.toLowerCase().indexOf(search) >= 0);
 
-				if (matchTitle || matchBody || matchTags)
+				if (matchTitle || matchBody || matchQuickReplies)
 				{
 					node.active(true);
 					element.clearQueue();

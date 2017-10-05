@@ -30,11 +30,10 @@ var data =
 				}
 			}));
 		}
-		else
-		{
-			alert("Unable to load file from your browser");
-		}
-		/*
+		// else
+		// {
+		// 	alert("Unable to load file from your browser");
+		// }
 		else if (window.File && window.FileReader && window.FileList && window.Blob && e.target && e.target.files && e.target.files.length > 0)
 		{
 			var reader  = new FileReader();
@@ -44,7 +43,7 @@ var data =
 				{
 					var contents = e.srcElement.result;
 					var type = data.getFileType(contents);
-					alert("type(2): " + type);
+					// alert("type(2): " + type);
 					if (type == FILETYPE.UNKNOWN)
 						alert("Unknown filetype!");
 					else
@@ -53,7 +52,6 @@ var data =
 			}
 			reader.readAsText(e.target.files[0], "UTF-8");
 		}
-		*/
 	},
 
 	openFile: function(e, filename)
@@ -78,18 +76,18 @@ var data =
 	{
 		var clone = filename;
 
-		if (filename.toLowerCase().indexOf(".json") > -1)
-			return FILETYPE.JSON;
-		else if (filename.toLowerCase().indexOf(".yarn.txt") > -1)
-			return FILETYPE.YARNTEXT;
-		else if (filename.toLowerCase().indexOf(".xml") > -1)
-			return FILETYPE.XML;
-		else if (filename.toLowerCase().indexOf(".txt") > -1)
-			return FILETYPE.TWEE;
-        else if (filename.toLowerCase().indexOf(".tw2") > -1)
-            return FILETYPE.TWEE2;
-		return FILETYPE.UNKNOWN;
-		/*
+		// if (filename.toLowerCase().indexOf(".json") > -1)
+		// 	return FILETYPE.JSON;
+		// else if (filename.toLowerCase().indexOf(".yarn.txt") > -1)
+		// 	return FILETYPE.YARNTEXT;
+		// else if (filename.toLowerCase().indexOf(".xml") > -1)
+		// 	return FILETYPE.XML;
+		// else if (filename.toLowerCase().indexOf(".txt") > -1)
+		// 	return FILETYPE.TWEE;
+    //     else if (filename.toLowerCase().indexOf(".tw2") > -1)
+    //         return FILETYPE.TWEE2;
+		// return FILETYPE.UNKNOWN;
+
 		// is json?
 		if (/^[\],:{}\s]*$/.test(clone.replace(/\\["\\\/bfnrtu]/g, '@').
 			replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']').
@@ -108,7 +106,7 @@ var data =
 		if (content.trim().substr(0, 2) == "::")
 			return FILETYPE.TWEE;
 		return FILETYPE.UNKNOWN;
-		*/
+
 	},
 
 	loadData: function(content, type, clearNodes)
@@ -117,185 +115,131 @@ var data =
 		if (clearNodes)
 			app.nodes.removeAll();
 
-		var objects = [];
+		var root_nodes = [];
+		var fallback_nodes = [];
+		var child_nodes = [];
 		var i = 0;
 		if (type == FILETYPE.JSON)
 		{
 			content = JSON.parse(content);
-			for (i = 0; i < content.length; i ++)
-				objects.push(content[i]);
-		}
-		else if (type == FILETYPE.YARNTEXT)
-		{
-			var lines = content.split("\n");
-			var obj = null;
-			var index  = 0;
-			var readingBody = false;
-			for  (var i = 0; i < lines.length; i ++)
-			{
-
-				if (lines[i].trim() == "===")
-				{
-					readingBody = false;
-					if (obj != null)
-					{
-						objects.push(obj);
-						obj = null;
-					}
-				}
-				else if (readingBody)
-				{
-					obj.body += lines[i] + "\n";
-				}
-				else
-				{
-					if (lines[i].indexOf("title:") > -1)
-					{
-						if (obj == null)
-							obj = {};
-						obj.title = lines[i].substr(7, lines[i].length-7);
-					}
-					else if (lines[i].indexOf("position:") > -1)
-					{
-						if (obj == null)
-							obj = {}
-						var xy = lines[i].substr(9, lines[i].length-9).split(',');
-						obj.position = { x: Number(xy[0].trim()), y: Number(xy[1].trim()) }
-					}
-					else if (lines[i].indexOf("colorID:") > -1)
-					{
-						if (obj == null)
-							obj = {}
-						obj.colorID = Number(lines[i].substr(9, lines[i].length-9).trim());
-					}
-					else if (lines[i].indexOf("quickreplies:") > -1)
-					{
-						if (obj == null)
-							obj = {}
-						obj.quickreplies = lines[i].substr(6, lines[i].length-6);
-					}
-					else if (lines[i].trim() == "---")
-					{
-						readingBody = true;
-						obj.body = "";
-					}
-				}
+			// for (i = 0; i < content.length; i ++)
+				// objects.push(content[i]);
+			for (let i = 0; i < content.root_nodes.length; i++) {
+				root_nodes.push(content.root_nodes[i])
 			}
-			if (obj != null)
-			{
-				objects.push(obj);
+			for (let i = 0; i < content.child_nodes.length; i++) {
+				child_nodes.push(content.child_nodes[i])
 			}
-		}
-		else if (type == FILETYPE.TWEE || type == FILETYPE.TWEE2)
-		{
-			var lines = content.split("\n");
-			var obj = null;
-			var index  = 0;
-			for  (var i = 0; i < lines.length; i ++)
-			{
-				lines[i] = lines[i].trim();
-				if (lines[i].substr(0, 2) == "::")
-				{
-					if (obj != null)
-						objects.push(obj);
-
-					obj = {};
-					index ++;
-
-					var title = "";
-					var quickreplies = "";
-					var position = {x: index * 80, y: index * 80};
-
-					// check if there are quickreplies
-					var openBracket = lines[i].indexOf("[");
-					var closeBracket = lines[i].indexOf("]");
-                    if (openBracket > 0 && closeBracket > 0)
-					{
-						quickreplies = lines[i].substr(openBracket + 1, closeBracket - openBracket - 1);
-					}
-
-                    // check if there are positions (Twee2)
-                    var openPosition = lines[i].indexOf("<");
-                    var closePosition = lines[i].indexOf(">");
-
-					if (openPosition > 0 && closePosition > 0)
-                    {
-                        var coordinates = lines[i].substr(openPosition + 1, closePosition - openPosition - 1).split(',');
-                        position.x = parseInt(coordinates[0]);
-                        position.y = parseInt(coordinates[1]);
-                    }
-
-                    var metaStart = 0;
-					if (openBracket > 0) {
-						metaStart = openBracket;
-					} else if (openPosition > 0) {
-                        // Twee2 dictates that quickreplies must come before position, so we'll only care about this if we don't
-						// have any quickreplies for this Passage
-                        metaStart = openPosition
-                    }
-
-                    console.log(openBracket, openPosition, metaStart);
-
-                    if (metaStart) {
-                        title = lines[i].substr(3, metaStart - 3);
-                    } else {
-                        title = lines[i].substr(3);
-                    }
-
-					obj.title = title;
-					obj.quickreplies = quickreplies;
-					obj.body = "";
-                    obj.position = position;
-				}
-				else if (obj != null)
-				{
-					if (obj.body.length > 0)
-						lines[i] += '\n';
-					obj.body += lines[i];
-				}
+			for (let i = 0; i < content.fallback_nodes.length; i++) {
+				fallback_nodes.push(content.fallback_nodes[i])
 			}
 
-			if (obj != null)
-				objects.push(obj);
 		}
-		else if (type == FILETYPE.XML)
-		{
-			var oParser = new DOMParser();
-			var xml = oParser.parseFromString(content, "text/xml");
-			content = Utils.xmlToObject(xml);
-
-			if (content != undefined)
-				for (i = 0; i < content.length; i ++)
-					objects.push(content[i]);
-		}
+		// else if (type == FILETYPE.XML)
+		// {
+		// 	var oParser = new DOMParser();
+		// 	var xml = oParser.parseFromString(content, "text/xml");
+		// 	content = Utils.xmlToObject(xml);
+		//
+		// 	if (content != undefined)
+		// 		for (i = 0; i < content.length; i ++)
+		// 			objects.push(content[i]);
+		// }
 
 		var avgX = 0, avgY = 0;
 		var numAvg = 0;
-		for (var i = 0; i < objects.length; i ++)
-		{
-			var node = new Node();
-			app.nodes.push(node);
 
-			var object = objects[i]
+
+		function addNodeFromJSON(node, object)
+		{
+			app.editing(node);
 			if (object.title != undefined)
-				node.title(object.title);
-			if (object.body != undefined)
-				node.body(object.body);
-			if (object.quickreplies != undefined)
-				node.quickreplies(object.quickreplies);
+				app.editing().title(object.title);
+			if (object.output != undefined)
+				for (var i = 0; i < object.output.length; i++) {
+					if (object.output[i].type == 0) {
+						app.editing().body.push({'id': ko.observable(object.output[i].content)});
+					}
+					if (object.output[i].type == 2) {
+						for (var j = 0; j < object.output[i].content.quick_replies.length; j++) {
+							if (object.output[i].content.quick_replies[j].title != "") {
+								app.editing().quickreplies.push({'id': ko.observable(object.output[i].content.quick_replies[j].title)});
+							}
+						}
+					}
+				}
 			if (object.position != undefined && object.position.x != undefined)
 			{
-				node.x(object.position.x);
+				app.editing().x(object.position.x);
 				avgX += object.position.x;
 				numAvg ++;
 			}
 			if (object.position != undefined && object.position.y != undefined)
 			{
-				node.y(object.position.y);
+				app.editing().y(object.position.y);
 				avgY += object.position.y;
 			}
 			if (object.colorID != undefined)
-				node.colorID(object.colorID);
+				app.editing().colorID(object.colorID);
+			app.editing(null);
+		};
+
+		var new_node = [];
+		var child_node_index = [];
+		var fallback_node_index = [];
+		var node_infos = [];
+
+		function AddAllNodes(nodeType)
+		{
+			// console.log(app.getSelectedNodes());
+			if (nodeType == "root") {
+				new_node.push(app.newRootNode());
+			}
+			if (nodeType == "child") {
+				new_node.push(app.newChildNode());
+			}
+			if (nodeType == "fallback") {
+				new_node.push(app.newFallbackNode());
+			}
+
+			// console.log(new_node);
+
+			app.deselectAllNodes();
+			app.addNodeSelected(new_node[new_node.length -1]);
+
+			addNodeFromJSON(new_node[new_node.length -1], node_infos[node_infos.length -1]);
+
+			while (node_infos[node_infos.length -1].childs.length > 0) {
+				child_node_index.push(parseInt(node_infos[node_infos.length -1].childs[node_infos[node_infos.length -1].childs.length - 1]));
+				node_infos.push(child_nodes[child_node_index[child_node_index.length -1]][0]);
+				arguments.callee("child");
+				child_node_index = child_node_index.slice(0, -1);
+				node_infos[node_infos.length -1].childs = node_infos[node_infos.length -1].childs.slice(0, -1);
+			};
+
+			if (node_infos[node_infos.length -1].fallback) {
+					fallback_node_index.push(parseInt(node_infos[node_infos.length -1].fallback));
+					node_infos.push(fallback_nodes[fallback_node_index[fallback_node_index.length -1]][0]);
+					arguments.callee("fallback");
+					fallback_node_index.slice(0,-1);
+					node_infos[node_infos.length -1].fallback = node_infos[node_infos.length -1].fallback.slice(0, -1);
+			};
+
+			node_infos = node_infos.slice(0,-1);
+			new_node = new_node.slice(0, -1);
+			app.deselectAllNodes();
+
+			if (new_node.length > 0) {
+				app.addNodeSelected(new_node[new_node.length -1]);
+			}
+
+			return;
+		}
+
+		for (var i = 0; i < root_nodes.length; i ++)
+		{
+			node_infos.push(root_nodes[i][0]);
+			AddAllNodes("root");
 		}
 
 		if (numAvg > 0)
@@ -307,68 +251,104 @@ var data =
 		app.updateNodeLinks();
 	},
 
+
+
+	filterNodeData: function(node)
+	{
+		var content = [];
+		var output = [];
+		var childs_indexes =[];
+		var body =[];
+		var quickreplies =[];
+
+		for (let i = 0; i < node.body().length; i++) {
+			body.push(node.body()[i].id());
+		}
+
+		for (let i = 0; i <body.length; i++) {
+			output.push({"type":"0", "content": body[i]});
+		}
+
+		for (let i = 0; i < node.quickreplies().length; i++) {
+			quickreplies.push(node.quickreplies()[i].id());
+		}
+
+		//TODO Add possible text to quickreplies
+		//TODO Add "image_url" and "conten_type":"location" types quickreplies"
+
+		if (quickreplies.length > 0) {
+			var qr = [];
+			for (let i = 0; i < quickreplies.length; i++) {
+				qr.push({
+					"content_type": "text",
+					"title": quickreplies[i],
+					"payload": quickreplies[i]
+				});
+			}
+
+			output.push({
+				"type": "2",
+				"content": {
+					"text": "change this text",
+					"quick_replies": qr
+				}
+			});
+		}
+
+		for (let i = 0; i < node.childs.length; i++) {
+			 childs_indexes.push(node.childs[i].index);
+		}
+
+		content.push({
+			"id": node.index,
+			"uuid":"",
+			"intent_name": "",
+			"parent_node": "",
+			"childs": childs_indexes,
+			"fallback": node.fallback.index,
+			"output": output,
+			"title": node.title(),
+			"position": { "x": node.x(), "y": node.y() },
+			"colorID": node.colorID()
+		});
+		return content;
+	},
+
 	getSaveData: function(type)
 	{
 		var output = "";
-		var content = [];
 		var nodes = app.nodes();
+		var content = {
+			root_nodes: [],
+			child_nodes: [],
+			fallback_nodes: []
+		};
 
-		for (var i = 0; i < nodes.length; i ++)
-		{
-			content.push({
-				"title": nodes[i].title(),
-				"quickreplies": nodes[i].quickreplies(),
-				"body": nodes[i].body(),
-				"position": { "x": nodes[i].x(), "y": nodes[i].y() },
-				"colorID": nodes[i].colorID()
-			});
-		}
+		console.log(app.nodes());
+
+		for (var i = 0; i < nodes.length; i++) {
+			var node = nodes[i];
+
+			// If node is a root node
+			if (node.index[node.index.length -1] == "r") {
+				let nodedata = data.filterNodeData(node);
+				content.root_nodes.push(nodedata);
+				}
+			// If node is a child node
+			if (node.index[node.index.length -1] == "c") {
+				let nodedata = data.filterNodeData(node);
+				content.child_nodes.push(nodedata);
+				}
+			if (node.index[node.index.length -1] == "f") {
+				let nodedata = data.filterNodeData(node);
+				content.fallback_nodes.push(nodedata);
+				}
+		};
 
 		if (type == FILETYPE.JSON)
 		{
 			output = JSON.stringify(content, null, "\t");
 		}
-		else if (type == FILETYPE.YARNTEXT)
-		{
-			for (i = 0; i < content.length; i++)
-			{
-				output += "title: " + content[i].title + "\n";
-				output += "quickreplies: " + content[i].quickreplies + "\n";
-				output += "colorID: " + content[i].colorID + "\n";
-				output += "position: " + content[i].position.x + "," + content[i].position.y + "\n";
-				output += "---\n";
-				output += content[i].body;
-				var body = content[i].body
-				if (!(body.length > 0 && body[body.length-1] == '\n'))
-				{
-					output += "\n";
-				}
-				output += "===\n";
-			}
-		}
-		else if (type == FILETYPE.TWEE)
-		{
-			for (i = 0; i < content.length; i ++)
-			{
-				var quickreplies = "";
-				if (content[i].quickreplies.length > 0)
-					quickreplies = " [" + content[i].quickreplies + "]"
-				output += ":: " + content[i].title + quickreplies + "\n";
-				output += content[i].body + "\n\n";
-			}
-		}
-        else if (type == FILETYPE.TWEE2)
-        {
-            for (i = 0; i < content.length; i ++)
-            {
-                var quickreplies = "";
-                if (content[i].quickreplies.length > 0)
-                    quickreplies = " [" + content[i].quickreplies + "]"
-				var position = " <" + content[i].position.x + "," + content[i].position.y + ">";
-                output += ":: " + content[i].title + quickreplies + position + "\n";
-                output += content[i].body + "\n\n";
-            }
-        }
 		else if (type == FILETYPE.XML)
 		{
 			output += '<nodes>\n';
@@ -442,7 +422,13 @@ var data =
 		{
 			switch(type) {
 				case 'json':
-					content = "data:text/json," + content;
+					// content = "data:text/json," + content;
+					var blob = new Blob([content], {type: "application/json"});
+					var url  = URL.createObjectURL(blob);
+					var a = document.createElement('a');
+					a.download    = "dialog.json";
+					a.href        = url;
+					a.click();
 					break;
 				case 'xml':
 					content = "data:text/xml," + content;
@@ -451,12 +437,13 @@ var data =
 					content = "data:text/plain," + content;
 					break;
 			}
-			window.open(content, "_blank");
+			// window.open(content, "_blank");
 		}
 	},
 
 	tryOpenFile: function()
 	{
+		app.deselectAllNodes();
 		data.openFileDialog($('#open-file'), data.openFile);
 	},
 

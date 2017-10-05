@@ -10,5 +10,8 @@
 		"min_width": 800,
 		"min_height": 600,
 		"icon": "Yarn.png"
+	},
+	"dependencies": {
+		"jfs": "^0.2.6"
 	}
 }

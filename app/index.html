@@ -43,9 +43,9 @@
 					<input type="checkbox" id="search-body" />
 					<label for="search-body">Body</label>
 				</div>
-				<div class="search-quickreplies search-item">
-					<input type="checkbox" id="search-quickreplies" />
-					<label for="search-quickreplies">QuickReplies</label>
+				<div class="search-quickreply search-item">
+					<input type="checkbox" id="search-quickreply" />
+					<label for="search-quickreply">QuickReplies</label>
 				</div>
 			</div>
 
@@ -69,17 +69,13 @@
 			<!-- navigation / menu -->
 			<div class="app-menu">
 				<div class="menu">
-					<span class="title" data-bind="click:app.newRootNode">+ Root Node</span>
+					<span class="title">Add Node</span>
+					<div class="dropdown">
+						<span class="item" data-bind="click: function() {app.newRootNode()}">Root</span>
+						<span class="item" data-bind="click: function() {app.newChildNode()}">Child</span>
+						<span class="item" data-bind="click: function() {app.newFallbackNode()}">Fallback</span>
+					</div>
 				</div>
-
-				<div class="menu">
-					<span class="title" data-bind="click:app.newChildNode">+ Child Node</span>
-				</div>
-
-				<div class="menu">
-					<span class="title" data-bind="click:app.newFallbackNode">+ Fallback Node</span>
-				</div>
-
 				<div class="menu">
 					<span class="title">File</span>
 					<div class="dropdown">
@@ -89,11 +85,11 @@
 						<!-- ko if:data.editingPath() != null -->
 						<span class="item" data-bind="click: data.trySaveCurrent">Save</span>
 						<!-- /ko -->
-						<span class="item" data-bind="click: function() { data.trySave(FILETYPE.JSON); }">Save As Json...</span>
-						<span class="item" data-bind="click: function() { data.trySave(FILETYPE.YARNTEXT); }">Save As Yarn...</span>
+						<span class="item" data-bind="click: function() { data.trySave(FILETYPE.JSON); }">Save As Json...</span><output></output>
+						<!-- <span class="item" data-bind="click: function() { data.trySave(FILETYPE.YARNTEXT); }">Save As Yarn...</span>
 						<span class="item" data-bind="click: function() { data.trySave(FILETYPE.TWEE); }">Save As Twee...</span>
 						<span class="item" data-bind="click: function() { data.trySave(FILETYPE.TWEE2); }">Save As Twee2...</span>
-						<span class="item" data-bind="click: function() { data.trySave(FILETYPE.XML); }">Save As Xml...</span>
+						<span class="item" data-bind="click: function() { data.trySave(FILETYPE.XML); }">Save As Xml...</span> -->
 						<!--<span class="item" data-bind="click: app.quit">Close</span>-->
 					</div>
 				</div>
@@ -117,6 +113,7 @@
 						node.colorID() == 5 ? '#C47862' :
 						node.colorID() == 6 ? '#97E1E9' :
 						'#eee'}"></div>
+						<!-- <div class="body" data-bind="html: node.clippedBody"></div> -->
 						<div class="body" data-bind="html: node.clippedBody"></div>
 						<div class="quickreplies" data-bind="html: node.clippedQuickReplies"></div>
 						<div class="icon colorDown" data-bind="click: node.cycleColorDown"></div>
@@ -132,16 +129,35 @@
 			<div class="node-editor" data-bind="mousedown:app.saveNode">
 
 				<div class="form" data-bind="preventBubble: 'click', preventBubble: 'mousedown'">
-					<input type="text" class="title" data-bind="value: app.editing().title">
-					<input type="text" data-bind="value: app.editing().quickreplies">
-					<div class="editor-container">
-						<div class="editor" id="editor"
-							data-bind="
-							ace: app.editing().body,
-							aceOptions: { mode: 'yarn', theme: 'yarn', showPrintMargin: false }">
+					<div class="title">
+						<span class="resizing-input" contentEditable="true" data-bind="editableText: app.editing().title"></span>
+					</div>
+					<div class="body" data-bind="foreach: app.editing().body">
+					  <div class="bot-answer">
+							<span class="deleteBotAnswer" data-bind="click:function () { app.removeBotAnswer($data.id) }">
+								<img src="./images/delete.png" alt="delete" height="16" width="16" >
+							</span>
+							<span contentEditable="true" data-bind="editableText: $data.id"></span>
 						</div>
 					</div>
-					<!--<div class="icon close" data-bind="click:app.saveNode"></div>-->
+					<div class="AddBotAnswer" data-bind="click: app.addBotAnswer">
+						<img src="./images/plus.png" alt="Add User Input" height="20" width="20" >
+					</div>
+					<div class="icon close" data-bind="click:app.saveNode"></div>
+					<div class="quickreplies-area">
+						<div class="line"></div>
+						<div class="quickreplies" data-bind="foreach: app.editing().quickreplies">
+							<div class="quickreply">
+								<span class="deleteQuickReply" data-bind="click:function () { app.removeQuickReply($data.id) }">
+									<img src="./images/delete.png" alt="delete" height="16" width="16" >
+								</span>
+								<span class="resizing-input" contentEditable="true" data-bind="editableText: $data.id"></span>
+							</div>
+						</div>
+						<div class="addQuickReply" data-bind="click: app.addQuickReply">
+							<img src="./images/plus.png" alt="Add Quick Reply" height="20" width="20">
+						</div>
+					</div>
 				</div>
 
 			</div>
