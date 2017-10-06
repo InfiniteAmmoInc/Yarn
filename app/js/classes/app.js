@@ -801,6 +801,18 @@ var App = function(name, version)
 		}
 	}
 
+//TODO Filter quickreplies with same name
+	this.filterQuickReplies = function (quickreply) {
+		if (self.editing() != null)
+		{
+			let quickreplies = [];
+			for (let i = 0; i < self.editing().quickreplies().length; i++) {
+				quickreplies.push(self.editing().quickreplies()[i].id());
+			}
+			console.log(quickreplies);
+		}
+	}
+
 	this.addBotAnswer = function(){
 		if (self.editing() != null)
 		{
@@ -820,9 +832,8 @@ var App = function(name, version)
 		if (self.editing() != null)
 		{
 			self.updateNodeLinks();
-			// console.log(self.editing().body());
-
 			self.editing().title(self.trim(self.editing().title()));
+
 
 			$(".node-editor").transition({ opacity: 0.8 }, 400);
 			$(".node-editor .form").transition({ x: "500" }, 400, function()
@@ -858,7 +869,7 @@ var App = function(name, version)
 				node_quickreplies += ' '+ quickreply.id();
 			})
 
-			if (search.length > 0 && (title || body || tags))
+			if (search.length > 0 && (title || body || quickreplies))
 			{
 				var matchTitle = (title && node.title().toLowerCase().indexOf(search) >= 0);
 				var matchBody = (body && node_body.toLowerCase().indexOf(search) >= 0);

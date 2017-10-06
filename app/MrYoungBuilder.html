@@ -11,12 +11,12 @@
 		<script type="text/javascript" src="js/libs/jquery.mousewheel.min.js"></script>
 		<script type="text/javascript" src="js/libs/transit.js"></script>
 		<script type="text/javascript" src="js/libs/knockout-3.3.0.js"></script>
-		<script type="text/javascript" src="js/libs/knockout.ace.js"></script>
-		<script type="text/javascript" src="js/libs/ace.js"></script>
+		<!-- <script type="text/javascript" src="js/libs/knockout.ace.js"></script> -->
+		<!-- <script type="text/javascript" src="js/libs/ace.js"></script> -->
 		<script type="text/javascript" src="js/libs/typo.js"></script>
 		<script type="text/javascript" src="js/libs/spellcheck_ace.js"></script>
-		<script type="text/javascript" src="js/libs/theme-yarn.js"></script>
-		<script type="text/javascript" src="js/libs/mode-yarn.js"></script>
+		<!-- <script type="text/javascript" src="js/libs/theme-yarn.js"></script> -->
+		<!-- <script type="text/javascript" src="js/libs/mode-yarn.js"></script> -->
 
 		<!-- various models / classes -->
 		<script type="text/javascript" src="js/classes/app.js"></script>
@@ -130,14 +130,14 @@
 
 				<div class="form" data-bind="preventBubble: 'click', preventBubble: 'mousedown'">
 					<div class="title">
-						<span class="resizing-input" contentEditable="true" data-bind="editableText: app.editing().title"></span>
+						<div class="resizing-input" contentEditable="true" data-bind="editableText: app.editing().title"></div>
 					</div>
 					<div class="body" data-bind="foreach: app.editing().body">
 					  <div class="bot-answer">
 							<span class="deleteBotAnswer" data-bind="click:function () { app.removeBotAnswer($data.id) }">
 								<img src="./images/delete.png" alt="delete" height="16" width="16" >
 							</span>
-							<span contentEditable="true" data-bind="editableText: $data.id"></span>
+							<div contentEditable="true" data-bind="editableText: $data.id"></div>
 						</div>
 					</div>
 					<div class="AddBotAnswer" data-bind="click: app.addBotAnswer">
@@ -151,7 +151,7 @@
 								<span class="deleteQuickReply" data-bind="click:function () { app.removeQuickReply($data.id) }">
 									<img src="./images/delete.png" alt="delete" height="16" width="16" >
 								</span>
-								<span class="resizing-input" contentEditable="true" data-bind="editableText: $data.id"></span>
+								<div class="resizing-input" contentEditable="true" data-bind="editableText: $data.id"></div>
 							</div>
 						</div>
 						<div class="addQuickReply" data-bind="click: app.addQuickReply">

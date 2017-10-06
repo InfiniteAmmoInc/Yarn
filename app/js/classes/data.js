@@ -273,9 +273,6 @@ var data =
 			quickreplies.push(node.quickreplies()[i].id());
 		}
 
-		//TODO Add possible text to quickreplies
-		//TODO Add "image_url" and "conten_type":"location" types quickreplies"
-
 		if (quickreplies.length > 0) {
 			var qr = [];
 			for (let i = 0; i < quickreplies.length; i++) {

@@ -456,10 +456,11 @@ a:hover { color: #000;}
 {
 	clear: both;
 	padding: 15px;
-	max-width: 300px;
+	max-width: 85%;
+	min-width: 25px;
 	border-radius: 30px;
-	margin-bottom: 4px;
-	font-family: Helvetica, Arial, sans-serif;
+	margin-bottom: 8px;
+	font-family: 'lucida grande', tahoma, verdana, arial, sans-serif;
 	background: #eee;
 	float: left;
 	border-style: none;
@@ -478,11 +479,15 @@ a:hover { color: #000;}
   padding: 15px;
   border-radius: 30px;
   margin-bottom: 2px;
-  font-family: Helvetica, Arial, sans-serif;
 	float: right;
 	background: #0084ff;
+}
+
+.node-editor .form .body .bot-answer{
+  font-family: 'lucida grande', tahoma, verdana, arial, sans-serif;
 	color: #fff;
-	max-width: 300px;
+	min-width: 25px;
+	max-width: 85%;
 }
 
 .node-editor .form .body .bot-answer:first-of-type {
@@ -512,8 +517,9 @@ a:hover { color: #000;}
 }
 
 .deleteBotAnswer{
-	margin-top: 3px;
+	margin-top: 2px;
 	display:none;
+	cursor: pointer;
 }
 
 .bot-answer:hover .deleteBotAnswer, .bot-answer .resizing-input{
@@ -557,12 +563,16 @@ a:hover { color: #000;}
 	float: left;
   border-radius: 30px;
 	margin-top: 4px;
-  margin-left: 2px;
-  font-family: Helvetica, Arial, sans-serif;
+  margin-left: 15px;
 	background: #fff;
-	border: #0084ff solid 2px;
+	border: #0084ff solid 1px;
 	padding: 15px;
-	color: #0084ff;;
+}
+
+.node-editor .form .quickreplies-area .quickreplies .quickreply{
+	min-width: 25px;
+  font-family: 'lucida grande', tahoma, verdana, arial, sans-serif;
+	color: #0084ff;
 }
 
 .node-editor .form .quickreplies-area .addQuickReply {
@@ -570,7 +580,7 @@ a:hover { color: #000;}
 	height: 20px;
 	width:20px;
 	margin-top: 7px;
-	margin-left: 5px;
+	margin-left: 15px;
 	cursor: pointer;
 }
 
@@ -580,15 +590,15 @@ a:hover { color: #000;}
 }
 
 .deleteQuickReply{
-	margin-top: 3px;
+	margin-top: 2px;
 	display:none;
+	cursor: pointer;
 }
 
 .quickreply:hover .deleteQuickReply, .quickreply .resizing-input{
 	float: left;
 	display:inline-block;
 	margin-right: 5px;
-	transition-delay: 2s;
 }
 
 /* --- EDITOR HIGHLIGHTING --- */
