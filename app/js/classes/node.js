@@ -18,12 +18,12 @@ var Node = function(NodeType, userInput)
 	if (NodeType == "root" || NodeType == undefined ) {
 		// this.index = ko.observable(globalRootNodeIndex++ + ' r');
 		this.index = globalRootNodeIndex++ + ' r';
-		this.colorID = ko.observable(1);
+		this.colorID = ko.observable(5);
 	}
 	if (NodeType == "fallback") {
 		// this.index = ko.observable(globalFallbackNodeIndex++ + ' f');
 		this.index = globalFallbackNodeIndex++ + ' f';
-		this.colorID = ko.observable(3);
+		this.colorID = ko.observable(5);
 	}
 
 	if (userInput != undefined ) {
@@ -54,6 +54,7 @@ var Node = function(NodeType, userInput)
 	this.selected = false;
 	this.childs = [];
 	this.fallback = "";
+	this.conditions = ko.observableArray([{content: ko.observable(""), op: ko.observable("")}]);
 
 	// clipped values for display
 	this.clippedQuickReplies = ko.computed(function()
@@ -254,6 +255,7 @@ var Node = function(NodeType, userInput)
 	{
 		var dragging = false;
 		var groupDragging = false;
+		var connect = false;
 
 		var offset = [0, 0];
 		var moved = false;
@@ -299,23 +301,41 @@ var Node = function(NodeType, userInput)
 				//app.refresh();
 				app.updateArrowsThrottled();
 			}
+			else if (connect) {
+
+				var newX = (e.pageX / self.getScale() - offset[0]);
+				var newY = (e.pageY / self.getScale() - offset[1]);
+				var movedX = newX - self.x();
+				var movedY = newY - self.y();
+				console.log(movedX,movedY);
+				//TODO Allow to push the node to the childs
+			}
 		});
 
 		$(self.element).on("mousedown", function (e)
 		{
 			if (!dragging && self.active())
 			{
-				var parent = $(self.element).parent();
+				if (!e.ctrlKey) {
+					var parent = $(self.element).parent();
 
-				dragging = true;
+					dragging = true;
 
-				if (app.shifted || self.selected)
-				{
-					groupDragging = true;
+					if (app.shifted || self.selected)
+					{
+						groupDragging = true;
+					}
+
+					offset[0] = (e.pageX / self.getScale() - self.x());
+					offset[1] = (e.pageY / self.getScale() - self.y());
 				}
+				else {
+					connect = true;
 
-				offset[0] = (e.pageX / self.getScale() - self.x());
-				offset[1] = (e.pageY / self.getScale() - self.y());
+					offset[0] = (e.pageX / self.getScale() - self.x());
+					offset[1] = (e.pageY / self.getScale() - self.y());
+
+				}
 			}
 		});
 

@@ -4,9 +4,11 @@ var App = function(name, version)
 
 	// self
 	this.instance = this;
+	this.operators = ['And', 'Or']
 	this.name = ko.observable(name);
 	this.version = ko.observable(version);
 	this.editing = ko.observable(null);
+	this.advediting = ko.observable(null);
 	this.deleting = ko.observable(null);
 	this.nodes = ko.observableArray([]);
 	this.cachedScale = 1;
@@ -62,7 +64,7 @@ var App = function(name, version)
 
 		self.canvas = $(".arrows")[0];
 		self.context = self.canvas.getContext('2d');
-		self.newRootNode().title("Start");
+		self.newRootNode().title("Get Started");
 
 		if (osName != "Windows" && osName != "Linux" && self.gui != undefined)
 		{
@@ -371,7 +373,7 @@ var App = function(name, version)
 		});
 
 		$(document).on('keydown', function(e) {
-			if (self.editing() || self.$searchField.is(':focus')) return;
+			if (self.editing() || self.$searchField.is(':focus') || self.advediting()) return;
 
 			var scale = self.cachedScale || 1,
 				movement = scale * 500;
@@ -771,9 +773,71 @@ var App = function(name, version)
 			$(".node-editor").css({ opacity: 0.8 }).transition({ opacity: 1 }, 400);
 			$(".node-editor .form").css({ x: "400" }).transition({ x: "0" }, 400);
 
+
+
 			//enable_spellcheck();
 			contents_modified = true;
 			//spell_check();
+		}
+	}
+
+	this.saveNode = function()
+	{
+		if (self.editing() != null)
+		{
+			self.updateNodeLinks();
+			self.editing().title(self.trim(self.editing().title()));
+
+
+			$(".node-editor").transition({ opacity: 0.8 }, 400);
+			$(".node-editor .form").transition({ x: "500" }, 400, function()
+			{
+				self.editing(null);
+			});
+
+			setTimeout(self.updateSearch, 100);
+		}
+	}
+
+	this.editNodeAdv = function(node)
+	{
+		if (node.active())
+		{
+			self.advediting(node);
+
+			$(".adv-node-editor").css({ opacity: 0.8 }).transition({ opacity: 1 }, 400);
+			$(".adv-node-editor .form").css({ x: "-400" }).transition({ x: "0" }, 400);
+
+
+			//enable_spellcheck();
+			contents_modified = true;
+			//spell_check();
+		}
+	}
+
+	this.saveNodeAdv = function()
+	{
+		if (self.advediting() != null)
+		{
+			if (self.advediting().conditions()[0].content().length != "") {
+				self.advediting().colorID(1);
+			}
+
+			$(".adv-node-editor").transition({ opacity: 0.8 }, 400);
+			$(".adv-node-editor .form").transition({ x: "-400" }, 400, function()
+			{
+				self.advediting(null);
+			});
+
+			setTimeout(self.updateSearch, 100);
+		}
+	}
+
+	this.addCondition = function(){
+		if (self.advediting() != null)
+		{
+			console.log(self.advediting().conditions());
+			self.advediting().conditions.push({'name': ko.observable("New Condition"), 'operator': ko.observable("And")});
 		}
 	}
 
@@ -824,24 +888,6 @@ var App = function(name, version)
 		if (self.editing() != null)
 		{
 			self.editing().body.remove(function (BotAnswer) { return BotAnswer.id == Bot_Answer_name })
-		}
-	}
-
-	this.saveNode = function()
-	{
-		if (self.editing() != null)
-		{
-			self.updateNodeLinks();
-			self.editing().title(self.trim(self.editing().title()));
-
-
-			$(".node-editor").transition({ opacity: 0.8 }, 400);
-			$(".node-editor .form").transition({ x: "500" }, 400, function()
-			{
-				self.editing(null);
-			});
-
-			setTimeout(self.updateSearch, 100);
 		}
 	}
 

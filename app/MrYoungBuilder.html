@@ -11,12 +11,8 @@
 		<script type="text/javascript" src="js/libs/jquery.mousewheel.min.js"></script>
 		<script type="text/javascript" src="js/libs/transit.js"></script>
 		<script type="text/javascript" src="js/libs/knockout-3.3.0.js"></script>
-		<!-- <script type="text/javascript" src="js/libs/knockout.ace.js"></script> -->
-		<!-- <script type="text/javascript" src="js/libs/ace.js"></script> -->
 		<script type="text/javascript" src="js/libs/typo.js"></script>
 		<script type="text/javascript" src="js/libs/spellcheck_ace.js"></script>
-		<!-- <script type="text/javascript" src="js/libs/theme-yarn.js"></script> -->
-		<!-- <script type="text/javascript" src="js/libs/mode-yarn.js"></script> -->
 
 		<!-- various models / classes -->
 		<script type="text/javascript" src="js/classes/app.js"></script>
@@ -90,7 +86,7 @@
 						<span class="item" data-bind="click: function() { data.trySave(FILETYPE.TWEE); }">Save As Twee...</span>
 						<span class="item" data-bind="click: function() { data.trySave(FILETYPE.TWEE2); }">Save As Twee2...</span>
 						<span class="item" data-bind="click: function() { data.trySave(FILETYPE.XML); }">Save As Xml...</span> -->
-						<!--<span class="item" data-bind="click: app.quit">Close</span>-->
+						<!-- <span class="item" data-bind="click: app.quit">Close</span> -->
 					</div>
 				</div>
 			</div>
@@ -113,21 +109,19 @@
 						node.colorID() == 5 ? '#C47862' :
 						node.colorID() == 6 ? '#97E1E9' :
 						'#eee'}"></div>
-						<!-- <div class="body" data-bind="html: node.clippedBody"></div> -->
 						<div class="body" data-bind="html: node.clippedBody"></div>
 						<div class="quickreplies" data-bind="html: node.clippedQuickReplies"></div>
 						<div class="icon colorDown" data-bind="click: node.cycleColorDown"></div>
 						<div class="icon colorUp" data-bind="click: node.cycleColorUp"></div>
-						<!--<div class="icon edit" data-bind="click: function() { app.editNode(node); }"></div>-->
+						<div class="icon edit" data-bind="click: function() { app.editNodeAdv(node); }"></div>
 						<div class="icon delete" data-bind="click: node.tryRemove"></div>
-						<!--<div class="resize" data-bind="click:node.toggleExpand"></div>-->
+						<!-- <div class="resize" data-bind="click:node.toggleExpand"></div> -->
 					</div>
 				</div>
 			</div>
 
 			<!-- ko if:app.editing() != null -->
 			<div class="node-editor" data-bind="mousedown:app.saveNode">
-
 				<div class="form" data-bind="preventBubble: 'click', preventBubble: 'mousedown'">
 					<div class="title">
 						<div class="resizing-input" contentEditable="true" data-bind="editableText: app.editing().title"></div>
@@ -141,7 +135,7 @@
 						</div>
 					</div>
 					<div class="AddBotAnswer" data-bind="click: app.addBotAnswer">
-						<img src="./images/plus.png" alt="Add User Input" height="20" width="20" >
+						<img src="./images/plus.png" alt="Add Bot Answer" height="20" width="20" >
 					</div>
 					<div class="icon close" data-bind="click:app.saveNode"></div>
 					<div class="quickreplies-area">
@@ -159,7 +153,21 @@
 						</div>
 					</div>
 				</div>
+			</div>
+			<!-- /ko -->
 
+			<!-- ko if:app.advediting() != null-->
+			<div class="adv-node-editor" data-bind="mousedown:app.saveNodeAdv">
+				<div class="form" data-bind="preventBubble: 'click', preventBubble: 'mousedown'">
+					<div class="conditions" data-bind="foreach: app.advediting().conditions">
+						<input type="content" data-bind="value: $data.content"/>
+						<select name="operator" data-bind="options: app.operators, value: $data.op"></select>
+					</div>
+					<div class="addCondition" data-bind="click: app.addCondition">
+						<img src="./images/plus.png" alt="Add Condition" height="20" width="20">
+					</div>
+					<div class="icon close" data-bind="click: app.saveNodeAdv"></div>
+				</div>
 			</div>
 			<!-- /ko -->
 

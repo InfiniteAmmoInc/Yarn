@@ -540,13 +540,16 @@ a:hover { color: #000;}
 .node-editor .form .quickreplies-area
 {
 	position: absolute;
+	width: 400px;
 	bottom: 20px;
 	padding: 5px;
+	overflow: auto;
+	height: 90px;
 }
 
 .node-editor .form .line{
 	position: relative;
-	width: 400px;
+	width: auto;
 	margin-left: auto;
 	margin-right: auto;
 	margin-bottom: 15px;
@@ -599,6 +602,45 @@ a:hover { color: #000;}
 	float: left;
 	display:inline-block;
 	margin-right: 5px;
+}
+
+/* ---ADVANCED NODE EDITOR --- */
+
+.adv-node-editor
+{
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	z-index: 200;
+	background: rgba(0, 0, 0, 0.5);
+}
+
+.adv-node-editor .form
+{
+	position: relative;
+	box-sizing: border-box;
+	left: 0%;
+	top: 0%;
+	margin-right: 550px;
+	width: auto;
+	height: 100%;
+	padding: 40px;
+	background: #fff;
+	border-bottom-right-radius: 8px;
+	border-top-right-radius: 8px;
+	box-shadow: 1px #000;
+}
+
+.adv-node-editor .addCondition {
+	cursor:pointer;
+}
+
+.adv-node-editor .form .close
+{
+	position: absolute;
+	right: 8px;
+	top: 8px;
+	background-position: -64px 0px;
 }
 
 /* --- EDITOR HIGHLIGHTING --- */

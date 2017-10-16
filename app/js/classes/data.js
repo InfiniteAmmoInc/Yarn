@@ -168,6 +168,8 @@ var data =
 						}
 					}
 				}
+			if (object.conditions != undefined)
+				app.editing().conditions(object.conditions);
 			if (object.position != undefined && object.position.x != undefined)
 			{
 				app.editing().x(object.position.x);
@@ -257,9 +259,10 @@ var data =
 	{
 		var content = [];
 		var output = [];
-		var childs_indexes =[];
-		var body =[];
-		var quickreplies =[];
+		var childs_indexes = [];
+		var body = [];
+		var quickreplies = [];
+		var conditions = [];
 
 		for (let i = 0; i < node.body().length; i++) {
 			body.push(node.body()[i].id());
@@ -294,6 +297,28 @@ var data =
 
 		for (let i = 0; i < node.childs.length; i++) {
 			 childs_indexes.push(node.childs[i].index);
+		}
+
+		for (let i = 0; i < node.conditions().length; i++) {
+			while ( node.conditions().op() == "And" && i < node.conditions().length) {
+				if (node.conditions()[i].content()[0] == '#') {
+					var intent = node.conditions()[i].content().slice(0,1);
+				}
+				if (node.conditions()[i].content()[0] == '@') {
+					entities.push(node.conditions()[i].content().slice(0,1));
+				}
+				i++;
+			}
+			if (node.conditions()[i].content()[0] == '#') {
+				var intent = node.conditions()[i].content().slice(0,1);
+			}
+			if (node.conditions()[i].content()[0] == '@') {
+				entities.push(node.conditions()[i].content().slice(0,1));
+			}
+		}
+
+		for (let i = 0; i <body.length; i++) {
+			output.push({"type":"0", "content": body[i]});
 		}
 
 		content.push({
