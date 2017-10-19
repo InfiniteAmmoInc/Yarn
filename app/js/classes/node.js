@@ -1,6 +1,3 @@
-var globalRootNodeIndex = 0;
-var globalChildNodeIndex = 0;
-var globalFallbackNodeIndex = 0;
 const NodeExpandWidth = 300;
 const NodeExpandHeight = 150;
 const ClipNodeTextLength = 1024;
@@ -10,19 +7,22 @@ var Node = function(NodeType, userInput)
 	var self = this;
 
 	// primary values
-	if (NodeType == "child") {
-		// this.index = ko.observable(globalChildNodeIndex++ + ' c');
-		this.index = globalChildNodeIndex++ + ' c';
+	if (NodeType == "root" || NodeType == undefined ) {
+		this.index = app.globalRootNodeIndexes()[app.globalRootNodeIndexes().length -1];
+		app.globalRootNodeIndexes.push(ko.observable(parseInt(this.index()) + 1 + ' r'))
+		// this.index = app.globalRootNodeIndex++ + ' r';
 		this.colorID = ko.observable(1);
 	}
-	if (NodeType == "root" || NodeType == undefined ) {
-		// this.index = ko.observable(globalRootNodeIndex++ + ' r');
-		this.index = globalRootNodeIndex++ + ' r';
+	if (NodeType == "child") {
+		this.index = app.globalChildNodeIndexes()[app.globalChildNodeIndexes().length -1];
+		app.globalChildNodeIndexes.push(ko.observable(parseInt(this.index()) + 1 + ' c'))
+		// this.index = app.globalChildNodeIndex++ + ' c';
 		this.colorID = ko.observable(1);
 	}
 	if (NodeType == "fallback") {
-		// this.index = ko.observable(globalFallbackNodeIndex++ + ' f');
-		this.index = globalFallbackNodeIndex++ + ' f';
+		this.index = app.globalFallbackNodeIndexes()[app.globalFallbackNodeIndexes().length -1];
+		app.globalFallbackNodeIndexes.push(ko.observable(parseInt(this.index()) + 1 + ' f'))
+		// this.index = globalFallbackNodeIndex++ + ' f';
 		this.colorID = ko.observable(3);
 	}
 
@@ -35,7 +35,7 @@ var Node = function(NodeType, userInput)
 		}
 	}
 	else {
-		this.title = ko.observable("Node " + this.index);
+		this.title = ko.observable("Node " + this.index());
 	}
 
 	this.quickreplies = ko.observableArray();
@@ -403,11 +403,11 @@ var Node = function(NodeType, userInput)
 
 		// find all the links
 		for (var i = 0; i < self.childs().length; i++) {
-			links.push(self.childs()[i].index)
+			links.push(self.childs()[i].index())
 		}
 
 		if (self.fallback() != undefined && self.fallback() != "") {
-			links.push(self.fallback().index);
+			links.push(self.fallback().index());
 		}
 
 
@@ -418,8 +418,8 @@ var Node = function(NodeType, userInput)
 			{
 				links[i] = links[i].toLowerCase();
 
-				// if (exists[links[i]] != undefined)
-				// 	links.splice(i, 1);
+				if (exists[links[i]] != undefined)
+					links.splice(i, 1);
 
 				exists[links[i]] = true;
 			}
@@ -429,7 +429,7 @@ var Node = function(NodeType, userInput)
 			{
 				var other = app.nodes()[index];
 				for (var i = 0; i < links.length; i ++)
-					if (other != self && other.index.toLowerCase() == links[i])
+					if (other != self && other.index().toLowerCase() == links[i])
 						self.linkedTo.push(other);
 			}
 		}

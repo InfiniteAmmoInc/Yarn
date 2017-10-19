@@ -3,6 +3,7 @@
 	<head>
 		<meta charset="utf-8">
 		<title>MrYoung Builder</title>
+		<link rel="icon" href="images/MrYoungBuilder.ico">
 		<link rel="stylesheet" href="css/normalize.css">
 		<link rel="stylesheet" href="css/style.css">
 
@@ -27,6 +28,8 @@
 
 		<!-- Entry Point / Container -->
 		<div id="app">
+
+
 
 			<!-- search form -->
 			<div class="app-search">
@@ -113,7 +116,7 @@
 						<div class="quickreplies" data-bind="html: node.clippedQuickReplies"></div>
 						<div class="icon colorDown" data-bind="click: node.cycleColorDown"></div>
 						<div class="icon colorUp" data-bind="click: node.cycleColorUp"></div>
-						<div class="icon edit" data-bind="click: function() { app.editNodeAdv(node); }"></div>
+						<!-- <div class="icon edit" data-bind="click: function() { app.editNodeAdv(node); }"></div> -->
 						<div class="icon delete" data-bind="click: node.tryRemove"></div>
 						<!-- <div class="resize" data-bind="click:node.toggleExpand"></div> -->
 					</div>
@@ -214,7 +217,7 @@
 
 		<!-- start it all up! -->
 		<script type="text/javascript">
-			var app = new App("MrYoung Builder", "1.0");
+			var app = new App("MrYoung Builder", "1.1");
 			app.run();
 		</script>
 

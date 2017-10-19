@@ -214,6 +214,7 @@ var data =
 
 			while (node_infos[node_infos.length -1].childs.length > 0) {
 				child_node_index.push(parseInt(node_infos[node_infos.length -1].childs[node_infos[node_infos.length -1].childs.length - 1]));
+				console.log(child_nodes);
 				node_infos.push(child_nodes[child_node_index[child_node_index.length -1]][0]);
 				arguments.callee("child");
 				child_node_index = child_node_index.slice(0, -1);
@@ -299,11 +300,11 @@ var data =
 		}
 
 		for (let i = 0; i < node.childs().length; i++) {
-			 childs_indexes.push(node.childs()[i].index);
+			 childs_indexes.push(node.childs()[i].index());
 		}
 
 		if (node.fallback() != "") {
-			fallback_index = node.fallback().index;
+			fallback_index = node.fallback().index();
 		}
 
 		for (let i = 0; i < node.conditions().length; i++) {
@@ -329,7 +330,7 @@ var data =
 		}
 
 		content.push({
-			"id": node.index,
+			"id": node.index(),
 			"uuid":"",
 			"intent_name": intent,
 			"conditions": conditions,
@@ -357,16 +358,16 @@ var data =
 			var node = nodes[i];
 
 			// If node is a root node
-			if (node.index[node.index.length -1] == "r") {
+			if (node.index()[node.index().length -1] == "r") {
 				let nodedata = data.filterNodeData(node);
 				content.root_nodes.push(nodedata);
 				}
 			// If node is a child node
-			if (node.index[node.index.length -1] == "c") {
+			if (node.index()[node.index().length -1] == "c") {
 				let nodedata = data.filterNodeData(node);
 				content.child_nodes.push(nodedata);
 				}
-			if (node.index[node.index.length -1] == "f") {
+			if (node.index()[node.index().length -1] == "f") {
 				let nodedata = data.filterNodeData(node);
 				content.fallback_nodes.push(nodedata);
 				}

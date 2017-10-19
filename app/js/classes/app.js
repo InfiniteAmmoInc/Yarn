@@ -3,6 +3,9 @@ var App = function(name, version)
 	var self = this;
 
 	// self
+	this.globalRootNodeIndexes = ko.observableArray([ko.observable("0 r")]);
+	this.globalChildNodeIndexes =  ko.observableArray([ko.observable("0 c")]);
+	this.globalFallbackNodeIndexes =  ko.observableArray([ko.observable("0 f")]);
 	this.instance = this;
 	this.operators = ['And', 'Or']
 	this.name = ko.observable(name);
@@ -671,9 +674,9 @@ var App = function(name, version)
 				if (childs.length == 0 || childsTitles != undefined) {
 					let childNode = new Node("child", userInput);
 					childNode.parent = selectedNodes[0];
-					let selectedNodeIndex = selectedNodes[0].index;
+					let selectedNodeIndex = selectedNodes[0].index();
 					for (var i = 0; i < self.nodes().length; i++) {
-						if (self.nodes()[i].index == selectedNodeIndex) {
+						if (self.nodes()[i].index() == selectedNodeIndex) {
 							self.nodes()[i].childs.push(childNode);
 							break;
 						}
@@ -708,9 +711,9 @@ var App = function(name, version)
 				if (selectedNodes[0].fallback() == "") {
 					let fallbackNode = new Node("fallback");
 					fallbackNode.parent = selectedNodes[0];
-					let selectedNodeIndex = selectedNodes[0].index;
+					let selectedNodeIndex = selectedNodes[0].index();
 					for (var i = 0; i < self.nodes().length; i++) {
-						if (self.nodes()[i].index == selectedNodeIndex) {
+						if (self.nodes()[i].index() == selectedNodeIndex) {
 							self.nodes()[i].fallback(fallbackNode);
 							break;
 						}
@@ -755,12 +758,25 @@ var App = function(name, version)
 			self.recordNodeAction("removed", node);
 			self.nodes.splice(index, 1);
 			if (node.parent != undefined) {
-				if (node.index[node.index.length -1] == "c") {
-					node.parent.childs.remove(node, 1);
+				if (node.index()[node.index().length -1] == "c") {
+					node.parent.childs.remove(node);
+					for (let i = index; i < self.globalChildNodeIndexes().length - 1; i++) {
+						self.globalChildNodeIndexes()[i](i - 1 + ' c');
+						console.log(self.globalChildNodeIndexes()[i]());
+					}
 				}
-				if (node.index[node.index.length -1] == "f") {
+				if (node.index()[node.index().length -1] == "f") {
 					node.parent.fallback("");
-					console.log(app.nodes()[0].fallback());
+					for (let i = index; i < self.globalFallbackNodeIndexes().length - 1; i++) {
+						self.globalFallbackNodeIndexes()[i](i - 1 + ' f');
+						console.log(self.globalFallbackNodeIndexes()[i]());
+					}
+				}
+			}
+			if (node.index()[node.index().length -1] == "r") {
+				for (let i = index; i < self.globalRootNodeIndexes().length - 1; i++) {
+					self.globalRootNodeIndexes()[i](i - 1 + ' r');
+					console.log(self.globalRootNodeIndexes()[i]());
 				}
 			}
 		}
