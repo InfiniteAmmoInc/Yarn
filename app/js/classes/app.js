@@ -630,18 +630,6 @@ var App = function(name, version)
 		}
 	}
 
-	// this.newNode = function(updateArrows)
-	// {
-	// 	var node = new Node();
-	// 	self.nodes.push(node);
-	// 	if (updateArrows == undefined || updateArrows == true)
-	// 		self.updateNodeLinks();
-	//
-	// 	self.recordNodeAction("created", node);
-	//
-	// 	return node;
-	// }
-
 	this.newRootNode = function(updateArrows)
 	{
 		var node = new Node("root");
@@ -665,8 +653,11 @@ var App = function(name, version)
 			alert("Too many nodes selected");
 		else
 			{
-				let childs = selectedNodes[0].childs;
-				if (childs.length > 0) {
+				let childs = selectedNodes[0].childs();
+				let y = selectedNodes[0].y();
+				if (childs.length > 0) { // IF selected Node as childs :
+					let lastChildNode = selectedNodes[0].childs()[selectedNodes[0].childs().length -1];
+					y = lastChildNode.y() + 300;
 					childsTitles =[];
 					for (var i = 0; i < childs.length; i++) {
 						childsTitles.push(childs[i].title());
@@ -687,6 +678,8 @@ var App = function(name, version)
 						}
 					}
 					self.nodes.push(childNode);
+					childNode.x(selectedNodes[0].x()+300);
+					childNode.y(y);
 					self.updateNodeLinks();
 					self.recordNodeAction("created", childNode);
 
