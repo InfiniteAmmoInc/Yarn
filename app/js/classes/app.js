@@ -753,6 +753,15 @@ var App = function(name, version)
 		{
 			self.recordNodeAction("removed", node);
 			self.nodes.splice(index, 1);
+			if (node.parent != undefined) {
+				if (node.index[node.index.length -1] == "c") {
+					node.parent.childs.remove(node, 1);
+				}
+				if (node.index[node.index.length -1] == "f") {
+					node.parent.fallback("");
+					console.log(app.nodes()[0].fallback());
+				}
+			}
 		}
 		self.updateNodeLinks();
 	}
