@@ -18,12 +18,12 @@ var Node = function(NodeType, userInput)
 	if (NodeType == "root" || NodeType == undefined ) {
 		// this.index = ko.observable(globalRootNodeIndex++ + ' r');
 		this.index = globalRootNodeIndex++ + ' r';
-		this.colorID = ko.observable(5);
+		this.colorID = ko.observable(1);
 	}
 	if (NodeType == "fallback") {
 		// this.index = ko.observable(globalFallbackNodeIndex++ + ' f');
 		this.index = globalFallbackNodeIndex++ + ' f';
-		this.colorID = ko.observable(5);
+		this.colorID = ko.observable(3);
 	}
 
 	if (userInput != undefined ) {
@@ -35,8 +35,6 @@ var Node = function(NodeType, userInput)
 		}
 	}
 	else {
-		console.log(userInput);
-		console.log(this.index);
 		this.title = ko.observable("Node " + this.index);
 	}
 
@@ -52,8 +50,8 @@ var Node = function(NodeType, userInput)
 	// this.colorID = ko.observable(0);
 	this.checked = false;
 	this.selected = false;
-	this.childs = [];
-	this.fallback = "";
+	this.childs = ko.observableArray([]);
+	this.fallback = ko.observable("");
 	this.conditions = ko.observableArray([{content: ko.observable(""), op: ko.observable("")}]);
 
 	// clipped values for display
@@ -404,12 +402,12 @@ var Node = function(NodeType, userInput)
 		var links = [];
 
 		// find all the links
-		for (var i = 0; i < self.childs.length; i++) {
-			links.push(self.childs[i].index)
+		for (var i = 0; i < self.childs().length; i++) {
+			links.push(self.childs()[i].index)
 		}
 
-		if (self.fallback != undefined && self.fallback != "") {
-			links.push(self.fallback.index);
+		if (self.fallback() != undefined && self.fallback() != "") {
+			links.push(self.fallback().index);
 		}
 
 

@@ -625,6 +625,7 @@ var App = function(name, version)
 		var nodes = self.getSelectedNodes();
 		for(var i in nodes)
 		{
+			console.log(nodes);
 			self.removeNodeSelection(nodes[i]);
 			nodes[i].remove();
 		}
@@ -669,7 +670,7 @@ var App = function(name, version)
 				}
 				if (childs.length == 0 || childsTitles != undefined) {
 					let childNode = new Node("child", userInput);
-					childNode.parent = selectedNodes[0].index;
+					childNode.parent = selectedNodes[0];
 					let selectedNodeIndex = selectedNodes[0].index;
 					for (var i = 0; i < self.nodes().length; i++) {
 						if (self.nodes()[i].index == selectedNodeIndex) {
@@ -704,13 +705,13 @@ var App = function(name, version)
 			alert("Too many nodes selected");
 		else
 			{
-				if (selectedNodes[0].fallback == "") {
+				if (selectedNodes[0].fallback() == "") {
 					let fallbackNode = new Node("fallback");
-					fallbackNode.parent = selectedNodes[0].index;
+					fallbackNode.parent = selectedNodes[0];
 					let selectedNodeIndex = selectedNodes[0].index;
 					for (var i = 0; i < self.nodes().length; i++) {
 						if (self.nodes()[i].index == selectedNodeIndex) {
-							self.nodes()[i].fallback = fallbackNode;
+							self.nodes()[i].fallback(fallbackNode);
 							break;
 						}
 					}
@@ -838,8 +839,7 @@ var App = function(name, version)
 	this.addCondition = function(){
 		if (self.advediting() != null)
 		{
-			console.log(self.advediting().conditions());
-			self.advediting().conditions.push({'name': ko.observable("New Condition"), 'operator': ko.observable("And")});
+			self.advediting().conditions.push({content: ko.observable(""), op: ko.observable("And")});
 		}
 	}
 

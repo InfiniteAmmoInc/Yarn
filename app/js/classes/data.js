@@ -169,6 +169,7 @@ var data =
 					}
 				}
 			if (object.conditions != undefined)
+				//TODO Add conditions from JSON
 				app.editing().conditions(object.conditions);
 			if (object.position != undefined && object.position.x != undefined)
 			{
@@ -263,6 +264,8 @@ var data =
 		var body = [];
 		var quickreplies = [];
 		var conditions = [];
+		var entities = [];
+		var fallback_index = "";
 
 		for (let i = 0; i < node.body().length; i++) {
 			body.push(node.body()[i].id());
@@ -295,25 +298,29 @@ var data =
 			});
 		}
 
-		for (let i = 0; i < node.childs.length; i++) {
-			 childs_indexes.push(node.childs[i].index);
+		for (let i = 0; i < node.childs().length; i++) {
+			 childs_indexes.push(node.childs()[i].index);
+		}
+
+		if (node.fallback() != "") {
+			fallback_index = node.fallback().index;
 		}
 
 		for (let i = 0; i < node.conditions().length; i++) {
-			while ( node.conditions().op() == "And" && i < node.conditions().length) {
+			if (node.conditions()[i].op() == "And") {
 				if (node.conditions()[i].content()[0] == '#') {
-					var intent = node.conditions()[i].content().slice(0,1);
+					var intent = node.conditions()[i].content().slice(1);
 				}
 				if (node.conditions()[i].content()[0] == '@') {
-					entities.push(node.conditions()[i].content().slice(0,1));
+					entities.push(node.conditions()[i].content().slice(1));
 				}
-				i++;
 			}
-			if (node.conditions()[i].content()[0] == '#') {
-				var intent = node.conditions()[i].content().slice(0,1);
-			}
-			if (node.conditions()[i].content()[0] == '@') {
-				entities.push(node.conditions()[i].content().slice(0,1));
+			if (node.conditions()[i].op() == "Or"  && node.conditions()[i+1] != undefined || i == node.conditions().length - 1) {
+				if (node.conditions()[i].content()[0] == '@') {
+					entities.push(node.conditions()[i].content().slice(1));
+				}
+				conditions.push({intent:intent, entities:entities});
+				entities = [];
 			}
 		}
 
@@ -324,10 +331,10 @@ var data =
 		content.push({
 			"id": node.index,
 			"uuid":"",
-			"intent_name": "",
-			"parent_node": "",
+			"intent_name": intent,
+			"conditions": conditions,
 			"childs": childs_indexes,
-			"fallback": node.fallback.index,
+			"fallback": fallback_index,
 			"output": output,
 			"title": node.title(),
 			"position": { "x": node.x(), "y": node.y() },
@@ -345,8 +352,6 @@ var data =
 			child_nodes: [],
 			fallback_nodes: []
 		};
-
-		console.log(app.nodes());
 
 		for (var i = 0; i < nodes.length; i++) {
 			var node = nodes[i];
