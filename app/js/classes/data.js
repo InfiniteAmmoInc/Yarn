@@ -58,7 +58,7 @@ var data =
 	{
 		data.readFile(e, filename, true);
 
-		app.refreshWindowTitle(filename);
+		// app.refreshWindowTitle(filename);
 	},
 
 	openFolder: function(e, foldername)
@@ -185,9 +185,13 @@ var data =
 						}
 					}
 				}
-			if (object.conditions != undefined)
+			if (object.conditions != undefined) {
 				//TODO Add conditions from JSON
-				app.editing().conditions(object.conditions);
+					console.log(object.conditions[0].intent);
+					console.log(app.editing().conditions()[0].content());
+					app.editing().conditions()[0].content('#'+object.conditions[0].intent);
+					console.log(app.editing().conditions()[0].content());
+			}
 			if (object.position != undefined && object.position.x != undefined)
 			{
 				app.editing().x(object.position.x);
@@ -323,23 +327,26 @@ var data =
 			fallback_index = node.fallback().index();
 		}
 
-		// for (let i = 0; i < node.conditions().length; i++) {
-		// 	if (node.conditions()[i].op() == "And") {
-		// 		if (node.conditions()[i].content()[0] == '#') {
-		// 			var intent = node.conditions()[i].content().slice(1);
-		// 		}
-		// 		if (node.conditions()[i].content()[0] == '@') {
-		// 			entities.push(node.conditions()[i].content().slice(1));
-		// 		}
-		// 	}
-		// 	if (node.conditions()[i].op() == "Or"  && node.conditions()[i+1] != undefined || i == node.conditions().length - 1) {
-		// 		if (node.conditions()[i].content()[0] == '@') {
-		// 			entities.push(node.conditions()[i].content().slice(1));
-		// 		}
-		// 		conditions.push({intent:intent, entities:entities});
-		// 		entities = [];
-		// 	}
-		// }
+		for (let i = 0; i < node.conditions().length; i++) {
+			if (node.conditions()[i].op() == "And") {
+				if (node.conditions()[i].content()[0] == '#') {
+					var intent = node.conditions()[i].content().slice(1);
+				}
+				if (node.conditions()[i].content()[0] == '@') {
+					entities.push(node.conditions()[i].content().slice(1));
+				}
+			}
+			if (node.conditions()[i].op() == "Or"  && node.conditions()[i+1] != undefined || i == node.conditions().length - 1) {
+				if (node.conditions()[i].content()[0] == '#') {
+					var intent = node.conditions()[i].content().slice(1);
+				}
+				if (node.conditions()[i].content()[0] == '@') {
+					entities.push(node.conditions()[i].content().slice(1));
+				}
+				conditions.push({intent:intent, entities:entities});
+				entities = [];
+			}
+		}
 
 		content.push({
 			"id": node.index(),
@@ -455,7 +462,7 @@ var data =
 			data.openFileDialog(dialog, function(e, path)
 			{
 				data.saveTo(path, content);
-				app.refreshWindowTitle(path);
+				// app.refreshWindowTitle(path);
 			});
 		}
 		else

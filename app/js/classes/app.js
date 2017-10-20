@@ -68,6 +68,7 @@ var App = function(name, version)
 		self.canvas = $(".arrows")[0];
 		self.context = self.canvas.getContext('2d');
 		self.newRootNode().title("Get Started");
+		self.nodes()[0].conditions()[0].content("#Get Started");
 
 		if (osName != "Windows" && osName != "Linux" && self.gui != undefined)
 		{
