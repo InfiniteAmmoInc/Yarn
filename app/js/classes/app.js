@@ -682,8 +682,10 @@ var App = function(name, version)
 						}
 					}
 					self.nodes.push(childNode);
-					childNode.x(selectedNodes[0].x()+300);
-					childNode.y(y);
+					if (!new_position) {
+						childNode.x(selectedNodes[0].x()+250);
+						childNode.y(y);
+					}
 					self.updateNodeLinks();
 					self.recordNodeAction("created", childNode);
 

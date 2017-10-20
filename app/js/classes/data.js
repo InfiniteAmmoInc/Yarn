@@ -115,6 +115,10 @@ var data =
 		if (clearNodes)
 			app.nodes.removeAll();
 
+		app.globalRootNodeIndexes = ko.observableArray([ko.observable("0 r")]);
+		app.globalChildNodeIndexes =  ko.observableArray([ko.observable("0 c")]);
+		app.globalFallbackNodeIndexes =  ko.observableArray([ko.observable("0 f")]);
+
 		var root_nodes = [];
 		var fallback_nodes = [];
 		var child_nodes = [];
@@ -155,6 +159,19 @@ var data =
 			app.editing(node);
 			if (object.title != undefined)
 				app.editing().title(object.title);
+			if (object.id != undefined)
+				app.editing().index(object.id);
+				if (object.id[object.id.length -1] == ' r') {
+					app.globalRootNodeIndexes.push(app.editing().index())
+				}
+				if (object.id[object.id.length -1] == ' c') {
+					app.globalChildNodeIndexes.push(app.editing().index())
+				}
+				if (object.id[object.id.length -1] == ' f') {
+					app.globalFallbackNodeIndexes.push(app.editing().index())
+				}
+			if (object.uuid != undefined)
+				app.editing().uuid = object.uuid;
 			if (object.output != undefined)
 				for (var i = 0; i < object.output.length; i++) {
 					if (object.output[i].type == 0) {
@@ -199,13 +216,11 @@ var data =
 				new_node.push(app.newRootNode());
 			}
 			if (nodeType == "child") {
-				new_node.push(app.newChildNode());
+				new_node.push(app.newChildNode(undefined, true));
 			}
 			if (nodeType == "fallback") {
 				new_node.push(app.newFallbackNode());
 			}
-
-			// console.log(new_node);
 
 			app.deselectAllNodes();
 			app.addNodeSelected(new_node[new_node.length -1]);
@@ -214,7 +229,6 @@ var data =
 
 			while (node_infos[node_infos.length -1].childs.length > 0) {
 				child_node_index.push(parseInt(node_infos[node_infos.length -1].childs[node_infos[node_infos.length -1].childs.length - 1]));
-				console.log(child_nodes);
 				node_infos.push(child_nodes[child_node_index[child_node_index.length -1]][0]);
 				arguments.callee("child");
 				child_node_index = child_node_index.slice(0, -1);
@@ -244,6 +258,7 @@ var data =
 		{
 			node_infos.push(root_nodes[i][0]);
 			AddAllNodes("root");
+			app.nodes.sort(function(left,right){ return left.index() == right.index() ? 0 : (left.index() < right.index() ? -1 : 1)});
 		}
 
 		if (numAvg > 0)
@@ -267,6 +282,7 @@ var data =
 		var conditions = [];
 		var entities = [];
 		var fallback_index = "";
+		var intent = " ";
 
 		for (let i = 0; i < node.body().length; i++) {
 			body.push(node.body()[i].id());
@@ -307,31 +323,27 @@ var data =
 			fallback_index = node.fallback().index();
 		}
 
-		for (let i = 0; i < node.conditions().length; i++) {
-			if (node.conditions()[i].op() == "And") {
-				if (node.conditions()[i].content()[0] == '#') {
-					var intent = node.conditions()[i].content().slice(1);
-				}
-				if (node.conditions()[i].content()[0] == '@') {
-					entities.push(node.conditions()[i].content().slice(1));
-				}
-			}
-			if (node.conditions()[i].op() == "Or"  && node.conditions()[i+1] != undefined || i == node.conditions().length - 1) {
-				if (node.conditions()[i].content()[0] == '@') {
-					entities.push(node.conditions()[i].content().slice(1));
-				}
-				conditions.push({intent:intent, entities:entities});
-				entities = [];
-			}
-		}
-
-		for (let i = 0; i <body.length; i++) {
-			output.push({"type":"0", "content": body[i]});
-		}
+		// for (let i = 0; i < node.conditions().length; i++) {
+		// 	if (node.conditions()[i].op() == "And") {
+		// 		if (node.conditions()[i].content()[0] == '#') {
+		// 			var intent = node.conditions()[i].content().slice(1);
+		// 		}
+		// 		if (node.conditions()[i].content()[0] == '@') {
+		// 			entities.push(node.conditions()[i].content().slice(1));
+		// 		}
+		// 	}
+		// 	if (node.conditions()[i].op() == "Or"  && node.conditions()[i+1] != undefined || i == node.conditions().length - 1) {
+		// 		if (node.conditions()[i].content()[0] == '@') {
+		// 			entities.push(node.conditions()[i].content().slice(1));
+		// 		}
+		// 		conditions.push({intent:intent, entities:entities});
+		// 		entities = [];
+		// 	}
+		// }
 
 		content.push({
 			"id": node.index(),
-			"uuid":"",
+			"uuid": node.uuid,
 			"intent_name": intent,
 			"conditions": conditions,
 			"childs": childs_indexes,
