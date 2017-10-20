@@ -233,7 +233,7 @@ var data =
 
 			while (node_infos[node_infos.length -1].childs.length > 0) {
 				child_node_index.push(parseInt(node_infos[node_infos.length -1].childs[node_infos[node_infos.length -1].childs.length - 1]));
-				node_infos.push(child_nodes[child_node_index[child_node_index.length -1]][0]);
+				node_infos.push(child_nodes[child_node_index[child_node_index.length -1]]);
 				arguments.callee("child");
 				child_node_index = child_node_index.slice(0, -1);
 				node_infos[node_infos.length -1].childs = node_infos[node_infos.length -1].childs.slice(0, -1);
@@ -241,7 +241,7 @@ var data =
 
 			if (node_infos[node_infos.length -1].fallback) {
 					fallback_node_index.push(parseInt(node_infos[node_infos.length -1].fallback));
-					node_infos.push(fallback_nodes[fallback_node_index[fallback_node_index.length -1]][0]);
+					node_infos.push(fallback_nodes[fallback_node_index[fallback_node_index.length -1]]);
 					arguments.callee("fallback");
 					fallback_node_index.slice(0,-1);
 					node_infos[node_infos.length -1].fallback = node_infos[node_infos.length -1].fallback.slice(0, -1);
@@ -260,7 +260,7 @@ var data =
 
 		for (var i = 0; i < root_nodes.length; i ++)
 		{
-			node_infos.push(root_nodes[i][0]);
+			node_infos.push(root_nodes[i]);
 			AddAllNodes("root");
 			app.nodes.sort(function(left,right){ return left.index() == right.index() ? 0 : (left.index() < right.index() ? -1 : 1)});
 		}
@@ -379,16 +379,16 @@ var data =
 			// If node is a root node
 			if (node.index()[node.index().length -1] == "r") {
 				let nodedata = data.filterNodeData(node);
-				content.root_nodes.push(nodedata);
+				content.root_nodes.push(nodedata[0]);
 				}
 			// If node is a child node
 			if (node.index()[node.index().length -1] == "c") {
 				let nodedata = data.filterNodeData(node);
-				content.child_nodes.push(nodedata);
+				content.child_nodes.push(nodedata[0]);
 				}
 			if (node.index()[node.index().length -1] == "f") {
 				let nodedata = data.filterNodeData(node);
-				content.fallback_nodes.push(nodedata);
+				content.fallback_nodes.push(nodedata[0]);
 				}
 		};
 
