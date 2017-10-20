@@ -1,6 +1,15 @@
 const NodeExpandWidth = 300;
 const NodeExpandHeight = 150;
 const ClipNodeTextLength = 1024;
+function guid() {
+  function s4() {
+    return Math.floor((1 + Math.random()) * 0x10000)
+      .toString(16)
+      .substring(1);
+  }
+  return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+    s4() + '-' + s4() + s4() + s4();
+}
 
 var Node = function(NodeType, userInput)
 {
@@ -53,6 +62,7 @@ var Node = function(NodeType, userInput)
 	this.childs = ko.observableArray([]);
 	this.fallback = ko.observable("");
 	this.conditions = ko.observableArray([{content: ko.observable(""), op: ko.observable("")}]);
+	this.uuid = guid();
 
 	// clipped values for display
 	this.clippedQuickReplies = ko.computed(function()

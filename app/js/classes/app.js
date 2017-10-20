@@ -648,7 +648,7 @@ var App = function(name, version)
 		return node;
 	}
 
-	this.newChildNode = function(userInput)
+	this.newChildNode = function(userInput, new_position)
 	{
 		var selectedNodes = self.getSelectedNodes();
 		if (selectedNodes.length == 0)
@@ -659,9 +659,9 @@ var App = function(name, version)
 			{
 				let childs = selectedNodes[0].childs();
 				let y = selectedNodes[0].y();
-				if (childs.length > 0) { // IF selected Node as childs :
+				if (childs.length > 0) { // IF selected Node has childs :
 					let lastChildNode = selectedNodes[0].childs()[selectedNodes[0].childs().length -1];
-					y = lastChildNode.y() + 300;
+					y = lastChildNode.y() + 250;
 					childsTitles =[];
 					for (var i = 0; i < childs.length; i++) {
 						childsTitles.push(childs[i].title());
@@ -806,7 +806,7 @@ var App = function(name, version)
 		{
 			self.updateNodeLinks();
 			self.editing().title(self.trim(self.editing().title()));
-
+			self.editing().uuid = guid();
 
 			$(".node-editor").transition({ opacity: 0.8 }, 400);
 			$(".node-editor .form").transition({ x: "500" }, 400, function()
