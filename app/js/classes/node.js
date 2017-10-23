@@ -18,20 +18,17 @@ var Node = function(NodeType, userInput)
 	// primary values
 	if (NodeType == "root" || NodeType == undefined ) {
 		this.index = app.globalRootNodeIndexes()[app.globalRootNodeIndexes().length -1];
-		app.globalRootNodeIndexes.push(ko.observable(parseInt(this.index()) + 1 + ' r'))
-		// this.index = app.globalRootNodeIndex++ + ' r';
+		app.globalRootNodeIndexes.push(ko.observable(parseInt(this.index()) + 1 + ' r'));
 		this.colorID = ko.observable(1);
 	}
 	if (NodeType == "child") {
 		this.index = app.globalChildNodeIndexes()[app.globalChildNodeIndexes().length -1];
-		app.globalChildNodeIndexes.push(ko.observable(parseInt(this.index()) + 1 + ' c'))
-		// this.index = app.globalChildNodeIndex++ + ' c';
+		app.globalChildNodeIndexes.push(ko.observable(parseInt(this.index()) + 1 + ' c'));
 		this.colorID = ko.observable(1);
 	}
 	if (NodeType == "fallback") {
 		this.index = app.globalFallbackNodeIndexes()[app.globalFallbackNodeIndexes().length -1];
-		app.globalFallbackNodeIndexes.push(ko.observable(parseInt(this.index()) + 1 + ' f'))
-		// this.index = globalFallbackNodeIndex++ + ' f';
+		app.globalFallbackNodeIndexes.push(ko.observable(parseInt(this.index()) + 1 + ' f'));
 		this.colorID = ko.observable(3);
 	}
 
@@ -61,6 +58,7 @@ var Node = function(NodeType, userInput)
 	this.selected = false;
 	this.childs = ko.observableArray([]);
 	this.fallback = ko.observable("");
+  this.parents = ko.observableArray([]);
 	this.conditions = ko.observableArray([{content: ko.observable(""), op: ko.observable("")}]);
 	this.uuid = guid();
 
@@ -139,7 +137,13 @@ var Node = function(NodeType, userInput)
 		$(self.element).on("dblclick", function()
 		{
 			if (self.canDoubleClick)
-				app.editNode(self);
+        var adv_mode = $(".adv-mode input").is(':checked');
+        if (adv_mode) {
+          app.editNodeAdv(self);
+        }
+        else {
+          app.editNode(self);
+        }
 		});
 
 		$(self.element).on("click", function(e)
@@ -309,15 +313,6 @@ var Node = function(NodeType, userInput)
 				//app.refresh();
 				app.updateArrowsThrottled();
 			}
-			else if (connect) {
-
-				var newX = (e.pageX / self.getScale() - offset[0]);
-				var newY = (e.pageY / self.getScale() - offset[1]);
-				var movedX = newX - self.x();
-				var movedY = newY - self.y();
-				console.log(movedX,movedY);
-				//TODO Allow to push the node to the childs
-			}
 		});
 
 		$(self.element).on("mousedown", function (e)
@@ -338,11 +333,8 @@ var Node = function(NodeType, userInput)
 					offset[1] = (e.pageY / self.getScale() - self.y());
 				}
 				else {
-					connect = true;
-
-					offset[0] = (e.pageX / self.getScale() - self.x());
-					offset[1] = (e.pageY / self.getScale() - self.y());
-
+          app.NodeToConnect = self;
+					app.connect = true;
 				}
 			}
 		});
@@ -358,6 +350,23 @@ var Node = function(NodeType, userInput)
 			if (!moved)
 				app.mouseUpOnNodeNotMoved();
 
+      if (app.connect && app.NodeToConnect != self) {
+        if (self.index()[self.index().length -1] == 'c' && app.NodeToConnect.childs.indexOf(self) == -1) {
+          app.NodeToConnect.childs.push(self);
+          self.parents.push(app.NodeToConnect);
+          app.updateNodeLinks();
+        }
+        if (self.index()[self.index().length -1] == 'f') {
+          if (app.NodeToConnect.fallback() != "") {
+            app.removeNode(app.NodeToConnect.fallback());
+          }
+          app.NodeToConnect.fallback(self);
+          self.parents.push(app.NodeToConnect);
+          app.updateNodeLinks();
+        }
+      }
+
+      app.connect = false;
 			moved = false;
 		});
 
@@ -366,6 +375,11 @@ var Node = function(NodeType, userInput)
 			dragging = false;
 			groupDragging = false;
 			moved = false;
+
+      if (app.NodeToConnect != null) {
+        app.NodeToConnect = null;
+      }
+
 
 			app.updateArrowsThrottled();
 		});

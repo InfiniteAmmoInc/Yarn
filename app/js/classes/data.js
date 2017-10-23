@@ -119,6 +119,7 @@ var data =
 		app.globalChildNodeIndexes =  ko.observableArray([ko.observable("0 c")]);
 		app.globalFallbackNodeIndexes =  ko.observableArray([ko.observable("0 f")]);
 
+		//Initialize the nodes infromations
 		var root_nodes = [];
 		var fallback_nodes = [];
 		var child_nodes = [];
@@ -126,8 +127,7 @@ var data =
 		if (type == FILETYPE.JSON)
 		{
 			content = JSON.parse(content);
-			// for (i = 0; i < content.length; i ++)
-				// objects.push(content[i]);
+
 			for (let i = 0; i < content.root_nodes.length; i++) {
 				root_nodes.push(content.root_nodes[i])
 			}
@@ -137,8 +137,8 @@ var data =
 			for (let i = 0; i < content.fallback_nodes.length; i++) {
 				fallback_nodes.push(content.fallback_nodes[i])
 			}
-
 		}
+
 		// else if (type == FILETYPE.XML)
 		// {
 		// 	var oParser = new DOMParser();
@@ -153,59 +153,60 @@ var data =
 		var avgX = 0, avgY = 0;
 		var numAvg = 0;
 
-
+		// Allow to rewrite node information from the JSON once created, node is the
+		// node just created and object is the array containing the informations
 		function addNodeFromJSON(node, object)
 		{
-			app.editing(node);
+			console.log(object);
 			if (object.title != undefined)
-				app.editing().title(object.title);
+				node.title(object.title);
 			if (object.id != undefined)
-				app.editing().index(object.id);
+				node.index(object.id);
 				if (object.id[object.id.length -1] == ' r') {
-					app.globalRootNodeIndexes.push(app.editing().index())
+					app.globalRootNodeIndexes.splice(-1,1);
+					app.globalRootNodeIndexes.push(node.index())
 				}
 				if (object.id[object.id.length -1] == ' c') {
-					app.globalChildNodeIndexes.push(app.editing().index())
+					app.globalChildNodeIndexes.splice(-1,1);
+					app.globalChildNodeIndexes.push(node.index())
 				}
 				if (object.id[object.id.length -1] == ' f') {
-					app.globalFallbackNodeIndexes.push(app.editing().index())
+					app.globalFallbackNodeIndexes.splice(-1,1);
+					app.globalFallbackNodeIndexes.push(node.index())
 				}
 			if (object.uuid != undefined)
-				app.editing().uuid = object.uuid;
+				node.uuid = object.uuid;
 			if (object.output != undefined)
 				for (var i = 0; i < object.output.length; i++) {
 					if (object.output[i].type == 0) {
-						app.editing().body.push({'id': ko.observable(object.output[i].content)});
+						node.body.push({'id': ko.observable(object.output[i].content)});
 					}
 					if (object.output[i].type == 2) {
+						node.body.push({'id': ko.observable(object.output[i].content.text)});
 						for (var j = 0; j < object.output[i].content.quick_replies.length; j++) {
 							if (object.output[i].content.quick_replies[j].title != "") {
-								app.editing().quickreplies.push({'id': ko.observable(object.output[i].content.quick_replies[j].title)});
+								node.quickreplies.push({'id': ko.observable(object.output[i].content.quick_replies[j].title)});
 							}
 						}
 					}
 				}
 			if (object.conditions != undefined) {
 				//TODO Add conditions from JSON
-					console.log(object.conditions[0].intent);
-					console.log(app.editing().conditions()[0].content());
-					app.editing().conditions()[0].content('#'+object.conditions[0].intent);
-					console.log(app.editing().conditions()[0].content());
+					node.conditions()[0].content('#'+object.conditions[0].intent);
 			}
 			if (object.position != undefined && object.position.x != undefined)
 			{
-				app.editing().x(object.position.x);
+				node.x(object.position.x);
 				avgX += object.position.x;
 				numAvg ++;
 			}
 			if (object.position != undefined && object.position.y != undefined)
 			{
-				app.editing().y(object.position.y);
+				node.y(object.position.y);
 				avgY += object.position.y;
 			}
 			if (object.colorID != undefined)
-				app.editing().colorID(object.colorID);
-			app.editing(null);
+				node.colorID(object.colorID);
 		};
 
 		var new_node = [];
@@ -213,56 +214,102 @@ var data =
 		var fallback_node_index = [];
 		var node_infos = [];
 
+		// Recursive fonction creating all the nodes
 		function AddAllNodes(nodeType)
 		{
-			// console.log(app.getSelectedNodes());
-			if (nodeType == "root") {
-				new_node.push(app.newRootNode());
+			// Make an array of the indexes of the nodes already created
+			var result = app.nodes().map(function(a) {return a.index();});
+			// Return the index of the node to add in the nodes already created (-1 if not existant)
+			var index = result.indexOf(node_infos[node_infos.length -1].id);
+
+			// If the node already exist:
+			if (index >= 0) {
+				// If it's a fallback node, add it to the current node
+				if (result[index][result[index].length -1] === 'f') {
+					app.getSelectedNodes()[0].fallback(app.nodes()[index]);
+					app.nodes()[index].parents.push(app.getSelectedNodes()[0]);
+				}
+				else {
+					app.getSelectedNodes()[0].childs.push(app.nodes()[index]);
+					app.nodes()[index].parents.push(app.getSelectedNodes()[0]);
+				}
+				node_infos.splice(-1,1);
+				app.deselectAllNodes();
+				app.updateNodeLinks();
+
+				if (new_node.length > 0) {
+					app.addNodeSelected(new_node[new_node.length -1]);
+				}
+
+				return;
 			}
-			if (nodeType == "child") {
-				new_node.push(app.newChildNode(undefined, true));
-			}
-			if (nodeType == "fallback") {
-				new_node.push(app.newFallbackNode());
-			}
+			else {
+				if (nodeType == "root") {
+					new_node.push(app.newRootNode());
+				}
+				if (nodeType == "child") {
+					new_node.push(app.newChildNode(undefined, true));
+				}
+				if (nodeType == "fallback") {
+					new_node.push(app.newFallbackNode());
+				}
+				addNodeFromJSON(new_node[new_node.length -1], node_infos[node_infos.length -1]);
 
-			app.deselectAllNodes();
-			app.addNodeSelected(new_node[new_node.length -1]);
-
-			addNodeFromJSON(new_node[new_node.length -1], node_infos[node_infos.length -1]);
-
-			while (node_infos[node_infos.length -1].childs.length > 0) {
-				child_node_index.push(parseInt(node_infos[node_infos.length -1].childs[node_infos[node_infos.length -1].childs.length - 1]));
-				node_infos.push(child_nodes[child_node_index[child_node_index.length -1]]);
-				arguments.callee("child");
-				child_node_index = child_node_index.slice(0, -1);
-				node_infos[node_infos.length -1].childs = node_infos[node_infos.length -1].childs.slice(0, -1);
-			};
-
-			if (node_infos[node_infos.length -1].fallback) {
-					fallback_node_index.push(parseInt(node_infos[node_infos.length -1].fallback));
-					node_infos.push(fallback_nodes[fallback_node_index[fallback_node_index.length -1]]);
-					arguments.callee("fallback");
-					fallback_node_index.slice(0,-1);
-					node_infos[node_infos.length -1].fallback = node_infos[node_infos.length -1].fallback.slice(0, -1);
-			};
-
-			node_infos = node_infos.slice(0,-1);
-			new_node = new_node.slice(0, -1);
-			app.deselectAllNodes();
-
-			if (new_node.length > 0) {
+				app.deselectAllNodes();
 				app.addNodeSelected(new_node[new_node.length -1]);
-			}
 
-			return;
+				while (node_infos[node_infos.length -1].childs.length > 0) {
+					child_node_index.push(parseInt(node_infos[node_infos.length -1].childs[node_infos[node_infos.length -1].childs.length - 1]));
+					node_infos.push(child_nodes[child_node_index[child_node_index.length -1]]);
+					arguments.callee("child"); //Calls the fonction recursivly as long as the current node as childs
+					child_node_index.splice(-1,1);;
+					node_infos[node_infos.length -1].childs.splice(-1,1);
+				};
+
+				if (node_infos[node_infos.length -1].fallback) {
+						fallback_node_index.push(parseInt(node_infos[node_infos.length -1].fallback));
+						node_infos.push(fallback_nodes[fallback_node_index[fallback_node_index.length -1]]);
+						arguments.callee("fallback");
+						fallback_node_index.splice(-1,1);
+						node_infos[node_infos.length -1].fallback = null;
+				};
+
+				node_infos.splice(-1,1);
+				new_node.splice(-1,1);
+				app.deselectAllNodes();
+
+				if (new_node.length > 0) {
+					app.addNodeSelected(new_node[new_node.length -1]);
+				}
+
+				return;
+			}
 		}
 
 		for (var i = 0; i < root_nodes.length; i ++)
 		{
 			node_infos.push(root_nodes[i]);
 			AddAllNodes("root");
-			app.nodes.sort(function(left,right){ return left.index() == right.index() ? 0 : (left.index() < right.index() ? -1 : 1)});
+			app.nodes.sort(function(left,right){
+				let left_type = left.index()[left.index().length -1];
+				let right_type = right.index()[right.index().length -1];
+				if (left_type == 'c' && right_type == 'r' || left_type == 'f' && right_type == 'r' || left_type == 'f' && right_type == 'c') {
+					return 0;
+				}
+				else if (left_type == 'r' && right_type == 'c' || left_type == 'r' && right_type == 'f' || left_type == 'c' && right_type == 'f') {
+					return -1;
+				}
+				else {
+					let left_index = parseInt(left.index());
+					let right_index = parseInt(right.index());
+					if (left_index < right_index) {
+						return -1;
+					}
+					else {
+						return 0;
+					}
+				}
+			});
 		}
 
 		if (numAvg > 0)
@@ -280,6 +327,7 @@ var data =
 	{
 		var content = [];
 		var output = [];
+		var parent_nodes = [];
 		var childs_indexes = [];
 		var body = [];
 		var quickreplies = [];
@@ -310,13 +358,19 @@ var data =
 				});
 			}
 
+			var text = output.splice(-1,1);
+
 			output.push({
 				"type": "2",
 				"content": {
-					"text": "change this text",
+					"text": text[0].content,
 					"quick_replies": qr
 				}
 			});
+		}
+
+		for (let i = 0; i < node.parents().length; i++) {
+			 parent_nodes.push(node.parents()[i].index());
 		}
 
 		for (let i = 0; i < node.childs().length; i++) {
@@ -351,12 +405,13 @@ var data =
 		content.push({
 			"id": node.index(),
 			"uuid": node.uuid,
+			"title": node.title(),
 			"intent_name": intent,
 			"conditions": conditions,
+			"parent_node": parent_nodes,
 			"childs": childs_indexes,
 			"fallback": fallback_index,
 			"output": output,
-			"title": node.title(),
 			"position": { "x": node.x(), "y": node.y() },
 			"colorID": node.colorID()
 		});

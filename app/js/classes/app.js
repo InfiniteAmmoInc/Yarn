@@ -629,7 +629,6 @@ var App = function(name, version)
 		var nodes = self.getSelectedNodes();
 		for(var i in nodes)
 		{
-			console.log(nodes);
 			self.removeNodeSelection(nodes[i]);
 			nodes[i].remove();
 		}
@@ -674,7 +673,7 @@ var App = function(name, version)
 				}
 				if (childs.length == 0 || childsTitles != undefined) {
 					let childNode = new Node("child", userInput);
-					childNode.parent = selectedNodes[0];
+					childNode.parents = ko.observableArray([selectedNodes[0]]);
 					let selectedNodeIndex = selectedNodes[0].index();
 					for (var i = 0; i < self.nodes().length; i++) {
 						if (self.nodes()[i].index() == selectedNodeIndex) {
@@ -713,7 +712,7 @@ var App = function(name, version)
 			{
 				if (selectedNodes[0].fallback() == "") {
 					let fallbackNode = new Node("fallback");
-					fallbackNode.parent = selectedNodes[0];
+					fallbackNode.parents.push(selectedNodes[0]);
 					let selectedNodeIndex = selectedNodes[0].index();
 					for (var i = 0; i < self.nodes().length; i++) {
 						if (self.nodes()[i].index() == selectedNodeIndex) {
@@ -760,26 +759,25 @@ var App = function(name, version)
 		{
 			self.recordNodeAction("removed", node);
 			self.nodes.splice(index, 1);
-			if (node.parent != undefined) {
-				if (node.index()[node.index().length -1] == "c") {
-					node.parent.childs.remove(node);
-					for (let i = index; i < self.globalChildNodeIndexes().length - 1; i++) {
-						self.globalChildNodeIndexes()[i](i - 1 + ' c');
-						console.log(self.globalChildNodeIndexes()[i]());
+			if (node.parents().length > 0) {
+				for (var i = 0; i < node.parents().length; i++) {
+					if (node.index()[node.index().length -1] == "c") {
+						node.parents()[i].childs.remove(node);
+						for (let j = parseInt(node.index()); j < self.globalChildNodeIndexes().length - 1; j++) {
+							self.globalChildNodeIndexes()[j](j - 1 + ' c');
+						}
 					}
-				}
-				if (node.index()[node.index().length -1] == "f") {
-					node.parent.fallback("");
-					for (let i = index; i < self.globalFallbackNodeIndexes().length - 1; i++) {
-						self.globalFallbackNodeIndexes()[i](i - 1 + ' f');
-						console.log(self.globalFallbackNodeIndexes()[i]());
+					if (node.index()[node.index().length -1] == "f") {
+						node.parents()[i].fallback("");
+						for (let j = parseInt(node.index()); j < self.globalFallbackNodeIndexes().length - 1; j++) {
+							self.globalFallbackNodeIndexes()[j](j - 1 + ' f');
+						}
 					}
 				}
 			}
 			if (node.index()[node.index().length -1] == "r") {
 				for (let i = index; i < self.globalRootNodeIndexes().length - 1; i++) {
 					self.globalRootNodeIndexes()[i](i - 1 + ' r');
-					console.log(self.globalRootNodeIndexes()[i]());
 				}
 			}
 		}
@@ -872,7 +870,6 @@ var App = function(name, version)
 		{
 			self.editing().quickreplies.push({'id': ko.observable("New QuickReply")});
 			let add_node = confirm("Do you want to add a node corresponding to this Quick Reply?");
-			console.log(add_node);
 			if (add_node) {
 				self.newChildNode(self.editing().quickreplies()[self.editing().quickreplies().length -1].id);
 			}
@@ -894,7 +891,6 @@ var App = function(name, version)
 			for (let i = 0; i < self.editing().quickreplies().length; i++) {
 				quickreplies.push(self.editing().quickreplies()[i].id());
 			}
-			console.log(quickreplies);
 		}
 	}
 
@@ -1016,8 +1012,8 @@ var App = function(name, version)
 					var from = { x: fromX + normal.x * dist * scale, y: fromY + normal.y * dist * scale };
 					var to = { x: toX - normal.x * dist * scale, y: toY - normal.y * dist * scale };
 
-					self.context.strokeStyle = "rgba(0, 0, 0, " + (node.tempOpacity * 0.6) + ")";
-					self.context.fillStyle = "rgba(0, 0, 0, " + (node.tempOpacity * 0.6) + ")";
+					self.context.strokeStyle = "rgba(110, 165, 224, " + (node.tempOpacity * 1) + ")";
+					self.context.fillStyle = "rgba(110, 165, 224, " + (node.tempOpacity * 1) + ")";
 
 					// draw line
 					self.context.beginPath();
@@ -1297,6 +1293,8 @@ var App = function(name, version)
 	 */
 	this.arrangeX = function()
 	{
+		self.nodes().forEach(function(node) {
+		})
 		var SPACING = 250;
 
 		var selectedNodes = self.nodes().filter(function(el) {
