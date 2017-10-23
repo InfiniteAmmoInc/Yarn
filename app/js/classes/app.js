@@ -69,6 +69,7 @@ var App = function(name, version)
 		self.context = self.canvas.getContext('2d');
 		self.newRootNode().title("Get Started");
 		self.nodes()[0].conditions()[0].content("#Get Started");
+		self.newFallbackNode("Default Fallback");
 
 		if (osName != "Windows" && osName != "Linux" && self.gui != undefined)
 		{
@@ -695,13 +696,19 @@ var App = function(name, version)
 			}
 	}
 
-	this.newFallbackNode = function(updateArrows)
+	this.newFallbackNode = function(type)
 	{
 
 		var selectedNodes = self.getSelectedNodes();
 		if (selectedNodes.length == 0)
-			if (true) {
-				//TODO Add possibility to add default fallback node
+			if (type == "Default Fallback") {
+				let fallbackNode = new Node("fallback");
+				fallbackNode.title("Default Fallback");
+				self.nodes.push(fallbackNode);
+				app.nodes()[1].x(app.nodes()[0].x());
+				app.nodes()[1].y(app.nodes()[0].y() + 350);
+				self.recordNodeAction("created", fallbackNode);
+				return fallbackNode;
 			}
 			else {
 
