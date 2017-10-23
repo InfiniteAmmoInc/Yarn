@@ -159,6 +159,12 @@
 			</div>
 			<!-- /ko -->
 
+			<!-- Advanced mode selector -->
+			<div class="adv-mode" hidden="hidden">
+				<label for="adv-mode">Advanced mode</label>
+				<input type="checkbox" id="adv-mode"/>
+			</div>
+			
 			<!-- ko if:app.advediting() != null-->
 			<div class="adv-node-editor" data-bind="mousedown:app.saveNodeAdv">
 				<div class="form" data-bind="preventBubble: 'click', preventBubble: 'mousedown'">

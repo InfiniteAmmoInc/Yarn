@@ -605,6 +605,19 @@ a:hover { color: #000;}
 }
 
 /* ---ADVANCED NODE EDITOR --- */
+.adv-mode
+{
+	position: absolute;
+	right: 20px;
+	bottom: 20px;
+	z-index: 100;
+	background: #fff;
+	border-radius: 2px;
+	box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.5);
+	padding: 10px 20px 10px 20px;
+}
+
+.adv-mode input[type="checkbox"] { cursor: pointer; }
 
 .adv-node-editor
 {
