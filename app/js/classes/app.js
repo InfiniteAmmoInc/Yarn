@@ -812,16 +812,34 @@ var App = function(name, version)
 	{
 		if (self.editing() != null)
 		{
-			self.updateNodeLinks();
-			self.editing().title(self.trim(self.editing().title()));
-			self.editing().uuid = guid();
+			let close = false;
+			if (self.editing().quickreplies().length > 0) {
+				for (var i = 0; i < self.editing().quickreplies().length; i++) {
+					console.log(self.editing().quickreplies()[i].id());
+					if (self.editing().quickreplies()[i].id().length > 20) {
+						alert("Quick reply '" + self.editing().quickreplies()[i].id() + "' is more than 20 characters, please reduce its length");
+						close = false;
+						break;
+					}
+					else {
+						close = true;
+					}
+				}
+			}
+			else {
+				close = true;
+			}
+			if (close) {
+				self.updateNodeLinks();
+				self.editing().title(self.trim(self.editing().title()));
+				self.editing().uuid = guid();
 
-			$(".node-editor").transition({ opacity: 0.8 }, 400);
-			$(".node-editor .form").transition({ x: "500" }, 400, function()
-			{
-				self.editing(null);
-			});
-
+				$(".node-editor").transition({ opacity: 0.8 }, 400);
+				$(".node-editor .form").transition({ x: "500" }, 400, function()
+				{
+					self.editing(null);
+				});
+			}
 			setTimeout(self.updateSearch, 100);
 		}
 	}

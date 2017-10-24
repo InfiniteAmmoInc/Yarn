@@ -359,11 +359,22 @@ var data =
 			}
 
 			var text = output.splice(-1,1);
+			var text = "";
+
+			if (output.length > 0) {
+				var last_output = output.splice(-1,1);
+				text = last_output[0].content;
+			}
+			else {
+				alert("You cannot have a quick reply without a text before");
+				return;
+			}
+
 
 			output.push({
 				"type": "2",
 				"content": {
-					"text": text[0].content,
+					"text": text,
 					"quick_replies": qr
 				}
 			});
