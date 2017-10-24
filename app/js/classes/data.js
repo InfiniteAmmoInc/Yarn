@@ -310,6 +310,18 @@ var data =
 					}
 				}
 			});
+			app.globalRootNodeIndexes.sort(function(left, right) {
+				left_num = parseInt(left());
+				right_num = parseInt(right());
+				return left_num == right_num ? 0 : (left_num < right_num ? -1 : 1)});
+			app.globalChildNodeIndexes.sort(function(left, right) {
+				left_num = parseInt(left());
+				right_num = parseInt(right());
+				return left_num == right_num ? 0 : (left_num < right_num ? -1 : 1)});
+			app.globalFallbackNodeIndexes.sort(function(left, right) {
+				left_num = parseInt(left());
+				right_num = parseInt(right());
+				return left_num == right_num ? 0 : (left_num < right_num ? -1 : 1)});
 		}
 
 		if (numAvg > 0)
