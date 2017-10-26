@@ -157,7 +157,6 @@ var data =
 		// node just created and object is the array containing the informations
 		function addNodeFromJSON(node, object)
 		{
-			console.log(object);
 			if (object.title != undefined)
 				node.title(object.title);
 			if (object.id != undefined)
@@ -370,7 +369,6 @@ var data =
 				});
 			}
 
-			var text = output.splice(-1,1);
 			var text = "";
 
 			if (output.length > 0) {

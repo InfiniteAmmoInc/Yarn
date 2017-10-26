@@ -362,20 +362,21 @@ var App = function(name, version)
 			return !isAllowedEl;
 		});
 
-		$(document).on('keydown', function(e){
-			//global ctrl+z
-			if((e.metaKey || e.ctrlKey) && !self.editing())
-			{
-				switch(e.keyCode)
-				{
-					case 90: self.historyDirection("undo");
-					break;
-					case 89: self.historyDirection("redo");
-					break;
-					case 68: self.deselectAllNodes();
-				}
-			}
-		});
+		//TODO Work on ctrl + z function
+		// $(document).on('keydown', function(e){
+		// 	//global ctrl+z
+		// 	if((e.metaKey || e.ctrlKey) && !self.editing())
+		// 	{
+		// 		switch(e.keyCode)
+		// 		{
+		// 			case 90: self.historyDirection("undo");
+		// 			break;
+		// 			case 89: self.historyDirection("redo");
+		// 			break;
+		// 			case 68: self.deselectAllNodes();
+		// 		}
+		// 	}
+		// });
 
 		$(document).on('keydown', function(e) {
 			if (self.editing() || self.$searchField.is(':focus') || self.advediting()) return;
@@ -815,7 +816,6 @@ var App = function(name, version)
 			let close = false;
 			if (self.editing().quickreplies().length > 0) {
 				for (var i = 0; i < self.editing().quickreplies().length; i++) {
-					console.log(self.editing().quickreplies()[i].id());
 					if (self.editing().quickreplies()[i].id().length > 20) {
 						alert("Quick reply '" + self.editing().quickreplies()[i].id() + "' is more than 20 characters, please reduce its length");
 						close = false;
@@ -1125,23 +1125,24 @@ var App = function(name, version)
 		var text = editor[0].innerText;
 		var startOffset, endOffset;
 
+		//TODO Work on ctrl + z function
 		// ctrl + z
-		if ((e.metaKey || e.ctrlKey) && e.keyCode == 90)
-		{
-			if (self.editingHistory.length > 0)
-			{
-				var last = self.editingHistory.pop();
-				text = last.text;
-				startOffset = last.start;
-				endOffset = last.end;
-			}
-			else
-			{
-				return;
-			}
-		}
-		else
-		{
+		// if ((e.metaKey || e.ctrlKey) && e.keyCode == 90)
+		// {
+		// 	if (self.editingHistory.length > 0)
+		// 	{
+		// 		var last = self.editingHistory.pop();
+		// 		text = last.text;
+		// 		startOffset = last.start;
+		// 		endOffset = last.end;
+		// 	}
+		// 	else
+		// 	{
+		// 		return;
+		// 	}
+		// }
+		// else
+		// {
 			// get the current start offset
 			var range = window.getSelection().getRangeAt(0);
 			var preCaretStartRange = range.cloneRange();
@@ -1213,7 +1214,7 @@ var App = function(name, version)
 					self.editingSaveHistoryTimeout = setTimeout(function() { self.editingSaveHistoryTimeout = null; }, 500);
 				}
 			}
-		}
+		// }
 
 		// update text
 		//editor[0].innerHTML = self.getHighlightedText(text);
