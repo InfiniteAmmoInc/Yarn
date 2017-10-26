@@ -767,25 +767,40 @@ var App = function(name, version)
 		{
 			self.recordNodeAction("removed", node);
 			self.nodes.splice(index, 1);
+
+			// If nodes has parents :
 			if (node.parents().length > 0) {
+				// For each parent :
 				for (var i = 0; i < node.parents().length; i++) {
+					// If this node is a child
 					if (node.index()[node.index().length -1] == "c") {
-						node.parents()[i].childs.remove(node);
-						for (let j = parseInt(node.index()); j < self.globalChildNodeIndexes().length - 1; j++) {
-							self.globalChildNodeIndexes()[j](j - 1 + ' c');
-						}
+						node.parents()[i].childs.remove(node);  //Remove it from the parent i
 					}
-					if (node.index()[node.index().length -1] == "f") {
-						node.parents()[i].fallback("");
-						for (let j = parseInt(node.index()); j < self.globalFallbackNodeIndexes().length - 1; j++) {
-							self.globalFallbackNodeIndexes()[j](j - 1 + ' f');
-						}
+					// If it's a fallback
+					else if (node.index()[node.index().length -1] == "f") {
+						node.parents()[i].fallback("");	//Remove it from the parent i
 					}
 				}
 			}
 			if (node.index()[node.index().length -1] == "r") {
-				for (let i = index; i < self.globalRootNodeIndexes().length - 1; i++) {
-					self.globalRootNodeIndexes()[i](i - 1 + ' r');
+				self.globalRootNodeIndexes.splice(index, 1);
+				for (let i = index; i < self.globalRootNodeIndexes().length; i++) {
+					// De-increment the global root nodes indexes:
+					self.globalRootNodeIndexes()[i](i + ' r');
+				}
+			}
+			else if (node.index()[node.index().length -1] == "c") {
+				// De-increment the global child nodes indexes:
+				self.globalChildNodeIndexes.splice(index, 1);
+				for (let i = parseInt(node.index()); i < self.globalChildNodeIndexes().length; i++) {
+					self.globalChildNodeIndexes()[i](i + ' c');
+				}
+			}
+			else if (node.index()[node.index().length -1] == "f") {
+				// De-increment the global fallback nodes indexes:
+				self.globalFallbackNodeIndexes.splice(index, 1);
+				for (let i = parseInt(node.index()); i < self.globalFallbackNodeIndexes().length ; i++) {
+					self.globalFallbackNodeIndexes()[i](i + ' f');
 				}
 			}
 		}
