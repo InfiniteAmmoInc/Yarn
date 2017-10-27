@@ -20,7 +20,7 @@ var data =
 				{
 					var type = data.getFileType(filename);
 					if (type == FILETYPE.UNKNOWN)
-						alert("Unknown filetype!");
+					alert("Unknown filetype!");
 					else
 					{
 						data.editingPath(filename);
@@ -45,9 +45,9 @@ var data =
 					var type = data.getFileType(contents);
 					// alert("type(2): " + type);
 					if (type == FILETYPE.UNKNOWN)
-						alert("Unknown filetype!");
+					alert("Unknown filetype!");
 					else
-						data.loadData(contents, type, clearNodes);
+					data.loadData(contents, type, clearNodes);
 				}
 			}
 			reader.readAsText(e.target.files[0], "UTF-8");
@@ -84,27 +84,27 @@ var data =
 		// 	return FILETYPE.XML;
 		// else if (filename.toLowerCase().indexOf(".txt") > -1)
 		// 	return FILETYPE.TWEE;
-    //     else if (filename.toLowerCase().indexOf(".tw2") > -1)
-    //         return FILETYPE.TWEE2;
+		//     else if (filename.toLowerCase().indexOf(".tw2") > -1)
+		//         return FILETYPE.TWEE2;
 		// return FILETYPE.UNKNOWN;
 
 		// is json?
 		if (/^[\],:{}\s]*$/.test(clone.replace(/\\["\\\/bfnrtu]/g, '@').
-			replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']').
-			replace(/(?:^|:|,)(?:\s*\[)+/g, '')))
-			return FILETYPE.JSON;
+		replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']').
+		replace(/(?:^|:|,)(?:\s*\[)+/g, '')))
+		return FILETYPE.JSON;
 
 		// is xml?
 		var oParser = new DOMParser();
 		var oDOM = oParser.parseFromString(content, "text/xml");
 		if (oDOM.documentElement["outerText"] == undefined)
-			return FILETYPE.XML;
+		return FILETYPE.XML;
 
 		// is twee?
 		//console.log(content.substr(0, 2));
 		console.log(content.indexOf("::"));
 		if (content.trim().substr(0, 2) == "::")
-			return FILETYPE.TWEE;
+		return FILETYPE.TWEE;
 		return FILETYPE.UNKNOWN;
 
 	},
@@ -113,7 +113,7 @@ var data =
 	{
 		// clear all content
 		if (clearNodes)
-			app.nodes.removeAll();
+		app.nodes.removeAll();
 
 		app.globalRootNodeIndexes = ko.observableArray([ko.observable("0 r")]);
 		app.globalChildNodeIndexes =  ko.observableArray([ko.observable("0 c")]);
@@ -158,40 +158,72 @@ var data =
 		function addNodeFromJSON(node, object)
 		{
 			if (object.title != undefined)
-				node.title(object.title);
+			node.title(object.title);
 			if (object.id != undefined)
-				node.index(object.id);
-				if (object.id[object.id.length -1] == ' r') {
-					app.globalRootNodeIndexes.splice(-1,1);
-					app.globalRootNodeIndexes.push(node.index())
-				}
-				if (object.id[object.id.length -1] == ' c') {
-					app.globalChildNodeIndexes.splice(-1,1);
-					app.globalChildNodeIndexes.push(node.index())
-				}
-				if (object.id[object.id.length -1] == ' f') {
-					app.globalFallbackNodeIndexes.splice(-1,1);
-					app.globalFallbackNodeIndexes.push(node.index())
-				}
+			node.index(object.id);
+			if (object.id[object.id.length -1] == ' r') {
+				app.globalRootNodeIndexes.splice(-1,1);
+				app.globalRootNodeIndexes.push(node.index())
+			}
+			if (object.id[object.id.length -1] == ' c') {
+				app.globalChildNodeIndexes.splice(-1,1);
+				app.globalChildNodeIndexes.push(node.index())
+			}
+			if (object.id[object.id.length -1] == ' f') {
+				app.globalFallbackNodeIndexes.splice(-1,1);
+				app.globalFallbackNodeIndexes.push(node.index())
+			}
 			if (object.uuid != undefined)
-				node.uuid = object.uuid;
+			node.uuid = object.uuid;
 			if (object.output != undefined)
-				for (var i = 0; i < object.output.length; i++) {
-					if (object.output[i].type == 0) {
-						node.body.push({'id': ko.observable(object.output[i].content)});
-					}
-					if (object.output[i].type == 2) {
-						node.body.push({'id': ko.observable(object.output[i].content.text)});
-						for (var j = 0; j < object.output[i].content.quick_replies.length; j++) {
-							if (object.output[i].content.quick_replies[j].title != "") {
-								node.quickreplies.push({'id': ko.observable(object.output[i].content.quick_replies[j].title)});
-							}
+			for (var i = 0; i < object.output.length; i++) {
+				if (object.output[i].type == 0) {
+					node.body.push({'id': ko.observable(object.output[i].content)});
+				}
+				if (object.output[i].type == 2) {
+					node.body.push({'id': ko.observable(object.output[i].content.text)});
+					for (var j = 0; j < object.output[i].content.quick_replies.length; j++) {
+						if (object.output[i].content.quick_replies[j].title != "") {
+							node.quickreplies.push({'id': ko.observable(object.output[i].content.quick_replies[j].title)});
 						}
 					}
 				}
+			}
 			if (object.conditions != undefined) {
 				//TODO Add conditions from JSON
-					node.conditions()[0].content('#'+object.conditions[0].intent);
+				var conditions = object.conditions;
+				let j = 0;
+
+				// For every set of conditions
+				for (var i = 0; i < conditions.length; i++) {
+					if (conditions[i].intent != ' ') {
+						node.conditions()[j].content('#'+conditions[i].intent);
+						node.conditions()[j].op("And");
+						node.conditions.push({content: ko.observable(""), op: ko.observable("")});
+						j++;
+					}
+					for (var k = 0; k < conditions[i].entities.length; k++) {
+						node.conditions()[j].content('@'+conditions[i].entities[k]);
+						node.conditions()[j].op("And");
+						node.conditions.push({content: ko.observable(""), op: ko.observable("")});
+						j++;
+					}
+					for (var l = 0; l < conditions[i].contexts.length; l++) {
+						node.conditions()[j].content('${'+conditions[i].contexts[l]+'}');
+						node.conditions()[j].op("And");
+						node.conditions.push({content: ko.observable(""), op: ko.observable("")});
+						j++;
+					}
+
+					var not_empty = conditions[i].intent != ' '
+												||conditions[i].entities.length > 0
+												||conditions[i].entities.length > 0;
+
+					if (not_empty && i < conditions.length - 1) {
+						node.conditions()[j - 1].op("Or");
+					}
+					not_empty = false;
+				}
 			}
 			if (object.position != undefined && object.position.x != undefined)
 			{
@@ -205,7 +237,7 @@ var data =
 				avgY += object.position.y;
 			}
 			if (object.colorID != undefined)
-				node.colorID(object.colorID);
+			node.colorID(object.colorID);
 		};
 
 		var new_node = [];
@@ -266,11 +298,11 @@ var data =
 				};
 
 				if (node_infos[node_infos.length -1].fallback) {
-						fallback_node_index.push(parseInt(node_infos[node_infos.length -1].fallback));
-						node_infos.push(fallback_nodes[fallback_node_index[fallback_node_index.length -1]]);
-						arguments.callee("fallback");
-						fallback_node_index.splice(-1,1);
-						node_infos[node_infos.length -1].fallback = null;
+					fallback_node_index.push(parseInt(node_infos[node_infos.length -1].fallback));
+					node_infos.push(fallback_nodes[fallback_node_index[fallback_node_index.length -1]]);
+					arguments.callee("fallback");
+					fallback_node_index.splice(-1,1);
+					node_infos[node_infos.length -1].fallback = null;
 				};
 
 				node_infos.splice(-1,1);
@@ -313,285 +345,302 @@ var data =
 				left_num = parseInt(left());
 				right_num = parseInt(right());
 				return left_num == right_num ? 0 : (left_num < right_num ? -1 : 1)});
-			app.globalChildNodeIndexes.sort(function(left, right) {
-				left_num = parseInt(left());
-				right_num = parseInt(right());
-				return left_num == right_num ? 0 : (left_num < right_num ? -1 : 1)});
-			app.globalFallbackNodeIndexes.sort(function(left, right) {
-				left_num = parseInt(left());
-				right_num = parseInt(right());
-				return left_num == right_num ? 0 : (left_num < right_num ? -1 : 1)});
-		}
+				app.globalChildNodeIndexes.sort(function(left, right) {
+					left_num = parseInt(left());
+					right_num = parseInt(right());
+					return left_num == right_num ? 0 : (left_num < right_num ? -1 : 1)});
+					app.globalFallbackNodeIndexes.sort(function(left, right) {
+						left_num = parseInt(left());
+						right_num = parseInt(right());
+						return left_num == right_num ? 0 : (left_num < right_num ? -1 : 1)});
+					}
 
-		if (numAvg > 0)
-		{
-			app.warpToNodeXY(avgX/numAvg, avgY/numAvg);
-		}
+					if (numAvg > 0)
+					{
+						app.warpToNodeXY(avgX/numAvg, avgY/numAvg);
+					}
 
-		$(".arrows").css({ opacity: 0 }).transition({ opacity: 1 }, 500);
-		app.updateNodeLinks();
-	},
+					$(".arrows").css({ opacity: 0 }).transition({ opacity: 1 }, 500);
+					app.updateNodeLinks();
+				},
 
 
 
-	filterNodeData: function(node)
-	{
-		var content = [];
-		var output = [];
-		var parent_nodes = [];
-		var childs_indexes = [];
-		var body = [];
-		var quickreplies = [];
-		var conditions = [];
-		var entities = [];
-		var fallback_index = "";
-		var intent = " ";
+				filterNodeData: function(node)
+				{
+					var content = [];
+					var output = [];
+					var parent_nodes = [];
+					var childs_indexes = [];
+					var body = [];
+					var quickreplies = [];
+					var conditions = [];
+					var entities = [];
+					var contexts = [];
+					var fallback_index = "";
+					var intent = " ";
 
-		for (let i = 0; i < node.body().length; i++) {
-			body.push(node.body()[i].id());
-		}
+					for (let i = 0; i < node.body().length; i++) {
+						body.push(node.body()[i].id());
+					}
 
-		for (let i = 0; i <body.length; i++) {
-			output.push({"type":"0", "content": body[i]});
-		}
+					for (let i = 0; i <body.length; i++) {
+						output.push({"type":"0", "content": body[i]});
+					}
 
-		for (let i = 0; i < node.quickreplies().length; i++) {
-			quickreplies.push(node.quickreplies()[i].id());
-		}
+					for (let i = 0; i < node.quickreplies().length; i++) {
+						quickreplies.push(node.quickreplies()[i].id());
+					}
 
-		if (quickreplies.length > 0) {
-			var qr = [];
-			for (let i = 0; i < quickreplies.length; i++) {
-				qr.push({
-					"content_type": "text",
-					"title": quickreplies[i],
-					"payload": quickreplies[i]
-				});
+					if (quickreplies.length > 0) {
+						var qr = [];
+						for (let i = 0; i < quickreplies.length; i++) {
+							qr.push({
+								"content_type": "text",
+								"title": quickreplies[i],
+								"payload": quickreplies[i]
+							});
+						}
+
+						var text = "";
+
+						if (output.length > 0) {
+							var last_output = output.splice(-1,1);
+							text = last_output[0].content;
+						}
+						else {
+							alert("You cannot have a quick reply without a text before");
+							return;
+						}
+
+
+						output.push({
+							"type": "2",
+							"content": {
+								"text": text,
+								"quick_replies": qr
+							}
+						});
+					}
+
+					for (let i = 0; i < node.parents().length; i++) {
+						parent_nodes.push(node.parents()[i].index());
+					}
+
+					for (let i = 0; i < node.childs().length; i++) {
+						childs_indexes.push(node.childs()[i].index());
+					}
+
+					if (node.fallback() != "") {
+						fallback_index = node.fallback().index();
+					}
+
+					for (let i = 0; i < node.conditions().length; i++) {
+						if (node.conditions()[i].op() == "And") {
+							if (node.conditions()[i].content()[0] == '#') {
+								var intent = node.conditions()[i].content().slice(1);
+							}
+							else if (node.conditions()[i].content()[0] == '@') {
+								entities.push(node.conditions()[i].content().slice(1));
+							}
+							else if (node.conditions()[i].content()[0] == '$') {
+								if (node.conditions()[i].content()[1] != '{' || node.conditions()[i].content()[node.conditions()[i].content().length -1] != '}') {
+									alert("One of the context condition for node " + node.index() + " don't follow the bracket convention {}");
+								}
+								else {
+									contexts.push(node.conditions()[i].content().slice(2,-1));
+								}
+							}
+						}
+						if (node.conditions()[i].op() == "Or"  && node.conditions()[i+1] != undefined || i == node.conditions().length - 1) {
+							if (node.conditions()[i].content()[0] == '#') {
+								var intent = node.conditions()[i].content().slice(1);
+							}
+							else if (node.conditions()[i].content()[0] == '@') {
+								entities.push(node.conditions()[i].content().slice(1));
+							}
+							else if (node.conditions()[i].content()[0] == '$') {
+								if (node.conditions()[i].content()[1] != '{' || node.conditions()[i].content()[node.conditions()[i].content().length -1] != '}') {
+									alert("One of the context condition for node " + node.index() + " don't follow the bracket convention {}");
+								}
+								else {
+									contexts.push(node.conditions()[i].content().slice(2,-1));
+								}
+							}
+							conditions.push({intent:intent, entities:entities, contexts:contexts});
+							entities = [];
+							contexts = [];
+						}
+					}
+
+					content.push({
+						"id": node.index(),
+						"uuid": node.uuid,
+						"title": node.title(),
+						"conditions": conditions,
+						"parent_node": parent_nodes,
+						"childs": childs_indexes,
+						"fallback": fallback_index,
+						"output": output,
+						"position": { "x": node.x(), "y": node.y() },
+						"colorID": node.colorID()
+					});
+					return content;
+				},
+
+				getSaveData: function(type)
+				{
+					var output = "";
+					var nodes = app.nodes();
+					var content = {
+						root_nodes: [],
+						child_nodes: [],
+						fallback_nodes: []
+					};
+
+					for (var i = 0; i < nodes.length; i++) {
+						var node = nodes[i];
+
+						// If node is a root node
+						if (node.index()[node.index().length -1] == "r") {
+							let nodedata = data.filterNodeData(node);
+							content.root_nodes.push(nodedata[0]);
+						}
+						// If node is a child node
+						if (node.index()[node.index().length -1] == "c") {
+							let nodedata = data.filterNodeData(node);
+							content.child_nodes.push(nodedata[0]);
+						}
+						if (node.index()[node.index().length -1] == "f") {
+							let nodedata = data.filterNodeData(node);
+							content.fallback_nodes.push(nodedata[0]);
+						}
+					};
+
+					if (type == FILETYPE.JSON)
+					{
+						output = JSON.stringify(content, null, "\t");
+					}
+					else if (type == FILETYPE.XML)
+					{
+						output += '<nodes>\n';
+						for (i = 0; i < content.length; i ++)
+						{
+							output += "\t<node>\n";
+							output += "\t\t<title>" + content[i].title + "</title>\n";
+							output += "\t\t<quickreplies>" + content[i].quickreplies + "</quickreplies>\n";
+							output += "\t\t<body>" + content[i].body + "</body>\n";
+							output += '\t\t<position x="' + content[i].position.x + '" y="' + content[i].position.y + '"></position>\n';
+							output += '\t\t<colorID>' + content[i].colorID + '</colorID>\n';
+							output += "\t</node>\n";
+						}
+						output += '</nodes>\n';
+					}
+
+					return output;
+				},
+
+				saveTo: function(path, content)
+				{
+					if (app.fs != undefined)
+					{
+						app.fs.writeFile(path, content, {encoding: 'utf-8'}, function(err)
+						{
+							data.editingPath(path);
+							if(err)
+							alert("Error Saving Data to " + path + ": " + err);
+						});
+					}
+				},
+
+				openFileDialog: function(dialog, callback)
+				{
+					dialog.bind("change", function(e)
+					{
+						// make callback
+						callback(e, dialog.val());
+
+						// replace input field with a new identical one, with the value cleared
+						// (html can't edit file field values)
+						var saveas = '';
+						var accept = '';
+						if (dialog.attr("nwsaveas") != undefined)
+						saveas = 'nwsaveas="' + dialog.attr("nwsaveas") + '"'
+						if (dialog.attr("accept") != undefined)
+						saveas = 'accept="' + dialog.attr("accept") + '"'
+
+						dialog.parent().append('<input type="file" id="' + dialog.attr("id") + '" ' + accept + ' ' + saveas + '>');
+						dialog.unbind("change");
+						dialog.remove();
+					});
+
+					dialog.trigger("click");
+				},
+
+				saveFileDialog: function(dialog, type, content)
+				{
+					var file = 'file.' + type;
+
+					if (app.fs)
+					{
+						dialog.attr("nwsaveas", file);
+						data.openFileDialog(dialog, function(e, path)
+						{
+							data.saveTo(path, content);
+							// app.refreshWindowTitle(path);
+						});
+					}
+					else
+					{
+						switch(type) {
+							case 'json':
+							// content = "data:text/json," + content;
+							var blob = new Blob([content], {type: "application/json"});
+							var url  = URL.createObjectURL(blob);
+							var a = document.createElement('a');
+							a.download    = "dialog.json";
+							a.href        = url;
+							a.click();
+							break;
+							case 'xml':
+							content = "data:text/xml," + content;
+							break;
+							default:
+							content = "data:text/plain," + content;
+							break;
+						}
+						// window.open(content, "_blank");
+					}
+				},
+
+				tryOpenFile: function()
+				{
+					app.deselectAllNodes();
+					data.openFileDialog($('#open-file'), data.openFile);
+				},
+
+				tryOpenFolder: function()
+				{
+					data.openFileDialog($('#open-folder'), data.openFolder);
+				},
+
+				tryAppend: function()
+				{
+					data.openFileDialog($('#open-file'), data.appendFile);
+				},
+
+				trySave: function(type)
+				{
+					data.editingType(type);
+					data.saveFileDialog($('#save-file'), type, data.getSaveData(type));
+				},
+
+				trySaveCurrent: function()
+				{
+					if (data.editingPath().length > 0 && data.editingType().length > 0)
+					{
+						data.saveTo(data.editingPath(), data.getSaveData(data.editingType()));
+					}
+				}
+
 			}
-
-			var text = "";
-
-			if (output.length > 0) {
-				var last_output = output.splice(-1,1);
-				text = last_output[0].content;
-			}
-			else {
-				alert("You cannot have a quick reply without a text before");
-				return;
-			}
-
-
-			output.push({
-				"type": "2",
-				"content": {
-					"text": text,
-					"quick_replies": qr
-				}
-			});
-		}
-
-		for (let i = 0; i < node.parents().length; i++) {
-			 parent_nodes.push(node.parents()[i].index());
-		}
-
-		for (let i = 0; i < node.childs().length; i++) {
-			 childs_indexes.push(node.childs()[i].index());
-		}
-
-		if (node.fallback() != "") {
-			fallback_index = node.fallback().index();
-		}
-
-		for (let i = 0; i < node.conditions().length; i++) {
-			if (node.conditions()[i].op() == "And") {
-				if (node.conditions()[i].content()[0] == '#') {
-					var intent = node.conditions()[i].content().slice(1);
-				}
-				if (node.conditions()[i].content()[0] == '@') {
-					entities.push(node.conditions()[i].content().slice(1));
-				}
-			}
-			if (node.conditions()[i].op() == "Or"  && node.conditions()[i+1] != undefined || i == node.conditions().length - 1) {
-				if (node.conditions()[i].content()[0] == '#') {
-					var intent = node.conditions()[i].content().slice(1);
-				}
-				if (node.conditions()[i].content()[0] == '@') {
-					entities.push(node.conditions()[i].content().slice(1));
-				}
-				conditions.push({intent:intent, entities:entities});
-				entities = [];
-			}
-		}
-
-		content.push({
-			"id": node.index(),
-			"uuid": node.uuid,
-			"title": node.title(),
-			"intent_name": intent,
-			"conditions": conditions,
-			"parent_node": parent_nodes,
-			"childs": childs_indexes,
-			"fallback": fallback_index,
-			"output": output,
-			"position": { "x": node.x(), "y": node.y() },
-			"colorID": node.colorID()
-		});
-		return content;
-	},
-
-	getSaveData: function(type)
-	{
-		var output = "";
-		var nodes = app.nodes();
-		var content = {
-			root_nodes: [],
-			child_nodes: [],
-			fallback_nodes: []
-		};
-
-		for (var i = 0; i < nodes.length; i++) {
-			var node = nodes[i];
-
-			// If node is a root node
-			if (node.index()[node.index().length -1] == "r") {
-				let nodedata = data.filterNodeData(node);
-				content.root_nodes.push(nodedata[0]);
-				}
-			// If node is a child node
-			if (node.index()[node.index().length -1] == "c") {
-				let nodedata = data.filterNodeData(node);
-				content.child_nodes.push(nodedata[0]);
-				}
-			if (node.index()[node.index().length -1] == "f") {
-				let nodedata = data.filterNodeData(node);
-				content.fallback_nodes.push(nodedata[0]);
-				}
-		};
-
-		if (type == FILETYPE.JSON)
-		{
-			output = JSON.stringify(content, null, "\t");
-		}
-		else if (type == FILETYPE.XML)
-		{
-			output += '<nodes>\n';
-			for (i = 0; i < content.length; i ++)
-			{
-				output += "\t<node>\n";
-				output += "\t\t<title>" + content[i].title + "</title>\n";
-				output += "\t\t<quickreplies>" + content[i].quickreplies + "</quickreplies>\n";
-				output += "\t\t<body>" + content[i].body + "</body>\n";
-				output += '\t\t<position x="' + content[i].position.x + '" y="' + content[i].position.y + '"></position>\n';
-				output += '\t\t<colorID>' + content[i].colorID + '</colorID>\n';
-				output += "\t</node>\n";
-			}
-			output += '</nodes>\n';
-		}
-
-		return output;
-	},
-
-	saveTo: function(path, content)
-	{
-		if (app.fs != undefined)
-		{
-			app.fs.writeFile(path, content, {encoding: 'utf-8'}, function(err)
-			{
-				data.editingPath(path);
-				if(err)
-					alert("Error Saving Data to " + path + ": " + err);
-			});
-		}
-	},
-
-	openFileDialog: function(dialog, callback)
-	{
-		dialog.bind("change", function(e)
-		{
-			// make callback
-			callback(e, dialog.val());
-
-			// replace input field with a new identical one, with the value cleared
-			// (html can't edit file field values)
-			var saveas = '';
-			var accept = '';
-			if (dialog.attr("nwsaveas") != undefined)
-				saveas = 'nwsaveas="' + dialog.attr("nwsaveas") + '"'
-			if (dialog.attr("accept") != undefined)
-				saveas = 'accept="' + dialog.attr("accept") + '"'
-
-			dialog.parent().append('<input type="file" id="' + dialog.attr("id") + '" ' + accept + ' ' + saveas + '>');
-			dialog.unbind("change");
-			dialog.remove();
-		});
-
-		dialog.trigger("click");
-	},
-
-	saveFileDialog: function(dialog, type, content)
-	{
-		var file = 'file.' + type;
-
-		if (app.fs)
-		{
-			dialog.attr("nwsaveas", file);
-			data.openFileDialog(dialog, function(e, path)
-			{
-				data.saveTo(path, content);
-				// app.refreshWindowTitle(path);
-			});
-		}
-		else
-		{
-			switch(type) {
-				case 'json':
-					// content = "data:text/json," + content;
-					var blob = new Blob([content], {type: "application/json"});
-					var url  = URL.createObjectURL(blob);
-					var a = document.createElement('a');
-					a.download    = "dialog.json";
-					a.href        = url;
-					a.click();
-					break;
-				case 'xml':
-					content = "data:text/xml," + content;
-					break;
-				default:
-					content = "data:text/plain," + content;
-					break;
-			}
-			// window.open(content, "_blank");
-		}
-	},
-
-	tryOpenFile: function()
-	{
-		app.deselectAllNodes();
-		data.openFileDialog($('#open-file'), data.openFile);
-	},
-
-	tryOpenFolder: function()
-	{
-		data.openFileDialog($('#open-folder'), data.openFolder);
-	},
-
-	tryAppend: function()
-	{
-		data.openFileDialog($('#open-file'), data.appendFile);
-	},
-
-	trySave: function(type)
-	{
-		data.editingType(type);
-		data.saveFileDialog($('#save-file'), type, data.getSaveData(type));
-	},
-
-	trySaveCurrent: function()
-	{
-		if (data.editingPath().length > 0 && data.editingType().length > 0)
-		{
-			data.saveTo(data.editingPath(), data.getSaveData(data.editingType()));
-		}
-	}
-
-}

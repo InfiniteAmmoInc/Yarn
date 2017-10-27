@@ -46,6 +46,7 @@ var Node = function(NodeType, userInput)
 
 	this.quickreplies = ko.observableArray();
 	this.body = ko.observableArray();
+  this.tag = ko.observable();
 	//this.x = ko.observable(128);
 	//this.y = ko.observable(128);
 	this.active = ko.observable(true);

@@ -767,7 +767,6 @@ var App = function(name, version)
 		{
 			self.recordNodeAction("removed", node);
 			self.nodes.splice(index, 1);
-
 			// If nodes has parents :
 			if (node.parents().length > 0) {
 				// For each parent :
@@ -879,9 +878,6 @@ var App = function(name, version)
 	{
 		if (self.advediting() != null)
 		{
-			if (self.advediting().conditions()[0].content().length != "") {
-				self.advediting().colorID(1);
-			}
 
 			$(".adv-node-editor").transition({ opacity: 0.8 }, 400);
 			$(".adv-node-editor .form").transition({ x: "-400" }, 400, function()
