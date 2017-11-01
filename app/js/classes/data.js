@@ -111,18 +111,12 @@ var data =
 
 	loadData: function(content, type, clearNodes)
 	{
-		// clear all content
-		if (clearNodes)
-		app.nodes.removeAll();
-		app.globalRootNodeIndexes = ko.observableArray([ko.observable("0 r")]);
-		app.globalChildNodeIndexes =  ko.observableArray([ko.observable("0 c")]);
-		app.globalFallbackNodeIndexes =  ko.observableArray([ko.observable("0 f")]);
 
 		//Initialize the nodes infromations
 		var root_nodes = [];
 		var fallback_nodes = [];
 		var child_nodes = [];
-		var i = 0;
+
 		if (type == FILETYPE.JSON)
 		{
 			content = JSON.parse(content);
@@ -137,6 +131,15 @@ var data =
 				fallback_nodes.push(content.fallback_nodes[i])
 			}
 		}
+
+		// clear all content
+		if (clearNodes)
+			app.nodes.removeAll();
+			app.globalRootNodeIndexes = ko.observableArray([ko.observable("0 r")]);
+			app.globalChildNodeIndexes =  ko.observableArray([ko.observable("0 c")]);
+			app.globalFallbackNodeIndexes =  ko.observableArray([ko.observable("0 f")]);
+			let DefaultFallback = app.newFallbackNode("Default Fallback");
+			addNodeFromJSON(DefaultFallback, fallback_nodes[0]);
 
 		// else if (type == FILETYPE.XML)
 		// {
@@ -156,10 +159,12 @@ var data =
 		// node just created and object is the array containing the informations
 		function addNodeFromJSON(node, object)
 		{
-			if (object.title != undefined)
-			node.title(object.title);
-			if (object.id != undefined)
-			node.index(object.id);
+			if (object.title != undefined) {
+				node.title(object.title);
+			}
+			if (object.id != undefined) {
+				node.index(object.id);
+			}
 			if (object.id[object.id.length -1] == ' r') {
 				app.globalRootNodeIndexes.splice(-1,1);
 				app.globalRootNodeIndexes.push(node.index())
@@ -172,18 +177,20 @@ var data =
 				app.globalFallbackNodeIndexes.splice(-1,1);
 				app.globalFallbackNodeIndexes.push(node.index())
 			}
-			if (object.uuid != undefined)
-			node.uuid = object.uuid;
-			if (object.output != undefined)
-			for (var i = 0; i < object.output.length; i++) {
-				if (object.output[i].type == 0) {
-					node.body.push({'id': ko.observable(object.output[i].content)});
-				}
-				if (object.output[i].type == 2) {
-					node.body.push({'id': ko.observable(object.output[i].content.text)});
-					for (var j = 0; j < object.output[i].content.quick_replies.length; j++) {
-						if (object.output[i].content.quick_replies[j].title != "") {
-							node.quickreplies.push({'id': ko.observable(object.output[i].content.quick_replies[j].title)});
+			if (object.uuid != undefined) {
+				node.uuid = object.uuid;
+			}
+			if (object.output != undefined) {
+				for (var i = 0; i < object.output.length; i++) {
+					if (object.output[i].type == 0) {
+						node.body.push({'id': ko.observable(object.output[i].content)});
+					}
+					if (object.output[i].type == 2) {
+						node.body.push({'id': ko.observable(object.output[i].content.text)});
+						for (var j = 0; j < object.output[i].content.quick_replies.length; j++) {
+							if (object.output[i].content.quick_replies[j].title != "") {
+								node.quickreplies.push({'id': ko.observable(object.output[i].content.quick_replies[j].title)});
+							}
 						}
 					}
 				}
