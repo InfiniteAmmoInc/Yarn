@@ -782,23 +782,26 @@ var App = function(name, version)
 				}
 			}
 			if (node.index()[node.index().length -1] == "r") {
-				self.globalRootNodeIndexes.splice(index, 1);
-				for (let i = index; i < self.globalRootNodeIndexes().length; i++) {
+				let root_node_index = parseInt(node.index());
+				self.globalRootNodeIndexes.splice(root_node_index, 1);
+				for (let i = root_node_index; i < self.globalRootNodeIndexes().length; i++) {
 					// De-increment the global root nodes indexes:
 					self.globalRootNodeIndexes()[i](i + ' r');
 				}
 			}
 			else if (node.index()[node.index().length -1] == "c") {
+				let child_node_index = parseInt(node.index());
 				// De-increment the global child nodes indexes:
-				self.globalChildNodeIndexes.splice(index, 1);
-				for (let i = parseInt(node.index()); i < self.globalChildNodeIndexes().length; i++) {
+				self.globalChildNodeIndexes.splice(child_node_index, 1);
+				for (let i = child_node_index; i < self.globalChildNodeIndexes().length; i++) {
 					self.globalChildNodeIndexes()[i](i + ' c');
 				}
 			}
 			else if (node.index()[node.index().length -1] == "f") {
+				let fallback_node_index = parseInt(node.index());
 				// De-increment the global fallback nodes indexes:
-				self.globalFallbackNodeIndexes.splice(index, 1);
-				for (let i = parseInt(node.index()); i < self.globalFallbackNodeIndexes().length ; i++) {
+				self.globalFallbackNodeIndexes.splice(fallback_node_index, 1);
+				for (let i = fallback_node_index; i < self.globalFallbackNodeIndexes().length ; i++) {
 					self.globalFallbackNodeIndexes()[i](i + ' f');
 				}
 			}

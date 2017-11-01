@@ -254,6 +254,38 @@ var Node = function(NodeType, userInput)
 			self.colorID(0);
 	}
 
+  this.changeToType = function(type) {
+    if (self.index()[self.index().length - 1] === 'r') {
+      let root_node_index = parseInt(self.index());
+      if (type === 'child') {
+        this.index = app.globalChildNodeIndexes()[app.globalChildNodeIndexes().length -1];
+        let child_node_index = parseInt(self.index());
+    		app.globalChildNodeIndexes.push(ko.observable(child_node_index + 1 + ' c'));
+				app.globalRootNodeIndexes.splice(root_node_index, 1);
+				for (let i = root_node_index; i < app.globalRootNodeIndexes().length; i++) {
+					// De-increment the global root nodes indexes:
+					app.globalRootNodeIndexes()[i](i + ' r');
+				}
+      }
+      if (type === 'fallback') {
+        this.index = app.globalChildNodeIndexes()[app.globalChildNodeIndexes().length -1];
+        let fallback_node_index = parseInt(self.index());
+        app.globalChildNodeIndexes.push(ko.observable(fallback_node_index + 1 + ' f'));
+        app.globalRootNodeIndexes.splice(root_node_index, 1);
+        for (let i = root_node_index; i < app.globalRootNodeIndexes().length; i++) {
+          // De-increment the global root nodes indexes:
+          app.globalRootNodeIndexes()[i](i + ' r');
+        }
+      }
+    }
+    if (self.index()[self.index().length - 1] === 'c') {
+
+    }
+    if (self.index()[self.index().length - 1] === 'f') {
+
+    }
+  }
+
 	this.remove = function()
 	{
 		$(self.element).transition({opacity: 0, scale: 0.8, y: "-=80px", rotate: "-45deg"}, 250, "easeInQuad", function()
@@ -362,6 +394,12 @@ var Node = function(NodeType, userInput)
             app.removeNode(app.NodeToConnect.fallback());
           }
           app.NodeToConnect.fallback(self);
+          self.parents.push(app.NodeToConnect);
+          app.updateNodeLinks();
+        }
+        if (self.index()[self.index().length -1] == 'r' && app.NodeToConnect.childs.indexOf(self) == -1) {
+          self.changeToType("child");
+          app.NodeToConnect.childs.push(self);
           self.parents.push(app.NodeToConnect);
           app.updateNodeLinks();
         }
