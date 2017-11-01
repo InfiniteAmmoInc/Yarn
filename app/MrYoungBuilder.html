@@ -132,9 +132,9 @@
 					<div class="body" data-bind="foreach: app.editing().body">
 					  <div class="bot-answer">
 							<span class="deleteBotAnswer" data-bind="click:function () { app.removeBotAnswer($data.id) }">
-								<img src="./images/delete.png" alt="delete" height="16" width="16" >
+								<img src="./images/delete.png" alt="delete" height="20" width="20" >
 							</span>
-							<div contentEditable="true" data-bind="editableText: $data.id"></div>
+							<div class="answer-content" contentEditable="true" data-bind="editableText: $data.id"></div>
 						</div>
 					</div>
 					<div class="AddBotAnswer" data-bind="click: app.addBotAnswer">
@@ -146,7 +146,7 @@
 						<div class="quickreplies" data-bind="foreach: app.editing().quickreplies">
 							<div class="quickreply">
 								<span class="deleteQuickReply" data-bind="click:function () { app.removeQuickReply($data.id) }">
-									<img src="./images/delete.png" alt="delete" height="16" width="16" >
+									<img src="./images/delete.png" alt="delete" height="20" width="20" >
 								</span>
 								<div class="resizing-input" contentEditable="true" data-bind="editableText: $data.id"></div>
 							</div>
@@ -170,6 +170,9 @@
 				<div class="form" data-bind="preventBubble: 'click', preventBubble: 'mousedown'">
 					<div type="text" class="title">Conditions :</div>
 					<div class="conditions" data-bind="foreach: app.advediting().conditions">
+						<span class="deleteCondition" data-bind="click:function () { app.removeCondition($data.content) }">
+							<img src="./images/delete.png" alt="delete" height="16" width="16" >
+						</span>
 						<input type="content" data-bind="value: $data.content" placeholder="#intent / @entity / ${context}"/>
 						<select class="operator" name="operator" data-bind="options: app.operators, value: $data.op"></select>
 					</div>

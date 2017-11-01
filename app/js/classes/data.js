@@ -114,7 +114,6 @@ var data =
 		// clear all content
 		if (clearNodes)
 		app.nodes.removeAll();
-
 		app.globalRootNodeIndexes = ko.observableArray([ko.observable("0 r")]);
 		app.globalChildNodeIndexes =  ko.observableArray([ko.observable("0 c")]);
 		app.globalFallbackNodeIndexes =  ko.observableArray([ko.observable("0 f")]);

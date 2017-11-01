@@ -517,15 +517,18 @@ a:hover { color: #000;}
 }
 
 .deleteBotAnswer{
+	float: left;
 	margin-top: 2px;
-	display:none;
+	margin-right: -20px;
 	cursor: pointer;
+	visibility: hidden;
+	position: relative;
+	z-index: 300;
 }
 
 .bot-answer:hover .deleteBotAnswer, .bot-answer .resizing-input{
+	visibility: visible;
 	float: left;
-	display:inline-block;
-	margin-right: 5px;
 }
 
 .node-editor .form .close
@@ -593,15 +596,18 @@ a:hover { color: #000;}
 }
 
 .deleteQuickReply{
+	float: left;
 	margin-top: 2px;
-	display:none;
+	margin-right: -20px;
 	cursor: pointer;
+	visibility: hidden;
+	position: relative;
+	z-index: 300;
 }
 
 .quickreply:hover .deleteQuickReply, .quickreply .resizing-input{
+	visibility: visible;
 	float: left;
-	display:inline-block;
-	margin-right: 5px;
 }
 
 /* ---ADVANCED NODE EDITOR --- */
@@ -634,7 +640,7 @@ a:hover { color: #000;}
 	left: 0%;
 	top: 0%;
 	margin-right: 550px;
-	width: 300px;
+	width: 320px;
 	height: 100%;
 	padding: 20px;
 	background: #fff;
@@ -656,7 +662,7 @@ a:hover { color: #000;}
 	margin-top: 10px;
 }
 
-.adv-node-editor .addCondition img{
+.adv-node-editor .addCondition img, .deleteCondition img{
 	cursor: pointer;
 }
 

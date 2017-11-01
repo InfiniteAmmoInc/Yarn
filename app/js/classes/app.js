@@ -7,7 +7,7 @@ var App = function(name, version)
 	this.globalChildNodeIndexes =  ko.observableArray([ko.observable("0 c")]);
 	this.globalFallbackNodeIndexes =  ko.observableArray([ko.observable("0 f")]);
 	this.instance = this;
-	this.operators = ['And', 'Or']
+	this.operators = ['And', 'Or'];
 	this.name = ko.observable(name);
 	this.version = ko.observable(version);
 	this.editing = ko.observable(null);
@@ -70,6 +70,8 @@ var App = function(name, version)
 		self.newRootNode().title("Get Started");
 		self.nodes()[0].conditions()[0].content("#Get Started");
 		self.newFallbackNode("Default Fallback");
+		self.nodes()[1].x(self.nodes()[0].x());
+		self.nodes()[1].y(self.nodes()[0].y() + 350);
 
 		if (osName != "Windows" && osName != "Linux" && self.gui != undefined)
 		{
@@ -706,8 +708,6 @@ var App = function(name, version)
 				let fallbackNode = new Node("fallback");
 				fallbackNode.title("Default Fallback");
 				self.nodes.push(fallbackNode);
-				app.nodes()[1].x(app.nodes()[0].x());
-				app.nodes()[1].y(app.nodes()[0].y() + 350);
 				self.recordNodeAction("created", fallbackNode);
 				return fallbackNode;
 			}
@@ -893,6 +893,13 @@ var App = function(name, version)
 		if (self.advediting() != null)
 		{
 			self.advediting().conditions.push({content: ko.observable(""), op: ko.observable("And")});
+		}
+	}
+
+	this.removeCondition = function(condition_name){
+		if (self.advediting() != null)
+		{
+			self.advediting().conditions.remove(function (condition) { return condition.content == condition_name })
 		}
 	}
 
