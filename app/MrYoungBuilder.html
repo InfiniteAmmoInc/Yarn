@@ -112,7 +112,7 @@
 						node.colorID() == 5 ? '#C47862' :
 						node.colorID() == 6 ? '#97E1E9' :
 						'#eee'}"></div>
-						<div class="body" data-bind="html: node.clippedBody"></div>
+						<div class="text" data-bind="html: node.clippedText"></div>
 						<div class="quickreplies" data-bind="html: node.clippedQuickReplies"></div>
 						<div class="icon colorDown" data-bind="click: node.cycleColorDown"></div>
 						<div class="icon colorUp" data-bind="click: node.cycleColorUp"></div>
@@ -129,15 +129,37 @@
 					<div class="title">
 						<div class="resizing-input" contentEditable="true" data-bind="editableText: app.editing().title"></div>
 					</div>
-					<div class="body" data-bind="foreach: app.editing().body">
-					  <div class="bot-answer">
-							<span class="deleteBotAnswer" data-bind="click:function () { app.removeBotAnswer($data.id) }">
-								<img src="./images/delete.png" alt="delete" height="20" width="20" >
-							</span>
-							<div class="answer-content" contentEditable="true" data-bind="editableText: $data.id"></div>
+					<div class="body">
+						<div class="bot-answers" data-bind="foreach: app.editing().text">
+							<div class="bot-answer">
+								<span class="deleteBotAnswer" data-bind="click:function () { app.removeBotAnswer($data.id) }">
+									<img src="./images/delete.png" alt="delete" height="20" width="20" >
+								</span>
+								<div class="answer-content" contentEditable="true" data-bind="editableText: $data.id"></div>
+							</div>
+						</div>
+						<div class="carousel">
+							<div class="cards" data-bind="foreach: app.editing().cards">
+								<div class="card">
+									<img data-bind="attr: { src: $data.imgUrl}">
+									<div class="card-title" contentEditable="true" data-bind="editableText: $data.title"></div>
+									<div class="card-subtitle" contentEditable="true" data-bind="editableText: $data.subtitle"></div>
+								</div>
+								<div class="scrolls">
+									<div class="scrollCardLeft">
+										<img src="./images/Arrow_left.png" alt="Add Bot Answer" height="20" width="20" data-bind="click: app.scrollCardLeft">
+									</div>
+									<div class="scrollCardRight">
+										<img src="./images/Arrow_right.png" alt="Add Bot Answer" height="20" width="20" data-bind="click: app.scrollCardRight" >
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
 					<div class="AddBotAnswer" data-bind="click: app.addBotAnswer">
+						<img src="./images/plus.png" alt="Add Bot Answer" height="20" width="20" >
+					</div>
+					<div class="AddCard" data-bind="click: app.addCard">
 						<img src="./images/plus.png" alt="Add Bot Answer" height="20" width="20" >
 					</div>
 					<div class="icon close" data-bind="click:app.saveNode"></div>

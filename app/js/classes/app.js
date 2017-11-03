@@ -847,6 +847,7 @@ var App = function(name, version)
 				close = true;
 			}
 			if (close) {
+				self.editing().xcard = 0;
 				self.updateNodeLinks();
 				self.editing().title(self.trim(self.editing().title()));
 				self.editing().uuid = guid();
@@ -929,7 +930,6 @@ var App = function(name, version)
 		}
 	}
 
-//TODO Filter quickreplies with same name
 	this.filterQuickReplies = function (quickreply) {
 		if (self.editing() != null)
 		{
@@ -943,14 +943,49 @@ var App = function(name, version)
 	this.addBotAnswer = function(){
 		if (self.editing() != null)
 		{
-			self.editing().body.push({'id': ko.observable("New Empty text")});
+			self.editing().text.push({'id': ko.observable("New Empty text")});
+		}
+	}
+
+	this.addCard = function(){
+		if (self.editing() != null)
+		{
+			let imgUrl = ko.observable("https://i.ytimg.com/vi/m5d1FlSeF-M/maxresdefault.jpg");
+			let card_title = ko.observable("Title example" + self.editing().cardIndex);
+			self.editing().cardIndex++;
+			let card_subtitle = ko.observable("Subtitle example");
+			self.editing().cards.push({'imgUrl':imgUrl , 'title':card_title , 'subtitle':card_subtitle });
+		}
+	}
+
+	this.scrollCardLeft = function() {
+		if (self.editing() != null)
+		{
+			let x_ini = self.editing().xcard;
+			$(".card")
+				.css({x: x_ini})
+				.stop(true,false)
+				.transition({ x: x_ini-359 }, 400);
+			self.editing().xcard = x_ini - 359;
+		}
+	}
+
+	this.scrollCardRight = function() {
+		if (self.editing() != null)
+		{
+			let x_ini = self.editing().xcard;
+			$(".card")
+				.css({x: x_ini})
+				.stop(true,false)
+				.transition({ x: x_ini + 359 }, 400);
+			self.editing().xcard = x_ini + 359;
 		}
 	}
 
 	this.removeBotAnswer = function(Bot_Answer_name){
 		if (self.editing() != null)
 		{
-			self.editing().body.remove(function (BotAnswer) { return BotAnswer.id == Bot_Answer_name })
+			self.editing().text.remove(function (BotAnswer) { return BotAnswer.id == Bot_Answer_name })
 		}
 	}
 
@@ -969,9 +1004,9 @@ var App = function(name, version)
 			var node = app.nodes()[i];
 			var element = $(node.element);
 
-			var node_body = "";
-			node.body().forEach(function(bubble) {
-				node_body += ' '+ bubble.id();
+			var node_text = "";
+			node.text().forEach(function(bubble) {
+				node_text += ' '+ bubble.id();
 			})
 			var node_quickreplies="";
 			node.quickreplies().forEach(function(quickreply) {
@@ -1341,6 +1376,7 @@ var App = function(name, version)
 	this.arrangeX = function()
 	{
 		self.nodes().forEach(function(node) {
+			console.log(node.index());
 		})
 		var SPACING = 250;
 
@@ -1408,6 +1444,47 @@ var App = function(name, version)
 	{
 		console.log(self.nodes.sort);
 		self.nodes.sort(function(a, b) { return a.title().localeCompare(b.title()); });
+	}
+
+	this.sortNodes = function(cb) {
+		self.nodes.sort(function(left,right) {
+			let left_type = left.index()[left.index().length -1];
+			let right_type = right.index()[right.index().length -1];
+			if (left_type == 'c' && right_type == 'r' || left_type == 'f' && right_type == 'r' || left_type == 'f' && right_type == 'c') {
+				return 0;
+			}
+			else if (left_type == 'r' && right_type == 'c' || left_type == 'r' && right_type == 'f' || left_type == 'c' && right_type == 'f') {
+				return -1;
+			}
+			else {
+				let left_index = parseInt(left.index());
+				let right_index = parseInt(right.index());
+				if (left_index < right_index) {
+					return -1;
+				}
+				else {
+					return 0;
+				}
+			}
+		});
+
+		self.globalRootNodeIndexes.sort(function(left, right) {
+			left_num = parseInt(left());
+			right_num = parseInt(right());
+			return left_num == right_num ? 0 : (left_num < right_num ? -1 : 1)
+		});
+		self.globalChildNodeIndexes.sort(function(left, right) {
+			left_num = parseInt(left());
+			right_num = parseInt(right());
+			return left_num == right_num ? 0 : (left_num < right_num ? -1 : 1)
+		});
+		self.globalFallbackNodeIndexes.sort(function(left, right) {
+			left_num = parseInt(left());
+			right_num = parseInt(right());
+			return left_num == right_num ? 0 : (left_num < right_num ? -1 : 1)
+		});
+
+		return cb;
 	}
 
 	this.moveNodes = function(offX, offY)

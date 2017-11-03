@@ -44,8 +44,12 @@ var Node = function(NodeType, userInput)
 		this.title = ko.observable("Node " + this.index());
 	}
 
+  this.cardIndex = 0;
+  this.xcard = 0;
+
 	this.quickreplies = ko.observableArray();
-	this.body = ko.observableArray();
+	this.text = ko.observableArray();
+  this.cards = ko.observableArray();
   this.tag = ko.observable();
 	//this.x = ko.observable(128);
 	//this.y = ko.observable(128);
@@ -79,9 +83,9 @@ var Node = function(NodeType, userInput)
 
 
 
-	this.clippedBody = ko.computed(function()
+	this.clippedText = ko.computed(function()
 	{
-		// var result = app.getHighlightedText(this.body());
+		// var result = app.getHighlightedText(this.text());
 		// while (result.indexOf("\n") >= 0)
 		// 	result = result.replace("\n", "<br />");
 		// while (result.indexOf("\r") >= 0)
@@ -89,9 +93,9 @@ var Node = function(NodeType, userInput)
 		// result = result.substr(0, ClipNodeTextLength);
     //     return result;
 		var result ="";
-		var body = this.body();
-		for (var i = 0; i < body.length; i++) {
-			result = result + body[i].id() + "<br />";
+		var text = this.text();
+		for (var i = 0; i < text.length; i++) {
+			result = result + text[i].id() + "<br />";
 		}
 		return result;
     }, this);
