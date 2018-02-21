@@ -27,7 +27,8 @@ var App = function(name, version)
 		0
 	];
 	this.shifted = false;
-
+    this.isNwjs = false;
+    
 	this.UPDATE_ARROWS_THROTTLE_MS = 25;
 
 	//this.editingPath = ko.observable(null);
@@ -41,6 +42,7 @@ var App = function(name, version)
 	{
 		this.gui = require('nw.gui');
 		this.fs = require('fs');
+        this.isNwjs = true;
 	}
 
 	this.run = function()
@@ -356,10 +358,53 @@ var App = function(name, version)
 				}
 			}
 		});
-
+                
+        $(document).on('keydown', function(e) {
+            if (self.isNwjs === false) { return; }
+            
+            if (e.ctrlKey || e.metaKey) {
+                if (e.shiftKey) {
+                    switch(e.keyCode)
+                    {
+                        case 83: 
+                            data.trySave(FILETYPE.JSON);
+                            self.fileKeyPressed = true;
+                        break;
+                        case 65:
+                            data.tryAppend();
+                            self.fileKeyPressed = true;
+                        break;
+                    }
+                } else if(e.altKey) {
+                    switch(e.keyCode)
+                    {
+                        case 83: 
+                            data.trySave(FILETYPE.YARNTEXT);
+                            self.fileKeyPressed = true;
+                        break;
+                    }  
+                } else {
+                    switch(e.keyCode)
+                    {
+                        case 83: 
+                            if (data.editingPath() != null) {
+                                data.trySaveCurrent();     
+                            } else {
+                                data.trySave(FILETYPE.JSON);
+                            }
+                            self.fileKeyPressed = true;
+                        break;
+                        case 79:
+                            data.tryOpenFile();
+                            self.fileKeyPressed = true;
+                        break;                        
+                    }
+                }                
+            }                  
+        });
+        
 		$(document).on('keydown', function(e) {
-			if (self.editing() || self.$searchField.is(':focus')) return;
-
+			if (self.editing() || self.$searchField.is(':focus') || e.ctrlKey || e.metaKey) return;                                                    
 			var scale = self.cachedScale || 1,
 				movement = scale * 500;
 
