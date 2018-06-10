@@ -29,25 +29,17 @@ function createWindow () {
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
 
-  // mainWindow.on('close', function (event) {
-  //   event.preventDefault();
-  //   mainWindow.webContents.send('closing'); ///save file meta
-  // });
+  mainWindow.on('close', function (event) {
+    event.preventDefault();
+    if(yarnRunnerWindow){yarnRunnerWindow.destroy();}
+    mainWindow.destroy();
+    mainWindow = null;
+  });
 
-  // Emitted when the window is closed.
-  // mainWindow.on('closed', function () {
-  //   mainWindow = null
-  // });
-  
   // mainWindow.webContents.on('dom-ready', () => { // in case you want to send data to yarn window on init
   //   mainWindow.webContents.send('loadYarnDataObject', yarnData);
   //   mainWindow.show();
   //   mainWindow.maximize();
-  // });
-
-  // ipcMain.on('Terminating', function (event) {
-  //   mainWindow.destroy();
-  //   if(yarnRunnerWindow){yarnRunnerWindow.destroy();}
   // });
 
   ipcMain.on('openFileYarn', (event,operation) => {
