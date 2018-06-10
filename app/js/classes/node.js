@@ -6,7 +6,7 @@ const ClipNodeTextLength = 1024;
 var Node = function()
 {
 	var self = this;
-
+	this.titleColorValues = ['#eee','#6EA5E0','#9EDE74','#FFE374','#F7A666','#C47862','#97E1E9'];
 	// primary values
 	this.index = ko.observable(globalNodeIndex++);
 	this.title = ko.observable("Node" + this.index());

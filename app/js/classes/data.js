@@ -1,5 +1,23 @@
 var FILETYPE = { JSON: "json", XML: "xml", TWEE: "twee", TWEE2: "tw2", UNKNOWN: "none", YARNTEXT: "yarn.txt" };
 
+const ipc = require('electron').ipcRenderer;
+
+ipc.on('selected-file', function (event, path,operation) {
+	if(operation == 'tryOpenFile'){data.openFile($('#open-file'), path);}
+	else if(operation == 'tryAppend'){data.openFileDialog($('#open-file'), path);}
+});
+
+ipc.on('saved-file', function (event, path,type,content) {
+	data.editingType(type);
+	data.saveTo(path, content);
+	app.refreshWindowTitle(path);
+});
+
+ipc.on('loadYarnDataObject', function (event, yarnData) {
+	console.log("Loading YARN data From Game engine...");
+	data.loadData(JSON.stringify(yarnData),FILETYPE.JSON,true);
+});
+
 var data =
 {
 	editingPath: ko.observable(null),
@@ -59,7 +77,6 @@ var data =
 	openFile: function(e, filename)
 	{
 		data.readFile(e, filename, true);
-
 		app.refreshWindowTitle(filename);
 	},
 
@@ -392,6 +409,7 @@ var data =
 	{
 		if (app.fs != undefined)
 		{
+			console.log(app.fs);
 			app.fs.writeFile(path, content, {encoding: 'utf-8'}, function(err) 
 			{
 				data.editingPath(path);
@@ -427,8 +445,11 @@ var data =
 
 	saveFileDialog: function(dialog, type, content)
 	{
-		var file = 'file.' + type;
-
+		if (ipc) {		
+			var file = 'file.' + type;
+			ipc.send('saveFileYarn',type,content);
+			return 
+		}
 		if (app.fs)
 		{
 			dialog.attr("nwsaveas", file);
@@ -455,9 +476,11 @@ var data =
 		}
 	},
 
-	tryOpenFile: function()
+	tryOpenFile: function() /// Refactor to send signal to the main process
 	{
-		data.openFileDialog($('#open-file'), data.openFile);
+		console.log(ipc);
+		ipc.send('openFileYarn','tryOpenFile');
+		// data.openFileDialog($('#open-file'), data.openFile);
 	},
 
 	tryOpenFolder: function()
@@ -467,7 +490,8 @@ var data =
 
 	tryAppend: function()
 	{
-		data.openFileDialog($('#open-file'), data.appendFile);
+		ipc.send('openFileYarn','tryAppend');
+		// data.openFileDialog($('#open-file'), data.appendFile);
 	},
 
 	trySave: function(type)
@@ -482,6 +506,11 @@ var data =
 		{
 			data.saveTo(data.editingPath(), data.getSaveData(data.editingType()));
 		}
-	}
+	},
+
+	sendToExternalApp: function()
+	{
+		ipc.send('sendYarnDataToObject',JSON.parse(data.getSaveData(FILETYPE.JSON)));
+	},
 
 }

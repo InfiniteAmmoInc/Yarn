@@ -1,0 +1,46 @@
+<script src="js/classes/renderer.js"></script>
+
+<p id="NVrichTextLabel"></p>
+<script>
+const electron = require('electron')
+const ipcRenderer = electron.ipcRenderer;
+const remote = electron.remote
+
+ipcRenderer.on('loadYarnDataOnRunner', (event,yarnContent,startTestNode) => {
+    var yarn = new yarnRender()
+	yarn.initYarn(yarnContent,startTestNode,"NVrichTextLabel");
+	
+    document.addEventListener("keydown", event => {
+		switch (event.key) {
+			case "z":
+			{
+				yarn.changeTextScrollSpeed(20)
+				return
+			}
+		}})
+	document.addEventListener("keyup", event => {
+		switch (event.key) {
+			case "z":
+			{
+				if(yarn.vnSelectedChoice != -1){ 
+					yarn.vnSelectChoice()
+				}
+				yarn.changeTextScrollSpeed(200)
+				return
+			}
+			case "ArrowLeft": 
+			{
+				if(yarn.vnSelectedChoice != -1){
+					yarn.vnUpdateChoice(-1)
+				 }
+				return		
+			}
+			case "ArrowRight": 
+			{
+				if(yarn.vnSelectedChoice != -1){yarn.vnUpdateChoice(1) }
+				return		
+			}
+		}})
+//   initYarn(yarnContent,startTestNode)
+})
+</script>

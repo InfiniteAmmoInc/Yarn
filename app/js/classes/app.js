@@ -1,7 +1,11 @@
+const electron = require('electron')
+const remote = electron.remote
+
 var App = function(name, version)
 {
+	// console.log(remote.getCurrentWindow()); ///// replace nw.gui 
 	var self = this;
-
+	
 	// self
 	this.instance = this;
 	this.name = ko.observable(name);
@@ -40,8 +44,10 @@ var App = function(name, version)
 	// node-webkit
 	if (typeof(require) == "function")
 	{
-		this.gui = require('nw.gui');
-		this.fs = require('fs');
+		// this.gui = require('nw.gui');
+		this.gui = remote.getCurrentWindow();
+		this.fs = remote.require('fs');
+		console.log(this.fs);
     this.isNwjs = true;
 	}
 
@@ -509,12 +515,13 @@ var App = function(name, version)
 
 	this.refreshWindowTitle = function(editingPath)
 	{
-		var gui = require('nw.gui');
-
+		// var gui = require('nw.gui');
+		var gui = remote.getCurrentWindow();
 		if (!gui) return;
 
 		// Get the current window
-		var win = gui.Window.get();
+		// var win = gui.Window.get(); //Borked
+		var win = remote.getCurrentWindow();
 
 		win.title = "Yarn - [" + editingPath + "] ";// + (self.dirty?"*":"");
 	}
@@ -728,8 +735,47 @@ var App = function(name, version)
 		return x.replace(/^\s+|\s+$/gm,'');
 	}
 
+	this.appendText = function(textToAppend) { // [[First choice|Option1]]
+		self.editing().body(self.editing().body()+" [[changeMe|"+textToAppend+"]]");
+	}
+
+	this.testRunFrom = function(startTestNode){
+		ipc.send('testYarnStoryFrom',JSON.parse(data.getSaveData(FILETYPE.JSON)),startTestNode);
+	}
+
+	this.openNodeListMenu = function(action) {
+		var helperLinkSearch = document.getElementById(action+'HelperMenuFilter').value;
+		var rootMenu = document.getElementById(action+'HelperMenu');
+		for (let i = rootMenu.childNodes.length - 1; i > 1; i--) {
+			rootMenu.removeChild(rootMenu.childNodes[i]);
+		 }
+		app.nodes().forEach((node,i) => {
+			if (node.title().toLowerCase().indexOf(helperLinkSearch) >= 0 || helperLinkSearch.length == 0 ){
+				var p = document.createElement('span');
+				p.innerHTML = node.title();
+				p.setAttribute('class', 'item');
+				var pColor = node.titleColorValues[app.nodes()[i].colorID()];
+				p.setAttribute('style' ,'background:'+pColor+';');
+
+				if(action == "link"){
+					if (node.title() !== self.editing().title() ){
+							p.setAttribute('onclick', "app.appendText('" + node.title() + "')");	
+							rootMenu.appendChild(p);
+					}
+				}else if (action=="run"){
+					if (node.title().toLowerCase().indexOf(helperLinkSearch) >= 0 || helperLinkSearch.length == 0 ){
+						console.log('make run node')
+						p.setAttribute('onclick', "app.testRunFrom('" + node.title() + "')");
+						rootMenu.appendChild(p);
+					}
+				}	
+			}
+		})
+	}
+
 	this.saveNode = function()
 	{
+		// console.log(self.editing().body());
 		if (self.editing() != null)
 		{
 			self.updateNodeLinks();
