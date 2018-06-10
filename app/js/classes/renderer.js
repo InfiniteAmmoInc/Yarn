@@ -97,12 +97,7 @@ var yarnRender = function() {
 
 	var scrollUpdateText = function(updateVNHud){
 		vnTextResult = vnResult.text.substring(0,vnTextScrollIdx);
-		// yarnRender.this.testme("err");
 		updateVNHud();
-	}
-	this.testme = function(test){
-		console.log(test)
-		console.log("whoa")
 	}
 
 	this.updateVNHud = function (){ /// trigger this only on text update
