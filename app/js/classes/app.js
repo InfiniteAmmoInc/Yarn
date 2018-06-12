@@ -748,7 +748,7 @@ var App = function(name, version)
 		var rootMenu = document.getElementById(action+'HelperMenu');
 		for (let i = rootMenu.childNodes.length - 1; i > 1; i--) {
 			rootMenu.removeChild(rootMenu.childNodes[i]);
-		 }
+		};
 		app.nodes().forEach((node,i) => {
 			if (node.title().toLowerCase().indexOf(helperLinkSearch) >= 0 || helperLinkSearch.length == 0 ){
 				var p = document.createElement('span');
@@ -759,12 +759,11 @@ var App = function(name, version)
 
 				if(action == "link"){
 					if (node.title() !== self.editing().title() ){
-							p.setAttribute('onclick', "app.appendText('" + node.title() + "')");	
-							rootMenu.appendChild(p);
+						p.setAttribute('onclick', "app.appendText('" + node.title() + "')");	
+						rootMenu.appendChild(p);
 					}
 				}else if (action=="run"){
 					if (node.title().toLowerCase().indexOf(helperLinkSearch) >= 0 || helperLinkSearch.length == 0 ){
-						console.log('make run node')
 						p.setAttribute('onclick', "app.testRunFrom('" + node.title() + "')");
 						rootMenu.appendChild(p);
 					}

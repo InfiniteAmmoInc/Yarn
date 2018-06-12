@@ -149,7 +149,7 @@ a:hover { color: #000;}
 {
 	transition: max-height 0.5s;
 	max-height: 0px;
-	overflow: hidden;
+	overflow: auto;
 	float: left;
 }
 
@@ -172,6 +172,15 @@ a:hover { color: #000;}
 {
     background: #ddd;
     color: #555;
+}
+
+.app-menu .dropdown .search-field
+{
+	box-sizing: border-box;
+	float: left;
+	display: block;
+	width: 100%;
+	padding: 10px;
 }
 
 .app-menu .menu:hover .dropdown
