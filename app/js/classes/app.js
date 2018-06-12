@@ -27,7 +27,7 @@ var App = function(name, version)
 		0
 	];
 	this.shifted = false;
-  this.isNwjs = false;
+  	this.isNwjs = false;
     
 	this.UPDATE_ARROWS_THROTTLE_MS = 25;
 
@@ -151,7 +151,6 @@ var App = function(name, version)
 				
 				if (dragging)
 				{
-					//if(e.ctrlKey)
 					if (e.altKey || e.button === 1)
 					{
 						//prevents jumping straight back to standard dragging
@@ -163,6 +162,7 @@ var App = function(name, version)
 						}
 						else
 						{
+							/*
 							self.transformOrigin[0] += e.pageX - offset.x;
 							self.transformOrigin[1] += e.pageY - offset.y;
 
@@ -170,8 +170,8 @@ var App = function(name, version)
 
 							offset.x = e.pageX;
 							offset.y = e.pageY;
+							*/
 
-							/*
 							var nodes = self.nodes();
 							for (var i in nodes)
 							{
@@ -180,7 +180,6 @@ var App = function(name, version)
 							}
 							offset.x = e.pageX;
 							offset.y = e.pageY;
-							*/
 						}
 					}
 					else
@@ -189,7 +188,7 @@ var App = function(name, version)
 
 						var scale = self.cachedScale;
 
-						if(e.pageX > offset.x && e.pageY < offset.y) 
+						if(e.pageX > offset.x && e.pageY < offset.y)
 						{
 							MarqRect.x1 = offset.x;
 							MarqRect.y1 = e.pageY;
@@ -215,7 +214,7 @@ var App = function(name, version)
 							MarqRect.x1 = e.pageX;
 							MarqRect.y1 = offset.y;
 							MarqRect.x2 = offset.x;
-							MarqRect.y2 = e.pageY;	
+							MarqRect.y2 = e.pageY;
 						}
 
 						$("#marquee").css({ x:MarqRect.x1, 
