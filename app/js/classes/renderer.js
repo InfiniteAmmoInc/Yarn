@@ -1,16 +1,25 @@
 const bondage = require('bondage');
 const bbcode = require('bbcode');
 const yarnRunner = new bondage.Runner();
+const EventEmitter = require('events').EventEmitter
 
+	
 var yarnRender = function() {
 	this.self = this;
 	this.vnChoiceSelectionCursor = ">";
 	this.startTimeWait;
 	this.vnSelectedChoice = -1;
 	this.vnTextScrollInterval;
+	this.finished = false;
+	this.commandsPassedLog = [];
+	this.commandPassed = "";
+	this.emiter = new EventEmitter();
+	////https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent
+	// this.commandRunEvent = new CustomEvent("commandRun", {
+	// 	command : null
+	//   });
 
 	var vnChoices, vnTextResult, vnResult ,VNtext ,vnTextScroll ,htmIDtoAttachYarnTo,vnTextScrollIdx = 0;
-
 	this.vnUpdateChoice = function(direction=0){ //dir: -1 or 1
 		if (this.vnSelectedChoice < 0){return};
 		var attemptChoice = this.vnSelectedChoice + direction;
@@ -41,12 +50,25 @@ var yarnRender = function() {
 	}
 
 	this.changeTextScrollSpeed = function(interval=0){ /// this function is triggered on key press/release
-		if (vnResult == undefined){return};
+		if (vnResult == undefined){
+			// this.terminate();
+			this.finished = true;
+			return
+		};
 		if (interval == this.vnTextScrollInterval){return};/// use this to stop it from triggering on every frame
 		this.vnTextScrollInterval = interval; 
-		
 		clearInterval(vnTextScroll);//this resets the scroll timer
 		
+		if (vnResult.constructor.name == "CommandResult" ){
+			this.commandsPassedLog.push(vnResult.text) ;
+			this.commandsPassed = vnResult.text;
+			this.emiter.emit("command",vnResult.text)
+			vnTextScrollIdx = 0;
+			vnResult = VNtext.next().value;
+			this.changeTextScrollSpeed(200);
+			return;
+		}
+
 		if (vnResult.constructor.name ==  "OptionsResult"){ /// Add choices to text
 			if (this.vnSelectedChoice === -1){ ///we need to set it to -1 after choice is made
 			this.vnSelectedChoice = 0;
@@ -56,13 +78,7 @@ var yarnRender = function() {
 			return
 		}
 		
-		if (vnResult.constructor.name == "jsEvalResult" ){
-			eval(vnResult.evalString);
-			vnTextScrollIdx = 0;
-			vnResult = VNtext.next().value;
-			this.changeTextScrollSpeed(200);
-			return;
-		}
+
 	
 		if(vnTextScrollIdx >= vnResult.text.length){ /// Scrolled to end of text, move on
 			vnTextScrollIdx = 0;
@@ -101,6 +117,12 @@ var yarnRender = function() {
 		document.getElementById(htmIDtoAttachYarnTo).innerHTML=RenderHtml;
 	}
 	
+	this.terminate = function(){
+		document.getElementById(htmIDtoAttachYarnTo).innerHTML="";
+		VNtext = null;
+		vnResult = null;
+	}
+
 	this.initYarn = function(yarnDataObject,startChapter,htmlIdToAttachTo){
 		htmIDtoAttachYarnTo =htmlIdToAttachTo
 		this.yarnDataObject= yarnDataObject
@@ -110,6 +132,7 @@ var yarnRender = function() {
 	}
 
 	this.loadYarnChapter = function(storyChapter){
+		this.finished = false;
 		console.log("LOADING YARN DATA... chapter: "+storyChapter);
 		VNtext = yarnRunner.run(storyChapter);
 		console.log("YARN::")
