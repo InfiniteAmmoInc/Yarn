@@ -735,16 +735,18 @@ var App = function(name, version)
 		return x.replace(/^\s+|\s+$/gm,'');
 	}
 
-	this.appendText = function(textToAppend) { // [[First choice|Option1]]
-		self.editing().body(self.editing().body()+" [[changeMe|"+textToAppend+"]]");
+	this.appendText = function(textToAppend) 
+	{
+		self.editing().body(self.editing().body()+" [[Answer:"+textToAppend+"|"+textToAppend+"]]");
 	}
 
 	this.testRunFrom = function(startTestNode){
 		ipc.send('testYarnStoryFrom',JSON.parse(data.getSaveData(FILETYPE.JSON)),startTestNode);
 	}
 
-	this.openNodeListMenu = function(action) {
-		var helperLinkSearch = document.getElementById(action+'HelperMenuFilter').value;
+	this.openNodeListMenu = function(action) 
+	{
+		var helperLinkSearch = document.getElementById(action+'HelperMenuFilter').value
 		var rootMenu = document.getElementById(action+'HelperMenu');
 		for (let i = rootMenu.childNodes.length - 1; i > 1; i--) {
 			rootMenu.removeChild(rootMenu.childNodes[i]);
@@ -767,14 +769,13 @@ var App = function(name, version)
 						p.setAttribute('onclick', "app.testRunFrom('" + node.title() + "')");
 						rootMenu.appendChild(p);
 					}
-				}	
+				}
 			}
 		})
 	}
 
 	this.saveNode = function()
 	{
-		// console.log(self.editing().body());
 		if (self.editing() != null)
 		{
 			self.updateNodeLinks();
@@ -797,7 +798,7 @@ var App = function(name, version)
 		var title = $(".search-title input").is(':checked');
 		var body = $(".search-body input").is(':checked');
 		var tags = $(".search-tags input").is(':checked');
-
+		
 		var on = 1;
 		var off = 0.25;
 

@@ -7,7 +7,6 @@
 		<link rel="stylesheet" href="css/style.css">
 
 		<!-- libraries -->
-		<!-- https://ourcodeworld.com/articles/read/202/how-to-include-and-use-jquery-in-electron-framework -->
 		<script>window.$ = window.jQuery = require('jquery');</script>
 		<!-- <script type="text/javascript" src="js/libs/jquery-1.11.2.min.js"></script> -->
 		<script type="text/javascript" src="js/libs/jquery.mousewheel.min.js"></script>
@@ -37,6 +36,7 @@
 			<!-- search form -->
 			<div class="app-search">
 				<input type="text" class="search-field"/>
+				
 				<div class="search-title search-item">
 					<input type="checkbox" checked="checked" id="search-title" />
 					<label for="search-title">Title</label>
@@ -77,19 +77,18 @@
 				<div class="menu">
 					<span class="title">File</span>
 					<div class="dropdown">
-						<!-- <span class="item" data-bind="click: data.tryOpenFile">Open...</span> -->
 						<span class="item" data-bind="click: data.tryOpenFile">Open...</span>
 						<!--<span class="item" data-bind="click: data.tryOpenFolder">Open Folder...</span>-->
 						<span class="item" data-bind="click: data.tryAppend">Append...</span>
 						<!-- ko if:data.editingPath() != null -->
-						<!-- <span class="item" data-bind="click: data.trySaveCurrent">Save</span> -->
+						<span class="item" data-bind="click: data.trySaveCurrent">Save</span>
 						<!-- /ko -->
 						<span class="item" data-bind="click: function() { data.trySave(FILETYPE.JSON);}">Save As Json...</span>
-						<!-- <span class="item" data-bind="click: function() { data.trySave(FILETYPE.YARNTEXT); }">Save As Yarn...</span> -->
-						<!-- <span class="item" data-bind="click: function() { data.trySave(FILETYPE.TWEE); }">Save As Twee...</span> -->
-						<!-- <span class="item" data-bind="click: function() { data.trySave(FILETYPE.TWEE2); }">Save As Twee2...</span> -->
-						<!-- <span class="item" data-bind="click: function() { data.trySave(FILETYPE.XML); }">Save As Xml...</span> -->
-						<!--<span class="item" data-bind="click: app.quit">Close</span>-->
+						<span class="item" data-bind="click: function() { data.trySave(FILETYPE.YARNTEXT); }">Save As Yarn...</span>
+						<span class="item" data-bind="click: function() { data.trySave(FILETYPE.TWEE); }">Save As Twee...</span>
+						<span class="item" data-bind="click: function() { data.trySave(FILETYPE.TWEE2); }">Save As Twee2...</span>
+						<span class="item" data-bind="click: function() { data.trySave(FILETYPE.XML); }">Save As Xml...</span>
+						<span class="item" data-bind="click: app.quit">Close</span>
 					</div>
 				</div>
 				
@@ -189,7 +188,6 @@
 				<span class="app-title" data-bind="text:app.name"></span>
 				<span class="app-version" data-bind="text:app.version"></span>
 			</div>
-
 
 			<!-- marquee -->
 			<div id="marquee"></div>

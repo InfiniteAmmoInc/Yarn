@@ -24,8 +24,17 @@
 	ipcRenderer.on('loadYarnDataOnRunner', (event,yarnContent,startTestNode) => {
 		
 		yarn.initYarn(yarnContent,startTestNode,"NVrichTextLabel");
+		
 		yarn.emiter.on("command",function(command){
 			document.getElementById("commandDebugLabel").innerHTML += "<br>" + command;
+			if (command.includes("(")){ // user is possibly calling a js function
+				try {
+					eval(command)
+				}
+				catch(err) {
+					alert(command + ":" + err)
+				}
+			};
 		});
 
 		document.addEventListener("keydown", event => {
@@ -45,13 +54,7 @@
 					if(yarn.vnSelectedChoice != -1){ 
 						yarn.vnSelectChoice()
 					};
-					
-					if(yarn.commandPassed !== null){
-						if (yarn.commandPassed.includes("(")){
-							eval(yarn.commandPassed)
-						}
-					};
-	
+						
 					if (yarn.finished){remote.getCurrentWindow().close()}
 					return
 				}

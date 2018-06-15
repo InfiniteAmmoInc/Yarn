@@ -139,6 +139,7 @@ var data =
 		if (type == FILETYPE.JSON)
 		{
 			content = JSON.parse(content);
+			if(!content){return};
 			for (i = 0; i < content.length; i ++)
 				objects.push(content[i]);
 		}
@@ -478,7 +479,6 @@ var data =
 
 	tryOpenFile: function() /// Refactor to send signal to the main process
 	{
-		console.log(ipc);
 		ipc.send('openFileYarn','tryOpenFile');
 		// data.openFileDialog($('#open-file'), data.openFile);
 	},

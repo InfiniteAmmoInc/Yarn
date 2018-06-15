@@ -53,7 +53,7 @@ function createWindow () {
 
   ipcMain.on('saveFileYarn', (event,type,content) => {
     dialog.showSaveDialog( mainWindow,
-      {filters: [{ name: 'story', extensions: ['json'] }]},
+      {filters: [{ name: 'story', extensions: [type] }]},
       function(filepath) {
         mainWindow.webContents.send('saved-file', filepath,type,content);
       });

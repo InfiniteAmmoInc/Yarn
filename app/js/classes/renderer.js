@@ -2,7 +2,6 @@ const bondage = require('bondage');
 const bbcode = require('bbcode');
 const yarnRunner = new bondage.Runner();
 const EventEmitter = require('events').EventEmitter
-
 	
 var yarnRender = function() {
 	this.self = this;
@@ -14,10 +13,6 @@ var yarnRender = function() {
 	this.commandsPassedLog = [];
 	this.commandPassed = "";
 	this.emiter = new EventEmitter();
-	////https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/CustomEvent
-	// this.commandRunEvent = new CustomEvent("commandRun", {
-	// 	command : null
-	//   });
 
 	var vnChoices, vnTextResult, vnResult ,VNtext ,vnTextScroll ,htmIDtoAttachYarnTo,vnTextScrollIdx = 0;
 	this.vnUpdateChoice = function(direction=0){ //dir: -1 or 1
@@ -60,9 +55,9 @@ var yarnRender = function() {
 		clearInterval(vnTextScroll);//this resets the scroll timer
 		
 		if (vnResult.constructor.name == "CommandResult" ){
-			this.commandsPassedLog.push(vnResult.text) ;
-			this.commandsPassed = vnResult.text;
-			this.emiter.emit("command",vnResult.text)
+			this.commandsPassedLog.push(vnResult.value) ;
+			this.commandsPassed = vnResult.value;
+			this.emiter.emit("command",vnResult.value)
 			vnTextScrollIdx = 0;
 			vnResult = VNtext.next().value;
 			this.changeTextScrollSpeed(200);
@@ -70,7 +65,7 @@ var yarnRender = function() {
 		}
 
 		if (vnResult.constructor.name ==  "OptionsResult"){ /// Add choices to text
-			if (this.vnSelectedChoice === -1){ ///we need to set it to -1 after choice is made
+			if (this.vnSelectedChoice === -1){ /// we need to set it to -1 after choice is made
 			this.vnSelectedChoice = 0;
 			this.vnUpdateChoice();
 			this.startTimeWait = new Date().getTime();
@@ -78,8 +73,6 @@ var yarnRender = function() {
 			return
 		}
 		
-
-	
 		if(vnTextScrollIdx >= vnResult.text.length){ /// Scrolled to end of text, move on
 			vnTextScrollIdx = 0;
 			vnResult = VNtext.next().value
