@@ -2,13 +2,19 @@
 
 Dialogue editor created for "Night in the Woods" (and other projects) by @NoelFB and @infinite_ammo with contributions from @seiyria and @beeglebug. It is heavily inspired by and based on the amazing Twine software: http://twinery.org/
 
-![Screenshot](http://infiniteammo.com/Yarn/screenshot.jpg)
+This is a port to electron, made possible by Todor Imreorov. It adds a number of new features, such as:
+- Integration of bondage.js (yarnspinner port in javascript) inside Yarn - this allows testing yarn stories directly insode yarn.
+- Helper menu to create node links - with a search filter
+- Helper menu to test yarn story from a specific node - with a search filter (via bondage.js)
+- Tester interface that supports rendering of bbcode- enabling rich text (font colors, styles,images and even links) with typing animation. The tester is written in a very reusable way (as a class with methods)- so it is easy to integrate in html5 games!
+
+![yarn-testerbbcode](https://user-images.githubusercontent.com/6495061/41685950-2b8b3580-74da-11e8-89ea-c7d23dea19da.gif)
 
 # Builds
 
-Win64: http://infiniteammo.com/Yarn/Yarn-2016-08-15-win.zip
+Win64: https://github.com/blurymind/Yarn/releases/tag/untagged-1933231011a749959b56
 
-MacOS: http://infiniteammo.com/Yarn/Yarn-2016-08-15-mac.zip
+MacOS: in Progress
 
 # Examples
 
@@ -40,6 +46,9 @@ Node connections work similar to Twine.
 
 ![Screenshot](http://infiniteammo.com/Yarn/node-connections.jpg)
 
+With the difference that there is now a helper menu to create links:
+![yarn-linkmaking](https://user-images.githubusercontent.com/6495061/41685764-7bf48d1a-74d9-11e8-89bc-b7bae39470f6.gif)
+
 # Shortcut Options
 
 Shortcut options are a new method of creating dialogue branches that does not require creating new nodes.
@@ -61,17 +70,6 @@ https://github.com/InfiniteAmmoInc/yarn-test
 You can find a more advanced Yarn interpreter here: 
 
 https://github.com/thesecretlab/YarnSpinner
-
-# How to Run the Yarn Source as an App
-
-Download http://nwjs.io/ for your platform and extract the contents.
-
-Win64: Download the latest nwjs for Windows 64bit. Extract the content to wherever you like. Drag the yarn folder into nw.exe and it should run yarn! (if not ensure that the yarn folder has package.json in it). Alternatively run nw.exe and navigate to C:/path_to_yarn/Yarn/app/index.html 
-
-MacOS: Place source code in a new folder named "app.nw" inside the extracted nwjs.app's "Contents/Resources/" folder.
-(to explore an app's folder structure, right click and select "Show Package Contents")
-
-Linux: Download latest nwjs for linux. Extract the content to wherver you like. In that folder make a new folder named "package.nw". Clone yarn into the package.nw folder so that readme, licence and most imporatantly package.json are in the package.nw folder. Now open terminal, navigate to the folder where you extracted nwjs and run the "nw" executable.
 
 # Yarn Icon
 
