@@ -124,6 +124,7 @@ var yarnRender = function() {
 		this.loadYarnChapter(startChapter);
 	}
 
+	//todo- rename to startChapter
 	this.loadYarnChapter = function(storyChapter){
 		this.finished = false;
 		console.log("LOADING YARN DATA... chapter: "+storyChapter);

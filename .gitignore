@@ -31,6 +31,9 @@ build/Release
 # Dependency directory
 node_modules
 
+# Updater
+electron-builder.yml
+
 # Optional npm cache directory
 .npm
 

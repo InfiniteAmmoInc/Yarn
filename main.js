@@ -1,6 +1,7 @@
 const electron = require('electron')
 const ipcMain = electron.ipcMain;
-const {dialog} = require('electron')
+const {dialog} = electron;
+const {autoUpdater} = require("electron-updater");
 // Module to control application life.
 const app = electron.app
 // Module to create native browser window.
@@ -20,7 +21,8 @@ function createWindow () {
     defaultWidth: 1000,
     defaultHeight: 800,
     maximize: false,
-    show:false
+    show:false,
+    autoHideMenuBar:true,
   });
   mainWindow.maximize();
   // and load the index.html of the app.
@@ -59,13 +61,23 @@ function createWindow () {
       });
   });
 
-  ipcMain.on('sendYarnDataToObject', (event,content,startTestNode) => { // in case you wanna export yarn object to another embedded app
+  ipcMain.on('sendYarnDataToObject', (event,content,startTestNode) => { // in case you wannt to export yarn object to another embedded app
     // otherApp.webContents.send('yarnSavedStory',content);
     // mainWindow.close();
   })
 
   ipcMain.on('testYarnStoryFrom' ,(event,content,startTestNode) => {
     createYarnTesterWindow(content,startTestNode);
+  })
+
+  // when the update has been downloaded and is ready to be installed, notify the BrowserWindow
+  autoUpdater.on('update-downloaded', (info) => {
+    mainWindow.webContents.send('updateReady')
+  });
+
+  // when receiving a quitAndInstall signal, quit and install the new version ;)
+  ipcMain.on("quitAndInstall", (event, arg) => {
+    autoUpdater.quitAndInstall();
   })
 
 }
@@ -77,16 +89,16 @@ function createYarnTesterWindow(content,startTestNode){
     defaultWidth: 1400,
     defaultHeight: 200,
     maximize: false,
-    show:false
+    show:false,
+    autoHideMenuBar:true,
     });
   
     yarnRunnerWindow.loadURL(`file://${__dirname}/app/renderer.html`);
-    yarnRunnerWindow.webContents.openDevTools();
+    // yarnRunnerWindow.webContents.openDevTools();
 
     yarnRunnerWindow.webContents.on('dom-ready', () => {
       yarnRunnerWindow.webContents.send('loadYarnDataOnRunner', content,startTestNode);
       yarnRunnerWindow.show();
-      // yarnRunnerWindow.maximize();
     });
 }
 

@@ -26,7 +26,17 @@
 		<script type="text/javascript" src="js/classes/node.js"></script>
 	</head>
 	<body>
-
+		<button id="updateButton" onClick="ipcRenderer.send('quitAndInstall')"></button>
+		<script>
+			const ipcRenderer = require('electron').ipcRenderer;
+			// wait for an updateReady message
+			var updateButton = document.getElementById('updateButton');
+			updateButton.style.display = 'none';
+			ipcRenderer.on('updateReady', function(event, text) {
+				updateButton.innerHTML = "new version ready!";
+				updateButton.style.display = 'block';
+			})
+		</script>
 		<!-- Fancy Background -->
 		<div id="app-bg">&nbsp;</div>
 

@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="utf-8">
-		<title>Bondage.js Testing Yarn Story</title>
-		<link rel="stylesheet" href="css/normalize.css">
-		<link rel="stylesheet" href="css/style.css">
-		<script src="js/classes/renderer.js"></script>
-	</head>
+
+<head>
+	<meta charset="utf-8">
+	<title>Bondage.js Testing Yarn Story</title>
+	<link rel="stylesheet" href="css/normalize.css">
+	<link rel="stylesheet" href="css/style.css">
+	<script src="js/classes/renderer.js"></script>
+</head>
+
 </html>
 
 <body>
@@ -21,55 +23,55 @@
 	const remote = electron.remote
 
 	let yarn = new yarnRender();
-	ipcRenderer.on('loadYarnDataOnRunner', (event,yarnContent,startTestNode) => {
-		
-		yarn.initYarn(yarnContent,startTestNode,"NVrichTextLabel");
-		
-		yarn.emiter.on("command",function(command){
-			document.getElementById("commandDebugLabel").innerHTML += "<br>" + command;
-			if (command.includes("(")){ // user is possibly calling a js function
-				try {
-					eval(command)
-				}
-				catch(err) {
-					alert(command + ":" + err)
-				}
-			};
-		});
+	ipcRenderer.on('loadYarnDataOnRunner', (event, yarnContent, startTestNode) => {
+
+		yarn.initYarn(yarnContent, startTestNode, "NVrichTextLabel");
+
+		// yarn.emiter.on("command",function(command){
+		// 	document.getElementById("commandDebugLabel").innerHTML += "<br>" + command;
+		// 	if (command.includes("(")){ // user is possibly calling a js function
+		// 	};
+		// });
 
 		document.addEventListener("keydown", event => {
 			switch (event.key) {
 				case "z":
-				{
-					yarn.changeTextScrollSpeed(20)
-					return
-				}
-		}});
+					{
+						yarn.changeTextScrollSpeed(20)
+						return
+					}
+			}
+		});
 
 		document.addEventListener("keyup", event => {
 			switch (event.key) {
 				case "z":
-				{
-					yarn.changeTextScrollSpeed(200)
-					if(yarn.vnSelectedChoice != -1){ 
-						yarn.vnSelectChoice()
-					};
-						
-					if (yarn.finished){remote.getCurrentWindow().close()}
-					return
-				}
-				case "ArrowLeft": 
-				{
-					if(yarn.vnSelectedChoice != -1){
-						yarn.vnUpdateChoice(-1)
-					 }
-					return		
-				}
-				case "ArrowRight": 
-				{
-					if(yarn.vnSelectedChoice != -1){yarn.vnUpdateChoice(1) }
-					return		
-				}
-		}});
+					{
+						yarn.changeTextScrollSpeed(200)
+						if (yarn.vnSelectedChoice != -1) {
+							yarn.vnSelectChoice()
+						};
+
+						if (yarn.finished) {
+							remote.getCurrentWindow().close()
+						}
+						return
+					}
+				case "ArrowLeft":
+					{
+						if (yarn.vnSelectedChoice != -1) {
+							yarn.vnUpdateChoice(-1)
+						}
+						return
+					}
+				case "ArrowRight":
+					{
+						if (yarn.vnSelectedChoice != -1) {
+							yarn.vnUpdateChoice(1)
+						}
+						return
+					}
+			}
+		});
 	})
-	</script>	
+</script>
