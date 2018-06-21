@@ -25,11 +25,12 @@ function createWindow () {
     autoHideMenuBar:true,
   });
   mainWindow.maximize();
+  mainWindow.setMenu(null)
   // and load the index.html of the app.
   mainWindow.loadURL(`file://${__dirname}/app/index.html`)
 
   // Open the DevTools.
-  // mainWindow.webContents.openDevTools();
+  mainWindow.webContents.openDevTools();
 
   mainWindow.on('close', function (event) {
     event.preventDefault();

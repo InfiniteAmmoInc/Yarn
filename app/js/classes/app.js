@@ -31,7 +31,7 @@ var App = function(name, version)
 		0
 	];
 	this.shifted = false;
-  this.isNwjs = false;
+  	this.isNwjs = false;
     
 	this.UPDATE_ARROWS_THROTTLE_MS = 25;
 
@@ -133,9 +133,11 @@ var App = function(name, version)
 			var MarqueeSelection = [];
 			var MarqRect = {x1:0,y1:0,x2:0,y2:0};
 			var MarqueeOffset = [0, 0];
+			var midClickHeld = false;
 
 			$(".nodes").on("mousedown", function(e)
 			{
+				if(e.button == 1){midClickHeld = true};
 				$("#marquee").css({x:0, y:0, width:0, height:0});
 				dragging = true;
 				offset.x = e.pageX;
@@ -154,11 +156,9 @@ var App = function(name, version)
 
 			$(".nodes").on("mousemove", function(e)
 			{
-				
 				if (dragging)
 				{
-					//if(e.ctrlKey)
-					if (e.altKey || e.button === 1)
+					if (e.altKey || midClickHeld)
 					{
 						//prevents jumping straight back to standard dragging
 						if(MarqueeOn)
@@ -169,15 +169,14 @@ var App = function(name, version)
 						}
 						else
 						{
-							self.transformOrigin[0] += e.pageX - offset.x;
-							self.transformOrigin[1] += e.pageY - offset.y;
+							// self.transformOrigin[0] += e.pageX - offset.x;
+							// self.transformOrigin[1] += e.pageY - offset.y;
 
-							self.translate();
+							// self.translate();
 
-							offset.x = e.pageX;
-							offset.y = e.pageY;
+							// offset.x = e.pageX;
+							// offset.y = e.pageY;
 
-							/*
 							var nodes = self.nodes();
 							for (var i in nodes)
 							{
@@ -186,7 +185,6 @@ var App = function(name, version)
 							}
 							offset.x = e.pageX;
 							offset.y = e.pageY;
-							*/
 						}
 					}
 					else
@@ -200,7 +198,7 @@ var App = function(name, version)
 							MarqRect.x1 = offset.x;
 							MarqRect.y1 = e.pageY;
 							MarqRect.x2 = e.pageX;
-							MarqRect.y2 = offset.y;
+							MarqRect.y2 = e.pageY;
 						}
 						else if(e.pageX > offset.x && e.pageY > offset.y)
 						{
@@ -273,7 +271,8 @@ var App = function(name, version)
 
 			$(".nodes").on("mouseup", function(e)
 			{
-				console.log("finished dragging");
+				// console.log("finished dragging");
+				if(e.button == 1){midClickHeld = false};
 				dragging = false;
 
 				if(MarqueeOn && MarqueeSelection.length == 0)
@@ -285,7 +284,6 @@ var App = function(name, version)
 				MarqRect = {x1:0,y1:0,x2:0,y2:0};
 				$("#marquee").css({x:0, y:0, width:0, height:0});
 				MarqueeOn = false;
-
 			});
 		})();
 
@@ -363,8 +361,9 @@ var App = function(name, version)
 					case 68: self.deselectAllNodes();
 				}
 			}
+			
 		});
-                
+		
         $(document).on('keydown', function(e) {
             if (self.isNwjs === false) { return; }
             
@@ -464,6 +463,7 @@ var App = function(name, version)
 				self.updateEditorStats();
 			}
 		});
+
 		// apple command key
 		//$(window).on('keydown', function(e) { if (e.keyCode == 91 || e.keyCode == 93) { self.appleCmdKey = true; } });
 		//$(window).on('keyup', function(e) { if (e.keyCode == 91 || e.keyCode == 93) { self.appleCmdKey = false; } });
