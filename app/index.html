@@ -29,6 +29,7 @@
 		<button id="updateButton" onClick="ipcRenderer.send('quitAndInstall')"></button>
 		<script>
 			const ipcRenderer = require('electron').ipcRenderer;
+
 			// wait for an updateReady message
 			var updateButton = document.getElementById('updateButton');
 			updateButton.style.display = 'none';
@@ -216,8 +217,12 @@
 
 		<!-- start it all up! -->
 		<script type="text/javascript">
-			var app = new App("Yarn", "0.2.1");
-			app.run();
+			var app  
+			ipcRenderer.on('setVersionNumber', function(event, version) {
+				console.log(version)
+				app = new App("Yarn", version);
+				app.run();
+			})	
 		</script>
 
 	</body>

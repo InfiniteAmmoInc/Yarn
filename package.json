@@ -1,6 +1,6 @@
 {
   "name": "yarn",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "main": "main.js",
   "window": {
     "toolbar": false,
@@ -15,14 +15,14 @@
   "scripts": {
     "start": "electron .",
     "build": "build",
-    "ship": "build --win -p always",
+    "ship": "build -mwl -p always",
     "release": "build"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/blurymind/Yarn.git"
   },
-  "author": "Todor Imreorov",
+  "author": " @infinite_ammo, @seiyria, @beeglebug ,Todor Imreorov",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/blurymind/Yarn/issues"
