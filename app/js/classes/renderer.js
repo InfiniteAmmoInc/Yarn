@@ -54,15 +54,15 @@ var yarnRender = function() {
 		this.vnTextScrollInterval = interval; 
 		clearInterval(vnTextScroll);//this resets the scroll timer
 		
-		if (vnResult.constructor.name == "CommandResult" ){
-			this.commandsPassedLog.push(vnResult.value) ;
-			this.commandsPassed = vnResult.value;
-			this.emiter.emit("command",vnResult.value)
-			vnTextScrollIdx = 0;
-			vnResult = VNtext.next().value;
-			this.changeTextScrollSpeed(200);
-			return;
-		}
+		// if (vnResult.constructor.name == "CommandResult" ){
+		// 	this.commandsPassedLog.push(vnResult.value) ;
+		// 	this.commandsPassed = vnResult.value;
+		// 	this.emiter.emit("command",vnResult.value);
+		// 	vnTextScrollIdx = 0;
+		// 	vnResult = VNtext.next().value;
+		// 	this.changeTextScrollSpeed(200);
+		// 	return;
+		// }
 
 		if (vnResult.constructor.name ==  "OptionsResult"){ /// Add choices to text
 			if (this.vnSelectedChoice === -1){ /// we need to set it to -1 after choice is made

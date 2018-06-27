@@ -788,8 +788,8 @@ var App = function(name, version) {
 
   this.saveNode = function() {
     if (self.editing() != null) {
+      self.makeNewNodesFromLinks();//
       self.updateNodeLinks();
-
       self.editing().title(self.trim(self.editing().title()));
 
       $(".node-editor").transition({ opacity: 0 }, 250);
@@ -854,6 +854,24 @@ var App = function(name, version) {
   this.updateNodeLinks = function() {
     for (var i in self.nodes()) self.nodes()[i].updateLinks();
   };
+  
+  this.makeNewNodesFromLinks = function(){
+    var otherNodeTitles = [];
+    app.nodes().forEach((node) => {
+      otherNodeTitles.push(node.title());
+    });
+
+    var nodeLinks = self.editing().getLinksInNode();
+    if (nodeLinks == undefined){return}
+    for (var i = 0; i < nodeLinks.length; i ++)
+    {
+      // Create new Nodes from Node Links
+      if (!otherNodeTitles.includes(nodeLinks[i])){
+        var newNodeOffset = 220 * (i+1);
+        self.newNodeAt(self.editing().x() + newNodeOffset, self.editing().y() - 120).title(nodeLinks[i]);
+      }
+    }
+  }
 
   this.updateArrows = function() {
     self.canvas.width = $(window).width();

@@ -325,38 +325,56 @@ var Node = function()
 		return false;
 	}
 
-	this.updateLinks = function()
-	{
-		self.resetDoubleClick();
-		// clear existing links
-		self.linkedTo.removeAll();
-
+	this.getLinksInNode = function(){
 		// find all the links
 		var links = self.body().match(/\[\[(.*?)\]\]/g);
+
 		if (links != undefined)
 		{
 			var exists = {};
 			for (var i = links.length - 1; i >= 0; i --)
 			{
-				links[i] = links[i].substr(2, links[i].length - 4).toLowerCase();
-
+				links[i] = links[i].substr(2, links[i].length - 4)//.toLowerCase(); 
+				
 				if (links[i].indexOf("|") >= 0)
+				{
 					links[i] = links[i].split("|")[1];
+				}
 
 				if (exists[links[i]] != undefined)
+				{
 					links.splice(i, 1);
-				
+				}
 				exists[links[i]] = true;
 			}
+			return links
+		}
+		else{return undefined}
+	}
 
+	this.updateLinks = function()
+	{
+		self.resetDoubleClick();
+		// clear existing links
+		self.linkedTo.removeAll();
+		// find all the links
+		var links = self.getLinksInNode();
+
+		if (links != undefined)
+		{
 			// update links
 			for (var index in app.nodes())
 			{
 				var other = app.nodes()[index];
 				for (var i = 0; i < links.length; i ++)
-					if (other != self && other.title().toLowerCase() == links[i])
+				{
+					// if (other != self && other.title().toLowerCase() == links[i])
+					if (other != self && other.title() == links[i])
+					{
 						self.linkedTo.push(other);
-			}
+					}
+				}
+			}	
 		}
 	}
 
