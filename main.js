@@ -2,6 +2,7 @@ const electron = require("electron");
 const ipcMain = electron.ipcMain;
 const { dialog } = electron;
 const { autoUpdater } = require("electron-updater");
+const isDev = require('electron-is').dev();
 // Module to control application life.
 const app = electron.app;
 // Module to create native browser window.
@@ -11,7 +12,7 @@ const BrowserWindow = electron.BrowserWindow;
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 let yarnRunnerWindow;
-let yarnVersion = "0.3.1";
+let yarnVersion = "0.3.2";
 
 function createWindow() {
   // Create the browser window.
@@ -29,8 +30,9 @@ function createWindow() {
   // and load the index.html of the app.
   mainWindow.loadURL(`file://${__dirname}/app/index.html`);
 
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  if (isDev) {
+    mainWindow.webContents.openDevTools();
+  }
 
   mainWindow.on("close", function(event) {
     event.preventDefault();
@@ -105,7 +107,9 @@ function createYarnTesterWindow(content, startTestNode) {
   });
 
   yarnRunnerWindow.loadURL(`file://${__dirname}/app/renderer.html`);
-  // yarnRunnerWindow.webContents.openDevTools();
+  if (isDev) {
+    yarnRunnerWindow.webContents.openDevTools()
+  };
 
   yarnRunnerWindow.webContents.on("dom-ready", () => {
     yarnRunnerWindow.webContents.send(

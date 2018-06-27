@@ -299,8 +299,7 @@ var App = function(name, version) {
     });
 
     $(document).contextmenu(function(e) {
-      var isAllowedEl =
-        $(e.target).hasClass("nodes") || $(e.target).parents(".nodes").length;
+      var isAllowedEl = $(e.target).hasClass("nodes") || $(e.target).parents(".nodes").length;
 
       if (e.button == 2 && isAllowedEl) {
         var x = (self.transformOrigin[0] * -1) / self.cachedScale,
@@ -440,7 +439,7 @@ var App = function(name, version) {
         if (
           self.focusedNodeIdx > -1 &&
           nodes.length > self.focusedNodeIdx &&
-          (self.transformOrigin[0] !=
+          (self.transformOrigin[0] != 
             -nodes[self.focusedNodeIdx].x() +
               $(window).width() / 2 -
               $(nodes[self.focusedNodeIdx].element).width() / 2 ||
