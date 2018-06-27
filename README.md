@@ -22,6 +22,7 @@ MacOS: in Progress
 Make sure you have nodejs and electron installed. Then
 
 npm install
+
 npm start
 
 # To build a yarn executable yourself:
