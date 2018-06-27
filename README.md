@@ -3,10 +3,12 @@
 Dialogue editor created for "Night in the Woods" (and other projects) by @NoelFB and @infinite_ammo with contributions from @seiyria and @beeglebug. It is heavily inspired by and based on the amazing Twine software: http://twinery.org/
 
 This is a port to electron, made possible by Todor Imreorov. It adds a number of new features, such as:
-- Integration of bondage.js (yarnspinner port in javascript) inside Yarn - this allows testing yarn stories directly insode yarn.
+- Integration of bondage.js (yarnspinner port in javascript) inside Yarn - this allows testing yarn stories directly inside yarn.
 - Helper menu to create node links - with a search filter
 - Helper menu to test yarn story from a specific node - with a search filter (via bondage.js)
-- Tester interface that supports rendering of bbcode- enabling rich text (font colors, styles,images and even links) with typing animation. The tester is written in a very reusable way (as a class with methods)- so it is easy to integrate in html5 games!
+- Support for multiple app instances and file drag and drop
+- Automatic creation of nodes with correct name and path when writing any new story threads that have no node created yet
+- Story tester tool that supports rendering of bbcode- enabling rich text (font colors, styles,images and even links) with typing animation. The tester is written in a very reusable way (as a class with methods)- so it is easy to integrate in html5 games!
 
 ![yarn-testerbbcode](https://user-images.githubusercontent.com/6495061/41685950-2b8b3580-74da-11e8-89ea-c7d23dea19da.gif)
 
@@ -15,6 +17,15 @@ This is a port to electron, made possible by Todor Imreorov. It adds a number of
 Win64: https://github.com/blurymind/Yarn/releases/tag/untagged-1933231011a749959b56
 
 MacOS: in Progress
+
+# To compile and run from source:
+Make sure you have nodejs and electron installed. Then
+
+npm install
+npm start
+
+# To build a yarn executable yourself:
+npm run-script build
 
 # Examples
 
