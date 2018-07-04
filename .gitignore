@@ -19,6 +19,9 @@ lib-cov
 # Coverage directory used by tools like istanbul
 coverage
 
+# Vscode settings
+.vscode/
+
 # Grunt intermediate storage (http://gruntjs.com/creating-plugins#storing-task-files)
 .grunt
 
@@ -30,6 +33,9 @@ build/Release
 
 # Dependency directory
 node_modules
+
+# Updater
+electron-builder.yml
 
 # Optional npm cache directory
 .npm
@@ -85,3 +91,5 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+dist/

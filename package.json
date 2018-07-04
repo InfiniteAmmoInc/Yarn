@@ -1,14 +1,42 @@
 {
-	"name": "Yarn",
-	"version": "0.2.1",
-	"main": "app/index.html",
-	"window": {
-		"toolbar": false,
-		"position": "center",
-		"width": 1280,
-		"height": 720,
-		"min_width": 800,
-		"min_height": 600,
-		"icon": "Yarn.png"
-	}
+  "name": "yarn",
+  "version": "0.3.2",
+  "main": "main.js",
+  "window": {
+    "toolbar": false,
+    "position": "center",
+    "width": 1280,
+    "height": 720,
+    "min_width": 800,
+    "min_height": 600,
+    "icon": "Yarn.png"
+  },
+  "description": "Dialogue editor created for \"Night in the Woods\" (and other projects) by @NoelFB and @infinite_ammo with contributions from @seiyria and @beeglebug. It is heavily inspired by and based on the amazing Twine software: http://twinery.org/. This version has been ported over to Electron and extended with further functionality by Todor Imreorov",
+  "scripts": {
+    "start": "electron .",
+    "build": "build",
+    "ship": "build --win --linux",
+    "release": "build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/blurymind/Yarn.git"
+  },
+  "author": " @infinite_ammo, @seiyria, @beeglebug ,Todor Imreorov",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/blurymind/Yarn/issues"
+  },
+  "homepage": "https://github.com/blurymind/Yarn#readme",
+  "devDependencies": {
+    "electron": "^2.0.2",
+    "electron-builder": "^20.15.1"
+  },
+  "dependencies": {
+    "bbcode": "^0.1.5",
+    "bondage": "^1.0.4",
+    "electron-is": "^2.4.1",
+    "electron-updater": "^2.21.10",
+    "jquery": "^3.3.1"
+  }
 }

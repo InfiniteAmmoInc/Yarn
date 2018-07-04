@@ -7,7 +7,8 @@
 		<link rel="stylesheet" href="css/style.css">
 
 		<!-- libraries -->
-		<script type="text/javascript" src="js/libs/jquery-1.11.2.min.js"></script>
+		<script>window.$ = window.jQuery = require('jquery');</script>
+		<!-- <script type="text/javascript" src="js/libs/jquery-1.11.2.min.js"></script> -->
 		<script type="text/javascript" src="js/libs/jquery.mousewheel.min.js"></script>
 		<script type="text/javascript" src="js/libs/transit.js"></script>
 		<script type="text/javascript" src="js/libs/knockout-3.3.0.js"></script>
@@ -25,7 +26,18 @@
 		<script type="text/javascript" src="js/classes/node.js"></script>
 	</head>
 	<body>
+		<button id="updateButton" onClick="ipcRenderer.send('quitAndInstall')"></button>
+		<script>
+			const ipcRenderer = require('electron').ipcRenderer;
 
+			// wait for an updateReady message
+			var updateButton = document.getElementById('updateButton');
+			updateButton.style.display = 'none';
+			ipcRenderer.on('updateReady', function(event, text) {
+				updateButton.innerHTML = "new version ready!";
+				updateButton.style.display = 'block';
+			})
+		</script>
 		<!-- Fancy Background -->
 		<div id="app-bg">&nbsp;</div>
 
@@ -35,6 +47,7 @@
 			<!-- search form -->
 			<div class="app-search">
 				<input type="text" class="search-field"/>
+				
 				<div class="search-title search-item">
 					<input type="checkbox" checked="checked" id="search-title" />
 					<label for="search-title">Title</label>
@@ -81,33 +94,37 @@
 						<!-- ko if:data.editingPath() != null -->
 						<span class="item" data-bind="click: data.trySaveCurrent">Save</span>
 						<!-- /ko -->
-						<span class="item" data-bind="click: function() { data.trySave(FILETYPE.JSON); }">Save As Json...</span>
+						<span class="item" data-bind="click: function() { data.trySave(FILETYPE.JSON);}">Save As Json...</span>
 						<span class="item" data-bind="click: function() { data.trySave(FILETYPE.YARNTEXT); }">Save As Yarn...</span>
 						<span class="item" data-bind="click: function() { data.trySave(FILETYPE.TWEE); }">Save As Twee...</span>
 						<span class="item" data-bind="click: function() { data.trySave(FILETYPE.TWEE2); }">Save As Twee2...</span>
 						<span class="item" data-bind="click: function() { data.trySave(FILETYPE.XML); }">Save As Xml...</span>
-						<!--<span class="item" data-bind="click: app.quit">Close</span>-->
+						<span class="item" data-bind="click: app.quit">Close</span>
 					</div>
 				</div>
+				
+				<div class="menu">
+					<span class="title" onmouseover="app.openNodeListMenu('run')">Run</span>
+					<div class="dropdown" id="runHelperMenu">
+						<input class="search-field" placeholder="search" type="text" id="runHelperMenuFilter" oninput="app.openNodeListMenu('run')"></input>
+					</div>
+				</div>
+
+				<!-- <div class="menu">
+					<span class="title" data-bind="click:data.sendToExternalApp">[ SAVE ]</span>
+				</div> -->
 			</div>
 
 			<!-- arrow bg canvas for linked nodes -->
 			<canvas class="arrows">
 
 			</canvas>
-
 			<!-- foreach loop  of the nodes -->
 			<div class="nodes">
 				<div class="nodes-holder" data-bind="foreach: { data: app.nodes, as: 'node' }">
 					<div class="node" data-bind="nodeBind: true, css: { inactive: !node.active()}" >
 						<div class="title" data-bind="text: node.title, style: {background:
-						node.colorID() == 1 ? '#6EA5E0' :
-						node.colorID() == 2 ? '#9EDE74' :
-						node.colorID() == 3 ? '#FFE374' :
-						node.colorID() == 4 ? '#F7A666' :
-						node.colorID() == 5 ? '#C47862' :
-						node.colorID() == 6 ? '#97E1E9' :
-						'#eee'}"></div>
+						node.titleColorValues[node.colorID()]}"></div>
 						<div class="body" data-bind="html: node.clippedBody"></div>
 						<div class="tags" data-bind="html: node.clippedTags"></div>
 						<div class="icon colorDown" data-bind="click: node.cycleColorDown"></div>
@@ -121,10 +138,22 @@
 
 			<!-- ko if:app.editing() != null -->
 			<div class="node-editor" data-bind="mousedown:app.saveNode">
-
 				<div class="form" data-bind="preventBubble: 'click', preventBubble: 'mousedown'">
 					<input type="text" class="title" data-bind="value: app.editing().title">
+					
+					<!-- <div float="left"> </div> -->
+					
+					<div class="app-menu">
+						<div class="menu" style="float:left">
+							<span class="title" onmouseover="app.openNodeListMenu('link')">Add Link</span>
+							<div id="linkHelperMenu" class="dropdown">
+								<input class="search-field" style="text-align:center" placeholder="search" type="text" id="linkHelperMenuFilter" oninput="app.openNodeListMenu('link')"></input>
+							</div>
+						</div>
+					</div>
+
 					<input type="text" data-bind="value: app.editing().tags">
+
 					<div class="editor-container">
 						<div class="editor" id="editor"
 							data-bind="
@@ -171,7 +200,6 @@
 				<span class="app-version" data-bind="text:app.version"></span>
 			</div>
 
-
 			<!-- marquee -->
 			<div id="marquee"></div>
 		</div>
@@ -189,8 +217,12 @@
 
 		<!-- start it all up! -->
 		<script type="text/javascript">
-			var app = new App("Yarn", "0.2.1");
-			app.run();
+			var app  
+			ipcRenderer.on('setVersionNumber', function(event, version) {
+				console.log(version)
+				app = new App("Yarn", version);
+				app.run();
+			})	
 		</script>
 
 	</body>
