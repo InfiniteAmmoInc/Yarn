@@ -63,15 +63,6 @@ var App = function(name, version) {
     self.context = self.canvas.getContext("2d");
     self.newNode().title("Start");
 
-    if (osName != "Windows" && osName != "Linux" && self.gui != undefined) {
-      var win = self.gui.Window.get();
-      var nativeMenuBar = new self.gui.Menu({ type: "menubar" });
-      if (nativeMenuBar.createMacBuiltin) {
-        nativeMenuBar.createMacBuiltin("Yarn");
-      }
-      win.menu = nativeMenuBar;
-    }
-
     // search field enter
     self.$searchField.on("keydown", function(e) {
       // enter
