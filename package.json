@@ -11,14 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/blurymind/Yarn.git"
+    "url": "git+https://github.com/InfiniteAmmoInc/Yarn.git"
   },
   "author": " @infinite_ammo, @seiyria, @beeglebug ,Todor Imreorov",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/blurymind/Yarn/issues"
+    "url": "https://github.com/InfiniteAmmoInc/Yarn/issues"
   },
-  "homepage": "https://github.com/blurymind/Yarn#readme",
+  "homepage": "https://github.com/InfiniteAmmoInc/Yarn#readme",
   "devDependencies": {
     "electron": "^2.0.2",
     "electron-builder": "^20.15.1"
