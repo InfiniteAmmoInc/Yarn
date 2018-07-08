@@ -516,7 +516,7 @@ var App = function(name, version) {
     if (!self.isElectron) {
       document.title = title;
     } else {
-      self.gui.setTitle("Vine Editor - [" + editingPath + "] ");
+      self.gui.setTitle(title);
     }
   };
 
