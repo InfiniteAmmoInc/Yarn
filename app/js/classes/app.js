@@ -162,7 +162,7 @@ var App = function(name, version) {
               MarqRect.x1 = offset.x;
               MarqRect.y1 = e.pageY;
               MarqRect.x2 = e.pageX;
-              MarqRect.y2 = e.pageY;
+              MarqRect.y2 = offset.y;
             } else if (e.pageX > offset.x && e.pageY > offset.y) {
               MarqRect.x1 = offset.x;
               MarqRect.y1 = offset.y;
