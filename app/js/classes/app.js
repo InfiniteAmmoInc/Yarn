@@ -2,7 +2,6 @@ const electron = require("electron");
 const remote = electron.remote;
 
 var App = function(name, version) {
-  // console.log(remote.getCurrentWindow()); ///// replace nw.gui
   var self = this;
 
   // self
@@ -27,7 +26,7 @@ var App = function(name, version) {
   this.zoomLimitMax = 1;
   this.transformOrigin = [0, 0];
   this.shifted = false;
-  this.isNwjs = false;
+  this.isElectron = false;
 
   this.UPDATE_ARROWS_THROTTLE_MS = 25;
 
@@ -37,17 +36,13 @@ var App = function(name, version) {
 
   this.$searchField = $(".search-field");
 
-  // node-webkit
   if (typeof require == "function") {
-    // this.gui = require('nw.gui');
     this.gui = remote.getCurrentWindow();
     this.fs = remote.require("fs");
-    this.isNwjs = true;
+    this.isElectron = true;
   }
 
   this.run = function() {
-    //TODO(Al):
-
     var osName = "Unknown OS";
     if (navigator.platform.indexOf("Win") != -1) osName = "Windows";
     if (navigator.platform.indexOf("Mac") != -1) osName = "MacOS";
@@ -62,15 +57,6 @@ var App = function(name, version) {
     self.canvas = $(".arrows")[0];
     self.context = self.canvas.getContext("2d");
     self.newNode().title("Start");
-
-    if (osName != "Windows" && osName != "Linux" && self.gui != undefined) {
-      var win = self.gui.Window.get();
-      var nativeMenuBar = new self.gui.Menu({ type: "menubar" });
-      if (nativeMenuBar.createMacBuiltin) {
-        nativeMenuBar.createMacBuiltin("Yarn");
-      }
-      win.menu = nativeMenuBar;
-    }
 
     // search field enter
     self.$searchField.on("keydown", function(e) {
@@ -331,7 +317,7 @@ var App = function(name, version) {
     });
 
     $(document).on("keydown", function(e) {
-      if (self.isNwjs === false) {
+      if (self.isElectron === false) {
         return;
       }
 
@@ -520,21 +506,18 @@ var App = function(name, version) {
   };
 
   this.quit = function() {
-    if (self.gui != undefined) {
-      self.gui.App.quit();
+    if (self.isElectron) {
+      remote.app.quit();
     }
   };
 
   this.refreshWindowTitle = function(editingPath) {
-    // var gui = require('nw.gui');
-    var gui = remote.getCurrentWindow();
-    if (!gui) return;
-
-    // Get the current window
-    // var win = gui.Window.get(); //Borked
-    var win = remote.getCurrentWindow();
-
-    win.title = "Yarn - [" + editingPath + "] "; // + (self.dirty?"*":"");
+    let title = "Yarn - [" + editingPath + "] ";
+    if (!self.isElectron) {
+      document.title = title;
+    } else {
+      self.gui.setTitle(title);
+    }
   };
 
   this.recordNodeAction = function(action, node) {

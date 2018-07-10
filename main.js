@@ -16,12 +16,11 @@ let yarnVersion = "0.3.2";
 
 function createWindow() {
   // Create the browser window.
-  // screen.height;
-  // screen.width;
-  let { width, height } = require("electron").screen.getPrimaryDisplay().size;
   mainWindow = new BrowserWindow({
-    defaultWidth: 1000,
-    defaultHeight: 800,
+    width: 1200,
+    height: 800,
+    minWidth: 800,
+    minHeight: 600,
     maximize: false,
     show: false,
     autoHideMenuBar: true
