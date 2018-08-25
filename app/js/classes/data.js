@@ -135,7 +135,7 @@ var data = {
       }
       for (i = 0; i < content.length; i++) objects.push(content[i]);
     } else if (type == FILETYPE.YARNTEXT) {
-      var lines = content.split("\n");
+      var lines = content.split(/\r?\n/);
       var obj = null;
       var index = 0;
       var readingBody = false;
