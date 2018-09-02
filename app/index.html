@@ -110,9 +110,10 @@
 					</div>
 				</div>
 
-				<!-- <div class="menu">
-					<span class="title" data-bind="click:data.sendToExternalApp">[ SAVE ]</span>
-				</div> -->
+				<div class="menu" id="sendToParentAppMenu">
+					<span class="title" data-bind="click:data.sendToExternalApp">APPLY</span>
+				</div>
+
 			</div>
 
 			<!-- arrow bg canvas for linked nodes -->
@@ -218,8 +219,14 @@
 		<!-- start it all up! -->
 		<script type="text/javascript">
 			var app  
-			ipcRenderer.on('setVersionNumber', function(event, version) {
-				console.log(version)
+			ipcRenderer.on('initiate', function(event, version="") {	
+				if (!version || version.length == 0) {
+					version = "";
+				}else{ // if app is not running in embedded state, disable send data to parent app
+					document.getElementById('sendToParentAppMenu').innerHTML = "";
+				}
+				console.log("Version:"+version);
+
 				app = new App("Yarn", version);
 				app.run();
 			})	

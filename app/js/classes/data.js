@@ -25,6 +25,7 @@ ipc.on("saved-file", function(event, path, type, content) {
 
 ipc.on("loadYarnDataObject", function(event, yarnData) {
   console.log("Loading YARN data From Game engine...");
+  console.log(yarnData);
   data.loadData(JSON.stringify(yarnData), FILETYPE.JSON, true);
 });
 

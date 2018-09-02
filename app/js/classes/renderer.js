@@ -9,10 +9,16 @@ var yarnRender = function() {
 	this.startTimeWait;
 	this.vnSelectedChoice = -1;
 	this.vnTextScrollInterval;
-	this.finished = false;
+	this.finished = null;
 	this.commandsPassedLog = [];
 	this.commandPassed = "";
 	this.emiter = new EventEmitter();
+	this.node = {}; //gets raw data from yarn text nodes
+
+	this.storyChapter = ""; // current chapter choices
+	this.choices = {} ; // all choices from all start chapters
+	this.visitedChapters = [];// to keep track of all visited start chapters
+	this.visitedNodes = [];// collects titles of ALL visited nodes
 
 	var vnChoices, vnTextResult, vnResult ,VNtext ,vnTextScroll ,htmIDtoAttachYarnTo,vnTextScrollIdx = 0;
 	this.vnUpdateChoice = function(direction=0){ //dir: -1 or 1
@@ -37,7 +43,12 @@ var yarnRender = function() {
 	this.vnSelectChoice = function(){
 		var endTimeWait = new Date().getTime();
 		if (endTimeWait - this.startTimeWait < 1000){return}; // we need to wait for user to see the questions	
+		this.choices[this.storyChapter].push(vnResult.options[this.vnSelectedChoice]);
+		console.log("choices so far:");
+		console.log(this.choices);
+		vnTextScrollIdx = 0;
 		vnResult.select(this.vnSelectedChoice);
+		this.emiter.emit("choiceMade",vnResult.options[this.vnSelectedChoice]);
 		vnResult = VNtext.next().value ;
 		vnChoices = "";
 		this.vnSelectedChoice = -1;
@@ -45,11 +56,16 @@ var yarnRender = function() {
 	}
 
 	this.changeTextScrollSpeed = function(interval=0){ /// this function is triggered on key press/release
-		if (vnResult == undefined){
+		if (vnResult === null){
+			console.log("No yarndata is initiated.Vnresult is null")
+			return
+		}
+		if (vnResult === undefined){
 			// this.terminate();
 			this.finished = true;
 			return
 		};
+
 		if (interval == this.vnTextScrollInterval){return};/// use this to stop it from triggering on every frame
 		this.vnTextScrollInterval = interval; 
 		clearInterval(vnTextScroll);//this resets the scroll timer
@@ -63,6 +79,21 @@ var yarnRender = function() {
 		// 	this.changeTextScrollSpeed(200);
 		// 	return;
 		// }
+		if (vnTextScrollIdx === 0 ){
+			console.log("Start rendering text")
+			if (vnResult.constructor.name ==  "TextResult"){
+				if (this.node.title != vnResult.data.title){ // update title data
+					this.node = self.jsonCopy(vnResult.data);
+					this.visitedNodes.push(vnResult.data.title);
+					// console.log(">>yarn node data:")
+					// console.log(this.node)
+					console.log("Visited nodes so far:");
+					console.log(this.visitedNodes);
+					this.emiter.emit("startedNode",this.node);
+				}
+			}
+			// this.emiter.emit("StartChapter",vnResult.value);
+		}
 
 		if (vnResult.constructor.name ==  "OptionsResult"){ /// Add choices to text
 			if (this.vnSelectedChoice === -1){ /// we need to set it to -1 after choice is made
@@ -74,13 +105,26 @@ var yarnRender = function() {
 		}
 		
 		if(vnTextScrollIdx >= vnResult.text.length){ /// Scrolled to end of text, move on
+			if (vnResult.constructor.name ==  "TextResult"){
+				
+				// if (this.node.title != vnResult.data.title){ // update title data
+				// 	this.node = self.jsonCopy(vnResult.data)
+				// 	this.visitedNodes.push(vnResult.data.title)
+				// 	console.log(">>yarn node data:")
+				// 	console.log(this.node)
+				// 	console.log("Visited nodes so far:");
+				// 	console.log(this.visitedNodes)
+				// }
+			}
 			vnTextScrollIdx = 0;
 			vnResult = VNtext.next().value
 			this.changeTextScrollSpeed(200);
 			return;
 		};	
 		if( interval == 0){return};
-		vnTextScroll = setInterval(self.scrollUpdateText, interval);
+		if (vnResult.constructor.name ==  "TextResult"){
+			vnTextScroll = setInterval(self.scrollUpdateText, interval);
+		}
 	}
 
 	self.scrollUpdateText = function(){
@@ -114,24 +158,46 @@ var yarnRender = function() {
 		document.getElementById(htmIDtoAttachYarnTo).innerHTML="";
 		VNtext = null;
 		vnResult = null;
+		this.finished = false;
 	}
 
 	this.initYarn = function(yarnDataObject,startChapter,htmlIdToAttachTo){
-		htmIDtoAttachYarnTo =htmlIdToAttachTo
-		this.yarnDataObject= yarnDataObject
-		this.startChapter = startChapter
+		htmIDtoAttachYarnTo =htmlIdToAttachTo;
+		this.yarnDataObject= yarnDataObject;
+		this.startChapter = startChapter;
 		yarnRunner.load(yarnDataObject);
 		this.loadYarnChapter(startChapter);
 	}
 
-	//todo- rename to startChapter
 	this.loadYarnChapter = function(storyChapter){
 		this.finished = false;
-		console.log("LOADING YARN DATA... chapter: "+storyChapter);
+		this.storyChapter = storyChapter;
+		this.choices[this.storyChapter] = [];
+		this.visitedChapters.push(storyChapter);
 		VNtext = yarnRunner.run(storyChapter);
-		console.log("YARN::")
-		console.log(VNtext);
 		vnResult = VNtext.next().value
 		this.changeTextScrollSpeed(100)
 	}
+
+	this.wasChoiceMade = function(choiceName,chapterInWhichItWasMade=this.storyChapter) { // external function to check in a choice was made
+		console.log(this.choices[chapterInWhichItWasMade].includes(choiceName));
+		if(this.choices[chapterInWhichItWasMade].includes(choiceName)){
+			return true
+		}else{return false}
+	}
+
+	this.timesNodeWasVisited = function(nodeName){ // external function to check how many times a node has been visited
+		var counted = 0;
+		this.visitedNodes.forEach((visitedNode,i)=>{
+			if(visitedNode === nodeName){
+				counted += 1
+			};
+		});
+		return counted
+	}
+
+	/// we need this to make copies instead of references ///
+	self.jsonCopy = function(src) {
+		return JSON.parse(JSON.stringify(src));
+	};
 }

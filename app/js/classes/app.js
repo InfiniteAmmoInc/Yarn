@@ -424,7 +424,7 @@ var App = function(name, version) {
             self.editNode(self.nodes()[0]);
           }
         } else if (e.ctrlKey) {
-          //ctrl+ enter closes an open node
+          //ctrl+ enter closes/saves an open node
           self.saveNode();
         }
       }

@@ -34,7 +34,7 @@
   },
   "dependencies": {
     "bbcode": "^0.1.5",
-    "bondage": "^1.0.4",
+    "bondage": "^1.1.0",
     "electron-is": "^2.4.1",
     "electron-updater": "^2.21.10",
     "jquery": "^3.3.1"
