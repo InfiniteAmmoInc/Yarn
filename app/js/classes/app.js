@@ -157,12 +157,8 @@ var App = function(name, version) {
 
               var nodes = self.nodes();
               for (var i in nodes) {
-                nodes[i].x(
-                  nodes[i].x() + (e.pageX - offset.x) / self.cachedScale
-                );
-                nodes[i].y(
-                  nodes[i].y() + (e.pageY - offset.y) / self.cachedScale
-                );
+                nodes[i].x(nodes[i].x() + (e.pageX - offset.x) / self.cachedScale);
+                nodes[i].y(nodes[i].y() + (e.pageY - offset.y) / self.cachedScale);
               }
               offset.x = e.pageX;
               offset.y = e.pageY;
@@ -215,11 +211,9 @@ var App = function(name, version) {
               var holder = $(".nodes-holder").offset();
               var marqueeOverNode =
                 (MarqRect.x2 - holder.left) / scale > nodes[i].x() &&
-                (MarqRect.x1 - holder.left) / scale <
-                  nodes[i].x() + nodes[i].tempWidth &&
+                (MarqRect.x1 - holder.left) / scale < nodes[i].x() + nodes[i].tempWidth &&
                 (MarqRect.y2 - holder.top) / scale > nodes[i].y() &&
-                (MarqRect.y1 - holder.top) / scale <
-                  nodes[i].y() + nodes[i].tempHeight;
+                (MarqRect.y1 - holder.top) / scale < nodes[i].y() + nodes[i].tempHeight;
 
               if (marqueeOverNode) {
                 if (!inMarqueeSelection) {
@@ -303,7 +297,7 @@ var App = function(name, version) {
 
       if (e.button == 2 && isAllowedEl) {
         var x = (self.transformOrigin[0] * -1) / self.cachedScale,
-          y = (self.transformOrigin[1] * -1) / self.cachedScale;
+        y = (self.transformOrigin[1] * -1) / self.cachedScale;
 
         x += event.pageX / self.cachedScale;
         y += event.pageY / self.cachedScale;
@@ -720,16 +714,9 @@ var App = function(name, version) {
   };
 
   this.appendText = function(textToAppend) {
-    self
-      .editing()
-      .body(
-        self.editing().body() +
-          " [[Answer:" +
-          textToAppend +
-          "|" +
-          textToAppend +
-          "]]"
-      );
+    self.editing().body(self.editing().body() +
+          " [[Answer:" + textToAppend + "|" + textToAppend + "]]"
+    );
   };
 
   this.testRunFrom = function(startTestNode) {
@@ -741,20 +728,13 @@ var App = function(name, version) {
   };
 
   this.openNodeListMenu = function(action) {
-    var helperLinkSearch = document.getElementById(action + "HelperMenuFilter")
-      .value;
+    var helperLinkSearch = document.getElementById(action + "HelperMenuFilter").value;
     var rootMenu = document.getElementById(action + "HelperMenu");
     for (let i = rootMenu.childNodes.length - 1; i > 1; i--) {
       rootMenu.removeChild(rootMenu.childNodes[i]);
     }
     app.nodes().forEach((node, i) => {
-      if (
-        node
-          .title()
-          .toLowerCase()
-          .indexOf(helperLinkSearch) >= 0 ||
-        helperLinkSearch.length == 0
-      ) {
+      if (node.title().toLowerCase().indexOf(helperLinkSearch) >= 0 || helperLinkSearch.length == 0) {
         var p = document.createElement("span");
         p.innerHTML = node.title();
         p.setAttribute("class", "item");
@@ -767,17 +747,8 @@ var App = function(name, version) {
             rootMenu.appendChild(p);
           }
         } else if (action == "run") {
-          if (
-            node
-              .title()
-              .toLowerCase()
-              .indexOf(helperLinkSearch) >= 0 ||
-            helperLinkSearch.length == 0
-          ) {
-            p.setAttribute(
-              "onclick",
-              "app.testRunFrom('" + node.title() + "')"
-            );
+          if (node.title().toLowerCase().indexOf(helperLinkSearch) >= 0 || helperLinkSearch.length == 0) {
+            p.setAttribute("onclick", "app.testRunFrom('" + node.title() + "')");
             rootMenu.appendChild(p);
           }
         }
@@ -1110,10 +1081,7 @@ var App = function(name, version) {
         }
 
         // save history (in chunks)
-        if (
-          self.editingHistory.length == 0 ||
-          text != self.editingHistory[self.editingHistory.length - 1].text
-        ) {
+        if (self.editingHistory.length == 0 || text != self.editingHistory[self.editingHistory.length - 1].text) {
           if (self.editingSaveHistoryTimeout == null)
             self.editingHistory.push({
               text: text,
@@ -1156,21 +1124,11 @@ var App = function(name, version) {
 
       for (var i = 0, textNode; (textNode = textNodes[i++]); ) {
         endCharCount = charCount + textNode.length;
-        if (
-          !foundStart &&
-          startOffset >= charCount &&
-          (startOffset <= endCharCount ||
-            (startOffset == endCharCount && i < textNodes.length))
-        ) {
+        if (!foundStart && startOffset >= charCount && (startOffset <= endCharCount || (startOffset == endCharCount && i < textNodes.length))) {
           range.setStart(textNode, startOffset - charCount);
           foundStart = true;
         }
-        if (
-          !foundEnd &&
-          endOffset >= charCount &&
-          (endOffset <= endCharCount ||
-            (endOffset == endCharCount && i < textNodes.length))
-        ) {
+        if (!foundEnd && endOffset >= charCount && (endOffset <= endCharCount || (endOffset == endCharCount && i < textNodes.length))) {
           range.setEnd(textNode, endOffset - charCount);
           foundEnd = true;
         }
@@ -1208,16 +1166,8 @@ var App = function(name, version) {
 
     $(".nodes-holder").transition(
       {
-        transform:
-          "matrix(" +
-          self.cachedScale +
-          ",0,0," +
-          self.cachedScale +
-          "," +
-          self.transformOrigin[0] +
-          "," +
-          self.transformOrigin[1] +
-          ")"
+        transform: "matrix(" + self.cachedScale + ",0,0," + self.cachedScale + "," +
+          self.transformOrigin[0] + "," + self.transformOrigin[1] + ")"
       },
       speed || 0,
       "easeInQuad",
@@ -1263,12 +1213,9 @@ var App = function(name, version) {
   this.arrangeY = function() {
     var SPACING = 250;
 
-    var selectedNodes = self
-        .nodes()
-        .filter(function(el) {
+    var selectedNodes = self.nodes().filter(function(el) {
           return el.selected;
-        })
-        .sort(function(a, b) {
+        }).sort(function(a, b) {
           if (a.y() > b.y()) return 1;
           if (a.y() < b.y()) return -1;
           return 0;
