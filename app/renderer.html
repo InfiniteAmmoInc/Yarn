@@ -14,7 +14,7 @@
 <body>
 	<div id="app-bg">&nbsp;</div>
 	<p id="NVrichTextLabel"></p>
-	<font color="green" id="commandDebugLabel" style="overflow-x:scroll;overflow-y:scroll;height:70%;width:100%;resize:none">Press "Z" to advance...</font>
+	<div id="commandDebugLabel" style="overflow-y:scroll;max-height:350px;width:100%;resize:none">Press "Z" to advance...</div>
 </body>
 
 <script>
@@ -22,6 +22,7 @@
 	const ipcRenderer = electron.ipcRenderer;
 	const remote = electron.remote
 
+	// You can use below yarn object as an example of how you can initiate bondage.js in your game
 	let yarn = new yarnRender();
 
 	yarn.emiter.on('startedNode', function(nodeData) {
@@ -32,50 +33,52 @@
 	yarn.emiter.on('choiceMade', function(choice) {
 		document.getElementById("commandDebugLabel").innerHTML += "<br/><font color='fuchsia'>Player chose: >" + choice + "</font>";	
 	});
+	yarn.emiter.on('commandCall', function(call) {
+		document.getElementById("commandDebugLabel").innerHTML += "<br/><font color='green'>Command call: " + call + "</font>";	
+	});
+	yarn.emiter.on('finished', function() {
+		document.getElementById("commandDebugLabel").innerHTML += "<br/><font color='red'>Finished!</font>";	
+		remote.getCurrentWindow().close();
+	});
 
 	ipcRenderer.on('loadYarnDataOnRunner', (event, yarnContent, startTestNode) => {
 		yarn.initYarn(yarnContent, startTestNode, "NVrichTextLabel");
 
 		console.log("Using Default input - press z to progress...")
-		/// these are usable only if its running from within yarn
 		document.addEventListener("keydown", event => {
 			switch (event.key) {
 				case "z":
-					{
-						yarn.changeTextScrollSpeed(20)
-						return
-					}
+				{
+					yarn.changeTextScrollSpeed(20)
+					return
+				}
 			}
 		});
 
 		document.addEventListener("keyup", event => {
 			switch (event.key) {
 				case "z":
-					{
-						yarn.changeTextScrollSpeed(200)
-						if (yarn.vnSelectedChoice != -1) {
-							yarn.vnSelectChoice()
-						};
-
-						if (yarn.finished) {
-							remote.getCurrentWindow().close()
-						}
-						return
-					}
+				{
+					yarn.changeTextScrollSpeed(200)
+					if (yarn.vnSelectedChoice != -1) {
+						yarn.vnSelectChoice()
+					};
+					return
+				}
 				case "ArrowLeft":
-					{
-						if (yarn.vnSelectedChoice != -1) {
-							yarn.vnUpdateChoice(-1)
-						}
-						return
+				{
+					if (yarn.vnSelectedChoice != -1) {
+						yarn.vnUpdateChoice(-1)
 					}
+					return
+				}
 				case "ArrowRight":
-					{
-						if (yarn.vnSelectedChoice != -1) {
-							yarn.vnUpdateChoice(1)
-						}
-						return
+				{
+					if (yarn.vnSelectedChoice != -1) {
+						yarn.vnUpdateChoice(1)
 					}
+					return
+				}
 			}
 		});
 	})
