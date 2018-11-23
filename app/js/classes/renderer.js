@@ -140,7 +140,7 @@ let yarnRender = function () {
 		}
 		if (vnResult.constructor.name === 'TextResult') {
 			vnText += vnResult.text
-			this.changeTextScrollSpeed(111)
+			this.changeTextScrollSpeed()
 		}
 	}
 
