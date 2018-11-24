@@ -24,8 +24,6 @@ ipc.on("saved-file", function(event, path, type, content) {
 });
 
 ipc.on("loadYarnDataObject", function(event, yarnData) {
-  console.log("Loading YARN data From Game engine...");
-  console.log(yarnData);
   data.loadData(JSON.stringify(yarnData), FILETYPE.JSON, true);
 });
 
@@ -97,6 +95,8 @@ var data = {
     if (filename.toLowerCase().indexOf(".json") > -1) return FILETYPE.JSON;
     else if (filename.toLowerCase().indexOf(".yarn.txt") > -1)
       return FILETYPE.YARNTEXT;
+    else if (filename.toLowerCase().indexOf(".yarn") > -1)
+      return FILETYPE.YARNTEXT;
     else if (filename.toLowerCase().indexOf(".xml") > -1) return FILETYPE.XML;
     else if (filename.toLowerCase().indexOf(".txt") > -1) return FILETYPE.TWEE;
     else if (filename.toLowerCase().indexOf(".tw2") > -1) return FILETYPE.TWEE2;
@@ -126,6 +126,8 @@ var data = {
   loadData: function(content, type, clearNodes) {
     // clear all content
     if (clearNodes) app.nodes.removeAll();
+    // fix for https://github.com/InfiniteAmmoInc/Yarn/issues/78
+    content = content.replace(/(\r?\n|\r)/gm,"\n").trim();
 
     var objects = [];
     var i = 0;
