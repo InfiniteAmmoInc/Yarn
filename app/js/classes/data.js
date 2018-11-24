@@ -127,8 +127,6 @@ var data = {
   loadData: function(content, type, clearNodes) {
     // clear all content
     if (clearNodes) app.nodes.removeAll();
-    // fix for https://github.com/InfiniteAmmoInc/Yarn/issues/78
-    content = content.replace(/(\r?\n|\r)/gm,"\n").trim();
 
     var objects = [];
     var i = 0;
