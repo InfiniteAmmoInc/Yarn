@@ -100,6 +100,7 @@ var data = {
     else if (filename.toLowerCase().indexOf(".xml") > -1) return FILETYPE.XML;
     else if (filename.toLowerCase().indexOf(".txt") > -1) return FILETYPE.TWEE;
     else if (filename.toLowerCase().indexOf(".tw2") > -1) return FILETYPE.TWEE2;
+    else if (filename.toLowerCase().indexOf(".twee") > -1) return FILETYPE.TWEE2;
     return FILETYPE.UNKNOWN;
     /*
 		// is json?
@@ -230,6 +231,9 @@ var data = {
           } else {
             title = lines[i].substr(3);
           }
+
+          // fix for issue https://github.com/InfiniteAmmoInc/Yarn/issues/83
+          title = title.trim()
 
           obj.title = title;
           obj.tags = tags;
