@@ -27,6 +27,7 @@ var App = function(name, version) {
   this.transformOrigin = [0, 0];
   this.shifted = false;
   this.isElectron = false;
+  this.editor = null
 
   this.UPDATE_ARROWS_THROTTLE_MS = 25;
 
@@ -232,7 +233,7 @@ var App = function(name, version) {
         MarqRect = { x1: 0, y1: 0, x2: 0, y2: 0 };
         $("#marquee").css({ x: 0, y: 0, width: 0, height: 0 });
         MarqueeOn = false;
-      });
+      });  
     })();
 
     // search field
@@ -388,10 +389,10 @@ var App = function(name, version) {
     $(document).on("keyup", function(e) {
       // console.log(e.keyCode+"-"+e.key)
       if (e.keyCode === 46 || e.key === "Delete") {
-		// Delete selected
-		if (self.editing() === null){
-			self.deleteSelectedNodes();
-		}
+        // Delete selected
+        if (self.editing() === null){
+          self.deleteSelectedNodes();
+        }
       }
       if (e.keyCode === 31 || e.key === "Enter") {
         // Open active node, if already active, close it
@@ -687,7 +688,11 @@ var App = function(name, version) {
       //enable_spellcheck();
       contents_modified = true;
       //spell_check();
-
+      app.editor = ace.edit("editor");
+      // app.editor.on('mouseup', function() {
+      //   console.log('highlighted')
+      //   console.log(app.editor.getSelectedText())
+      // });
       self.updateEditorStats();
     }
   };
@@ -698,9 +703,69 @@ var App = function(name, version) {
 
   this.appendText = function(textToAppend) {
     self.editing().body(self.editing().body() +
-          " [[Answer:" + textToAppend + "|" + textToAppend + "]]"
+          textToAppend
     );
+    // scroll to end of line
+    var row = app.editor.session.getLength() - 1;
+    var column = app.editor.session.getLine(row).length;
+    app.editor.gotoLine(row + 1, column);
   };
+
+  this.moveEditCursor = function(offset) {
+    var position = app.editor.getCursorPosition();
+    app.editor.gotoLine(position.row + 1, position.column + offset);
+  };
+
+  this.insertTextAtCursor = function(textToInsert) {
+    app.editor.session.insert(app.editor.getCursorPosition(), textToInsert)
+  };
+
+  // basic autocompletion
+  $(document).on("keyup", function(e) {
+    if (self.editing()) {
+      var key = e.keyCode || e.charCode || e.which;
+      // console.log(key)
+      if(key !== 8 && key !== 46 && key !== 17 && key !== 90) { // autocompletion should not be triggered by backspace or ctrl+z
+        selectionRange = app.editor.getSelectionRange();
+        var currline = selectionRange.start.row;
+        var cursorPosition = selectionRange.end.column;
+        var curLineText = app.editor.session.getLine(currline);
+
+        var textBeforeCursor = curLineText.substring(0,cursorPosition);
+        var tagBeforeCursor = (textBeforeCursor.lastIndexOf('[') !== -1) ? textBeforeCursor.substring(textBeforeCursor.lastIndexOf('['), textBeforeCursor.length) : ""
+        if (tagBeforeCursor.includes(']')) { tagBeforeCursor = "" }
+        if (textBeforeCursor.substring(textBeforeCursor.length -2, textBeforeCursor.length) === "[[") { tagBeforeCursor = "[[" }
+
+        var text = self.editing().body();
+        switch (tagBeforeCursor) {
+          case "[[":
+            app.insertTextAtCursor(" answer: | ]] ");
+            app.moveEditCursor(-6);
+            break;
+          case "[colo":
+            app.insertTextAtCursor("r=][/color] ");
+            app.moveEditCursor(-9);
+            break;
+          case "[b":
+            app.insertTextAtCursor("][/b] ")
+            app.moveEditCursor(-5);
+            break;
+          case "[i":
+            app.insertTextAtCursor("][/i] ")
+            app.moveEditCursor(-5);
+            break;
+          case "[u":
+            app.insertTextAtCursor("][/u] ")
+            app.moveEditCursor(-5);
+            break;
+          case "[img":
+            app.insertTextAtCursor("=][/img] ")
+            app.moveEditCursor(-7);
+            break;
+        }
+      };
+    };
+  });
 
   this.testRunFrom = function(startTestNode) {
     ipc.send(
@@ -726,7 +791,7 @@ var App = function(name, version) {
 
         if (action == "link") {
           if (node.title() !== self.editing().title()) {
-            p.setAttribute("onclick", "app.appendText('" + node.title() + "')");
+            p.setAttribute("onclick", "app.insertTextAtCursor(' [[Answer:" + node.title() + "|" + node.title() + "]]')");
             rootMenu.appendChild(p);
           }
         } else if (action == "run") {
@@ -811,7 +876,7 @@ var App = function(name, version) {
   this.makeNewNodesFromLinks = function(){
     var otherNodeTitles = [];
     app.nodes().forEach((node) => {
-      otherNodeTitles.push(node.title());
+      otherNodeTitles.push(node.title().trim());
     });
 
     var nodeLinks = self.editing().getLinksInNode();
@@ -819,9 +884,9 @@ var App = function(name, version) {
     for (var i = 0; i < nodeLinks.length; i ++)
     {
       // Create new Nodes from Node Links
-      if (!otherNodeTitles.includes(nodeLinks[i])){
+      if (!otherNodeTitles.includes(nodeLinks[i].trim())){
         var newNodeOffset = 220 * (i+1);
-        self.newNodeAt(self.editing().x() + newNodeOffset, self.editing().y() - 120).title(nodeLinks[i]);
+        self.newNodeAt(self.editing().x() + newNodeOffset, self.editing().y() - 120).title(nodeLinks[i].trim());
       }
     }
   }
@@ -849,6 +914,7 @@ var App = function(name, version) {
       var node = nodes[index];
       if (node.linkedTo().length > 0) {
         for (var link in node.linkedTo()) {
+          link = link.trim()
           var linked = node.linkedTo()[link];
 
           // get origins
@@ -1314,12 +1380,10 @@ var App = function(name, version) {
   };
 
   this.updateEditorStats = function() {
-    var editor = ace.edit("editor");
-    var text = editor.getSession().getValue();
-    var cursor = editor.getCursorPosition();
+    var text = app.editor.getSession().getValue();
+    var cursor = app.editor.getCursorPosition();
 
     var lines = text.split("\n");
-
     $(".editor-footer .character-count").html(text.length);
     $(".editor-footer .line-count").html(lines.length);
     $(".editor-footer .row-index").html(cursor.row);

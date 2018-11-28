@@ -43,6 +43,28 @@ var Node = function()
 			result = result.replace("\n", "<br />");
 		while (result.indexOf("\r") >= 0)
 			result = result.replace("\r", "<br />");
+		
+		result = result.replace(/\[\[[^\[]+\]\]/gi, function (goto) {
+			var extractedGoto = goto.match(/\|(.*)\]\]/i)[1]
+			return '<font color="tomato">(go:' + extractedGoto.trim() + ')</font>';
+		})
+
+		// bbcode cleanup start
+		result = result.replace(/\[b\]/g, '[b]<strong>')
+		result = result.replace(/\[\/b\]/g, '</strong>[/b]')
+
+		result = result.replace(/\[color=[A-z0-9]+\]/gi, function (color) {
+			var extractedColor = color.match(/\[color=([A-z0-9\#]+)\]/i)[1]
+			return '<font color="' + extractedColor.trim() + '">';
+		});result = result.replace(/\[\/color\]/g, '</font>');
+
+		result = result.replace(/\[u\]/g, '<u>');
+		result = result.replace(/\[\/u\]/g, '</u>');
+
+		result = result.replace(/\[i\]/g, '<i>');
+		result = result.replace(/\[\/i\]/g, '</i>');
+
+		result = result.replace(/\[[\/A-z]+\]/g, '') //last bbcode tag cleanup
 		result = result.substr(0, ClipNodeTextLength);
         return result;
     }, this);
@@ -276,7 +298,7 @@ var Node = function()
 
 		$(self.element).on("mouseup", function (e)
 		{
-			//alert("" + e.target.nodeName);
+			// alert("" + e.target.nodeName);
 			if (!moved)
 				app.mouseUpOnNodeNotMoved();
 
@@ -334,7 +356,7 @@ var Node = function()
 			var exists = {};
 			for (var i = links.length - 1; i >= 0; i --)
 			{
-				links[i] = links[i].substr(2, links[i].length - 4)//.toLowerCase(); 
+				links[i] = links[i].substr(2, links[i].length - 4).trim()//.toLowerCase(); 
 				
 				if (links[i].indexOf("|") >= 0)
 				{
@@ -369,12 +391,12 @@ var Node = function()
 				for (var i = 0; i < links.length; i ++)
 				{
 					// if (other != self && other.title().toLowerCase() == links[i])
-					if (other != self && other.title() == links[i])
+					if (other != self && other.title().trim() == links[i].trim())
 					{
 						self.linkedTo.push(other);
 					}
 				}
-			}	
+			}
 		}
 	}
 
