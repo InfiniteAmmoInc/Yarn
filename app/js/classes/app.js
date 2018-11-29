@@ -28,6 +28,7 @@ var App = function(name, version) {
   this.shifted = false;
   this.isElectron = false;
   this.editor = null;
+  this.autocompleteEnabled = false;
 
   this.UPDATE_ARROWS_THROTTLE_MS = 25;
 
@@ -689,23 +690,13 @@ var App = function(name, version) {
       contents_modified = true;
       //spell_check();
       self.editor = ace.edit("editor");
+      var autoCompleteButton = document.getElementById("toglAutocomplete");
+      autoCompleteButton.checked = self.autocompleteEnabled;
 
-      // var editor = $(".editor")[0];
-      // var editorPreviewer = document.getElementById("editor-preview")
-      // self.editor.on("blur", function() {
-      //   editor.style.visibility = "hidden";
-      //   editorPreviewer.style.visibility = "visible";
-      //   editorPreviewer.innerHTML = node.clippedBody();
-      // })
-      // $(".editor-container")[0].addEventListener("click", function() {
-      //   editorPreviewer.innerHTML = "";
-      //   editorPreviewer.style.visibility = "hidden";
-      //   editor.style.visibility = "visible";
-      // });
+      var previewButton = document.getElementById("toglPreviewBtn");
       $(".editor-container")[0].addEventListener("click", function(){
-        var checkbox = document.getElementById("toglPreviewBtn");
-        if (checkbox.checked) {
-          checkbox.click()
+        if (previewButton.checked) {
+          previewButton.click()
         }
       })
       self.updateEditorStats();
@@ -715,9 +706,9 @@ var App = function(name, version) {
   this.togglePreviewMode = function(e) {
     var editor = $(".editor")[0];
     var editorPreviewer = document.getElementById("editor-preview")
-    var checkbox = document.getElementById("toglPreviewBtn")
-
-    if (checkbox.checked) { //preview mode
+    var previewButton = document.getElementById("toglPreviewBtn")
+    
+    if (previewButton.checked) { //preview mode
       editor.style.visibility = "hidden";
       editorPreviewer.style.visibility = "visible";
       editorPreviewer.innerHTML = self.editing().clippedBody();
@@ -753,7 +744,8 @@ var App = function(name, version) {
 
   // basic autocompletion
   $(document).on("keyup", function(e) {
-    if (self.editing()) {
+    var autoCompleteButton = document.getElementById("toglAutocomplete");
+    if (self.editing() && autoCompleteButton.checked) {
       var key = e.keyCode || e.charCode || e.which;
       if (key === 37 || key === 38 || key === 39 || key === 40) { return } // Dont trigger if moved cursor using arrow keys
       if (key === 8 || key === 46 || key === 17 || key === 90) { return } // Dont trigger if backspace or ctrl+z pressed
@@ -771,7 +763,6 @@ var App = function(name, version) {
       if (textBeforeCursor.substring(textBeforeCursor.length-2, textBeforeCursor.length) === "[[") { tagBeforeCursor = "[[" }
       if (textBeforeCursor.substring(textBeforeCursor.length-2, textBeforeCursor.length) === "<<") { tagBeforeCursor = "<<" }
 
-      console.log(tagBeforeCursor)
       var text = self.editing().body();
       switch (tagBeforeCursor) {
         case "[[":
@@ -853,6 +844,9 @@ var App = function(name, version) {
       $(".node-editor .form").transition({ y: "-100" }, 250, function() {
         self.editing(null);
       });
+
+      var autoCompleteButton = document.getElementById("toglAutocomplete");
+      self.autocompleteEnabled = autoCompleteButton.checked;
 
       setTimeout(self.updateSearch, 100);
     }

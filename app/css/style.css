@@ -682,7 +682,7 @@ a:hover { color: #000;}
   /*------ ADDED CSS ---------*/
   .slider:after
   {
-   content:'EDIT';
+   content:'OFF';
    /* color: white; */
    display: block;
    position: absolute;
@@ -695,7 +695,7 @@ a:hover { color: #000;}
   
   input:checked + .slider:after
   {  
-	content:'PREVIEW';
+	content:'ON';
   }
   
   /*--------- END --------*/
