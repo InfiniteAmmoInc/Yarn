@@ -156,21 +156,24 @@
 					<input type="text" data-bind="value: app.editing().tags">
 
 					<div class="editor-container">
+						<div class="editor-preview" id="editor-preview"></div>
 						<div class="editor" id="editor"
 							data-bind="
 							ace: app.editing().body, 
 							aceOptions: { mode: 'yarn', theme: 'yarn', showPrintMargin: false }">
-						</div> 
+						</div>	
 					</div>
 					<!--<div class="icon close" data-bind="click:app.saveNode"></div>-->
 					<div class="editor-footer">
+						<label class="switch"><input type="checkbox" id="toglPreviewBtn" data-bind="click:app.togglePreviewMode();"><div class="slider round"></div></label>
+						&nbsp;
 						Length: <span class="character-count">0</span>
 						&nbsp;
 						Lines: <span class="line-count">0</span>
 						&nbsp;&nbsp;|&nbsp;&nbsp;
 						Line: <span class="line-index">0</span>
 						&nbsp;
-						Col: <span class="column-index">0</span>
+						Col: <span class="column-index">0</span>		
 					</div>
 				</div>
 			</div>

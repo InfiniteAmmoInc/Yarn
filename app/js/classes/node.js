@@ -2,6 +2,7 @@ var globalNodeIndex = 0;
 const NodeExpandWidth = 300;
 const NodeExpandHeight = 150;
 const ClipNodeTextLength = 1024;
+const bbcode = require('bbcode')
 
 var Node = function()
 {
@@ -36,36 +37,22 @@ var Node = function()
         return output;
     }, this);
 
-	this.clippedBody = ko.computed(function() 
+	this.clippedBody = ko.computed(function(lengthLimit = ClipNodeTextLength)
 	{
 		var result = app.getHighlightedText(this.body());
-		while (result.indexOf("\n") >= 0)
-			result = result.replace("\n", "<br />");
-		while (result.indexOf("\r") >= 0)
-			result = result.replace("\r", "<br />");
-		
+
+		result = result.replace(/[\n\r]/g,"<br />")
 		result = result.replace(/\[\[[^\[]+\]\]/gi, function (goto) {
 			var extractedGoto = goto.match(/\|(.*)\]\]/i)[1]
 			return '<font color="tomato">(go:' + extractedGoto.trim() + ')</font>';
 		})
 
-		// bbcode cleanup start
-		result = result.replace(/\[b\]/g, '[b]<strong>')
-		result = result.replace(/\[\/b\]/g, '</strong>[/b]')
+		// bbcode parsing
+		result = bbcode.parse(result);
 
-		result = result.replace(/\[color=[A-z0-9]+\]/gi, function (color) {
-			var extractedColor = color.match(/\[color=([A-z0-9\#]+)\]/i)[1]
-			return '<font color="' + extractedColor.trim() + '">';
-		});result = result.replace(/\[\/color\]/g, '</font>');
-
-		result = result.replace(/\[u\]/g, '<u>');
-		result = result.replace(/\[\/u\]/g, '</u>');
-
-		result = result.replace(/\[i\]/g, '<i>');
-		result = result.replace(/\[\/i\]/g, '</i>');
-
-		result = result.replace(/\[[\/A-z]+\]/g, '') //last bbcode tag cleanup
-		result = result.substr(0, ClipNodeTextLength);
+		if (lengthLimit > 0) {
+			result = result.substr(0, lengthLimit);
+		}
         return result;
     }, this);
 

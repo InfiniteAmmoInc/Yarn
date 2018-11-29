@@ -516,6 +516,23 @@ a:hover { color: #000;}
 	cursor: text;
 }
 
+.node-editor .form .editor-preview
+{
+	visibility: hidden;
+	max-height: 100%;
+	width: 100%;
+	overflow-y: scroll;
+	white-space: pre;
+	box-sizing: border-box;
+	padding: 0;
+	margin: 0;
+	font-size: 0.9em;
+	line-height: 1.1em;
+	color: #666;
+	font-family: "Lucida Console", Monaco, monospace;
+	cursor: pointer;
+}
+
 .node-editor .form .editor-footer
 {
 	width: 100%;
@@ -611,3 +628,74 @@ a:hover { color: #000;}
 		margin-top: 20px;
 	}
 }
+
+/* --- SWITCH BUTTON --- */
+.switch {
+	position: relative;
+	display: inline-block;
+	width: 50px;
+	height: 20px;
+  }
+  
+  .switch input {display:none;}
+  
+  .slider {
+	position: absolute;
+	cursor: pointer;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: #10e3ff;
+	-webkit-transition: .4s;
+	transition: .4s;
+	 border-radius: 10px;
+  }
+  
+  .slider:before {
+	position: absolute;
+	content: "";
+	height: 2px;
+	width: 2px;
+	left: 4px;
+	bottom: 4px;
+	/* background-color: white; */
+	-webkit-transition: .4s;
+	transition: .4s;
+	border-radius: 50%;
+  }
+  
+  input:checked + .slider {
+	background-color: #f2ffac;
+  }
+  
+  input:focus + .slider {
+	box-shadow: 0 0 1px #2196F3;
+  }
+  
+  input:checked + .slider:before {
+	-webkit-transform: translateX(11px);
+	-ms-transform: translateX(11px);
+	transform: translateX(30px);
+  }
+  
+  /*------ ADDED CSS ---------*/
+  .slider:after
+  {
+   content:'EDIT';
+   /* color: white; */
+   display: block;
+   position: absolute;
+   transform: translate(-50%,-50%);
+   top: 50%;
+   left: 50%;
+   font-size: 10px;
+   font-family: Verdana, sans-serif;
+  }
+  
+  input:checked + .slider:after
+  {  
+	content:'PREVIEW';
+  }
+  
+  /*--------- END --------*/
