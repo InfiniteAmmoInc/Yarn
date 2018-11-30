@@ -63,18 +63,13 @@ function spell_check() {
   currently_spellchecking = true;
   var session = ace.edit(editor).getSession();
 
-  // Clear the markers.
-  for (var i in markers_present) {
-    session.removeMarker(markers_present[i]);
-  }
-  markers_present = [];
-
+	// Clear all markers and gutter
+	clear_spellcheck_markers();
+	// Populate with markers and gutter
   try {
 	  var Range = ace.require('ace/range').Range
 	  var lines = session.getDocument().getAllLines();
 	  for (var i in lines) {
-	  	// Clear the gutter.
-	    session.removeGutterDecoration(i, "misspelled");
 	    // Check spelling of this line.
 	    var misspellings = misspelled(lines[i]);
 	    
@@ -93,9 +88,35 @@ function spell_check() {
 	}
 }
 
+var spellcheckEnabled = false;
 function enable_spellcheck() {
-  ace.edit(editor).getSession().on('change', function(e) {
-  	contents_modified = true;
-	});
-	setInterval(spell_check, 500);
+	spellcheckEnabled = true
+	ace.edit(editor).getSession().on('change', function(e) {
+		if (spellcheckEnabled) {
+			contents_modified = true;
+			spell_check();
+		};
+	})
+	// needed to trigger update once without input
+	contents_modified = true;
+	spell_check();
+}
+
+function disable_spellcheck() {
+	spellcheckEnabled = false
+	// Clear the markers
+	clear_spellcheck_markers();
+}
+
+function clear_spellcheck_markers() {
+	var session = ace.edit(editor).getSession();
+	for (var i in markers_present) {
+		session.removeMarker(markers_present[i]);
+	};
+	markers_present = [];
+	// Clear the gutter
+	var lines = session.getDocument().getAllLines();
+	for (var i in lines) {
+		session.removeGutterDecoration(i, "misspelled");
+	};
 }

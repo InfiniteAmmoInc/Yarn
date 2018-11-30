@@ -29,6 +29,7 @@ var App = function(name, version) {
   this.isElectron = false;
   this.editor = null;
   this.autocompleteEnabled = false;
+  this.spellcheckEnabled = false;
 
   this.UPDATE_ARROWS_THROTTLE_MS = 25;
 
@@ -686,14 +687,23 @@ var App = function(name, version) {
         .css({ y: "-100" })
         .transition({ y: "0" }, 250);
 
-      //enable_spellcheck();
-      contents_modified = true;
-      //spell_check();
       self.editor = ace.edit("editor");
       var autoCompleteButton = document.getElementById("toglAutocomplete");
       autoCompleteButton.checked = self.autocompleteEnabled;
-
+      var spellCheckButton = document.getElementById("toglSpellCheck");
+      spellCheckButton.checked = self.spellcheckEnabled;
+      self.toggleSpellCheck();
       self.updateEditorStats();
+    }
+  };
+
+  this.toggleSpellCheck = function() {
+    var spellCheckButton = document.getElementById("toglSpellCheck");
+    self.spellcheckEnabled = spellCheckButton.checked;
+    if (spellCheckButton.checked) {
+      enable_spellcheck();
+    } else {
+      disable_spellcheck();
     }
   };
 
