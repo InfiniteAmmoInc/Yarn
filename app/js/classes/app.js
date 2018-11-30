@@ -693,25 +693,21 @@ var App = function(name, version) {
       var autoCompleteButton = document.getElementById("toglAutocomplete");
       autoCompleteButton.checked = self.autocompleteEnabled;
 
-      var previewButton = document.getElementById("toglPreviewBtn");
-      $(".editor-container")[0].addEventListener("click", function(){
-        if (previewButton.checked) {
-          previewButton.click()
-        }
-      })
       self.updateEditorStats();
     }
   };
 
-  this.togglePreviewMode = function(e) {
+  this.togglePreviewMode = function(previewModeOverwrite = null) {
     var editor = $(".editor")[0];
     var editorPreviewer = document.getElementById("editor-preview")
     var previewButton = document.getElementById("toglPreviewBtn")
-    
+    if (previewModeOverwrite !== null) { //null when called by button
+      previewButton.checked = previewModeOverwrite;
+    }
     if (previewButton.checked) { //preview mode
       editor.style.visibility = "hidden";
       editorPreviewer.style.visibility = "visible";
-      editorPreviewer.innerHTML = self.editing().clippedBody();
+      editorPreviewer.innerHTML = self.editing().textToHtml(self.editing().body());
     } else { //edit mode
       editorPreviewer.innerHTML = "";
       editorPreviewer.style.visibility = "hidden";

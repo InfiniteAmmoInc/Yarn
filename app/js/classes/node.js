@@ -35,25 +35,29 @@ var Node = function()
 				output += '<span>' + tags[i] + '</span>';
 		}
         return output;
-    }, this);
-
-	this.clippedBody = ko.computed(function(lengthLimit = ClipNodeTextLength)
-	{
-		var result = app.getHighlightedText(this.body());
-
+	}, this);
+	
+	this.textToHtml = function(text) {
+		var result = text;
 		result = result.replace(/[\n\r]/g,"<br />")
 		result = result.replace(/\[\[[^\[]+\]\]/gi, function (goto) {
 			var extractedGoto = goto.match(/\|(.*)\]\]/i)[1]
-			return '<font color="tomato">(go:' + extractedGoto.trim() + ')</font>';
+			return '<font color="tomato">(go:' + extractedGoto + ')</font>';
 		})
+		result = result.replace(/<</gi, "<font color='violet'>(run:");
+		result = result.replace(/>>/gi, ")</font>");
 
-		// bbcode parsing
+		// bbcode tag parsing
 		result = bbcode.parse(result);
+    return result;
+	}
 
-		if (lengthLimit > 0) {
-			result = result.substr(0, lengthLimit);
-		}
-        return result;
+	this.clippedBody = ko.computed(function()
+	{
+		var result = app.getHighlightedText(this.body());
+		result = self.textToHtml(result);
+		result = result.substr(0, ClipNodeTextLength);
+    return result;
     }, this);
 
 	// internal cache

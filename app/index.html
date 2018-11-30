@@ -140,7 +140,7 @@
 			<!-- ko if:app.editing() != null -->
 			<div class="node-editor" data-bind="mousedown:app.saveNode">
 				<div class="form" data-bind="preventBubble: 'click', preventBubble: 'mousedown'">
-					<input type="text" class="title" data-bind="value: app.editing().title">
+					<input type="text" class="title" data-bind="value: app.editing().title;" onfocus="app.togglePreviewMode(true)">
 					
 					<!-- <div float="left"> </div> -->
 					
@@ -153,9 +153,9 @@
 						</div>
 					</div>
 
-					<input type="text" data-bind="value: app.editing().tags">
+					<input type="text" data-bind="value: app.editing().tags;" onfocus="app.togglePreviewMode(true)">
 
-					<div class="editor-container">
+					<div class="editor-container" onclick="app.togglePreviewMode(false)">
 						<div class="editor-preview" id="editor-preview"></div>
 						<div class="editor" id="editor"
 							data-bind="
@@ -173,9 +173,9 @@
 						&nbsp;
 						Col: <span class="column-index">0</span>
 						&nbsp;&nbsp;|&nbsp;&nbsp;
-						Preview BBC: <label class="switch"><input type="checkbox" id="toglPreviewBtn" data-bind="click:app.togglePreviewMode();"><div class="slider round"></div></label>
+						Preview BBC: <label class="switch"><input type="checkbox" id="toglPreviewBtn" onclick="app.togglePreviewMode()"><div class="slider round"></div></label>
 						&nbsp;
-						Auto Complete: <label class="switch"><input type="checkbox" id="toglAutocomplete"><div class="slider round"></div></label>	
+						Autocomplete: <label class="switch"><input type="checkbox" id="toglAutocomplete"><div class="slider round"></div></label>	
 					</div>
 				</div>
 			</div>
