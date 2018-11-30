@@ -26,7 +26,7 @@ $.get(dicPath, function(data) {
 
 // Check the spelling of a line, and return [start, end]-pairs for misspelled words.
 function misspelled(line) {
-	var words = line.split(/[ ]|\[|\]/);
+	var words = line.split(/[^a-zA-Z]/);
 	var i = 0;
 	var bads = [];
 	for (word in words) {
