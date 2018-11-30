@@ -26,12 +26,12 @@ $.get(dicPath, function(data) {
 
 // Check the spelling of a line, and return [start, end]-pairs for misspelled words.
 function misspelled(line) {
-	var words = line.split(/[^a-zA-Z']/);
+	var words = line.split(/[^a-zA-Z\-']/);
 	var i = 0;
 	var bads = [];
 	for (word in words) {
 		var x = words[word] + "";
-		var checkWord = x.replace(/[^a-zA-Z']/g, '');
+		var checkWord = x.replace(/[^a-zA-Z\-']/g, '');
 	  if (!dictionary.check(checkWord)) {
 	    bads[bads.length] = [i, i + words[word].length];
 	  }

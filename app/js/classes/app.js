@@ -28,8 +28,8 @@ var App = function(name, version) {
   this.shifted = false;
   this.isElectron = false;
   this.editor = null;
-  this.autocompleteEnabled = false;
-  this.spellcheckEnabled = false;
+  this.autocompleteEnabled = true;
+  this.spellcheckEnabled = true;
 
   this.UPDATE_ARROWS_THROTTLE_MS = 25;
 
