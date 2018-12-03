@@ -707,14 +707,11 @@ var App = function(name, version) {
     }
   };
 
-  this.togglePreviewMode = function(previewModeOverwrite = null) {
+  this.togglePreviewMode = function(previewModeOverwrite) {
     var editor = $(".editor")[0];
     var editorPreviewer = document.getElementById("editor-preview")
-    var previewButton = document.getElementById("toglPreviewBtn")
-    if (previewModeOverwrite !== null) { //null when called by button
-      previewButton.checked = previewModeOverwrite;
-    }
-    if (previewButton.checked) { //preview mode
+    
+    if (previewModeOverwrite) { //preview mode
       editor.style.visibility = "hidden";
       editorPreviewer.style.visibility = "visible";
       editorPreviewer.innerHTML = self.editing().textToHtml(self.editing().body());
