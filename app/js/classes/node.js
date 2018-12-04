@@ -38,14 +38,20 @@ var Node = function()
 	}, this);
 	
 	this.textToHtml = function(text) {
-		var result = text;
-		result = result.replace(/[\n\r]/g,"<br />")
+		var result = "     " + text;
+		result = result.replace(/[\n\r]/g,"<br />      ")
 		result = result.replace(/\[\[[^\[]+\]\]/gi, function (goto) {
 			var extractedGoto = goto.match(/\|(.*)\]\]/i)[1]
 			return '<font color="tomato">(go:' + extractedGoto + ')</font>';
 		})
 		result = result.replace(/<</gi, "<font color='violet'>(run:");
 		result = result.replace(/>>/gi, ")</font>");
+
+		// bbcode color tag previewing
+		result = result.replace(/\[color=#[A-Za-z0-9]+\]/gi, function (colorCode) {
+			var extractedCol = colorCode.match(/\[color=#([A-Za-z0-9]+)\]/i)[1]
+			return '[color=#'+ extractedCol + ']<font color=#' + extractedCol + ">&#9751</font>"
+		})
 
 		// bbcode tag parsing
 		result = bbcode.parse(result);

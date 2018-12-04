@@ -5,6 +5,8 @@
 		<title>Yarn</title>
 		<link rel="stylesheet" href="css/normalize.css">
 		<link rel="stylesheet" href="css/style.css">
+		<link rel="stylesheet" href="css/spectrum.css">
+
 
 		<!-- libraries -->
 		<script>window.$ = window.jQuery = require('jquery');</script>
@@ -13,12 +15,13 @@
 		<script type="text/javascript" src="js/libs/transit.js"></script>
 		<script type="text/javascript" src="js/libs/knockout-3.3.0.js"></script>
 		<script type="text/javascript" src="js/libs/knockout.ace.js"></script>
-		<script type="text/javascript" src="js/libs/ace.js"></script>
+		<script type="text/javascript" src="js/libs/ace.js"> ace.require("ace/ext/language_tools") </script>
 		<script type="text/javascript" src="js/libs/typo.js"></script>
 		<script type="text/javascript" src="js/libs/spellcheck_ace.js"></script>
 		<script type="text/javascript" src="js/libs/theme-yarn.js"></script>
 		<script type="text/javascript" src="js/libs/mode-yarn.js"></script>
 
+		<script type="text/javascript" src="js/libs/spectrum.js"></script>
 		<!-- various models / classes -->
 		<script type="text/javascript" src="js/classes/app.js"></script>
 		<script type="text/javascript" src="js/classes/data.js"></script>
@@ -138,7 +141,8 @@
 			</div>
 
 			<!-- ko if:app.editing() != null -->
-			<div class="node-editor" data-bind="mousedown:app.saveNode">
+			<div class="node-editor" data-bind="mousedown:app.saveNode">				
+			
 				<div class="form" data-bind="preventBubble: 'click', preventBubble: 'mousedown'">
 					<input type="text" class="title" data-bind="value: app.editing().title;" onfocus="app.togglePreviewMode(true)">
 					
@@ -154,7 +158,6 @@
 					</div>
 
 					<input type="text" data-bind="value: app.editing().tags;" onfocus="app.togglePreviewMode(true)">
-
 					<div class="editor-container" onclick="app.togglePreviewMode(false)">
 						<div class="editor-preview" id="editor-preview"></div>
 						<div class="editor" id="editor"
@@ -177,6 +180,11 @@
 						&nbsp;
 						<input type="checkbox" id="toglSpellCheck" onclick="app.toggleSpellCheck()"/> Spellcheck
 					</div>
+
+					<div id="tooltip" hidden>
+						<input type='text' id="colorPicker" data-bind="preventBubble: 'click', preventBubble: 'mousedown'"/>
+					</div>
+	
 				</div>
 			</div>
 			<!-- /ko -->

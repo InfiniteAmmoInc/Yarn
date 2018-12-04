@@ -1,6 +1,6 @@
 const electron = require("electron");
 const remote = electron.remote;
-
+//todo store color palette
 var App = function(name, version) {
   var self = this;
 
@@ -30,6 +30,8 @@ var App = function(name, version) {
   this.editor = null;
   this.autocompleteEnabled = true;
   this.spellcheckEnabled = true;
+  this.mouseX = 0; 
+  this.mouseY = 0;
 
   this.UPDATE_ARROWS_THROTTLE_MS = 25;
 
@@ -458,6 +460,59 @@ var App = function(name, version) {
       }
     });
 
+    this.guessPopUpHelper = function() {
+      console.log("trigger guess menu")
+      if (self.getTagBeforeCursor().match(/\[.*\|/)) {
+        alert("trigger NODE MENU");
+      }
+      if (self.getTagBeforeCursor().match(/\[color=#/)) {
+        // alert("trigger color Menu");
+        self.insertColorCode()
+      }
+    };
+
+
+    $(document).on("mousemove", function(e) {
+      self.mouseX = e.pageX; 
+      self.mouseY = e.pageY;
+    });
+
+    this.insertColorCode = function() {
+      // http://bgrins.github.io/spectrum/
+      if ($('#tooltip').is(':visible')) { return }
+
+      $("#colorPicker").spectrum("set", self.editor.getSelectedText());
+      $("#colorPicker").spectrum("toggle");
+      $('#tooltip').css({'top':self.mouseY - 50,'left':self.mouseX - 70}); 
+      $('#tooltip').show();
+      $("#colorPicker").on("dragstop.spectrum", function(e, color) {
+        self.applyPickerColorEditor(color);
+      });
+
+      self.togglePreviewMode(true);
+    };
+
+    this.applyPickerColorEditor = function(color) {
+      var selectRange = JSON.parse(JSON.stringify(self.editor.selection.getRange()));
+      self.editor.selection.setRange(selectRange);
+      var colorCode = color.toHexString().replace("#","");
+      self.editor.session.replace(selectRange, colorCode);
+      self.editor.selection.setRange({
+        start: self.editor.getCursorPosition(),
+        end: {
+          row: self.editor.getCursorPosition().row,
+          column: self.editor.getCursorPosition().column - colorCode.length
+        }
+      });
+      self.togglePreviewMode(true)
+    }
+
+    $(document).on("mouseup",function(e) {
+      if (self.editing() && e.button === 2 && self.isElectron) {
+        self.guessPopUpHelper();
+      }
+    });
+
     // apple command key
     //$(window).on('keydown', function(e) { if (e.keyCode == 91 || e.keyCode == 93) { self.appleCmdKey = true; } });
     //$(window).on('keyup', function(e) { if (e.keyCode == 91 || e.keyCode == 93) { self.appleCmdKey = false; } });
@@ -686,12 +741,38 @@ var App = function(name, version) {
       $(".node-editor .form")
         .css({ y: "-100" })
         .transition({ y: "0" }, 250);
-
       self.editor = ace.edit("editor");
       var autoCompleteButton = document.getElementById("toglAutocomplete");
       autoCompleteButton.checked = self.autocompleteEnabled;
       var spellCheckButton = document.getElementById("toglSpellCheck");
       spellCheckButton.checked = self.spellcheckEnabled;
+
+      $("#colorPicker").spectrum({
+        flat: true,
+        showButtons: true,
+        // color:'#' + self.editor.getSelectedText(),
+        showInput: true,
+        showPalette: true,
+        preferredFormat: "hex",
+        palette: [
+          ["#000","#444","#666","#999","#ccc","#eee","#f3f3f3","#fff"],
+          ["#f00","#f90","#ff0","#0f0","#0ff","#00f","#90f","#f0f"],
+          ["#f4cccc","#fce5cd","#fff2cc","#d9ead3","#d0e0e3","#cfe2f3","#d9d2e9","#ead1dc"],
+        ],
+        change: function (color) {
+          if ($('#tooltip').is(':visible')) {
+            // self.editor.session.insert(cursorPos, color.toHexString().replace("#",""))
+            // app.moveEditCursor(1);
+            self.applyPickerColorEditor(color)
+            $("#colorPicker").spectrum("hide");
+            $('#tooltip').hide();
+            self.togglePreviewMode(false);
+            self.moveEditCursor(color.toHexString().length)
+          };
+        },
+        clickoutFiresChange : true,
+      })
+      
       self.toggleSpellCheck();
       self.updateEditorStats();
     }
@@ -739,11 +820,30 @@ var App = function(name, version) {
   this.moveEditCursor = function(offset) {
     var position = self.editor.getCursorPosition();
     self.editor.gotoLine(position.row + 1, position.column + offset);
+    self.editor.focus();
   };
 
   this.insertTextAtCursor = function(textToInsert) {
+    // self.editor.session.replace(self.editor.selection.getRange(), "");
     self.editor.session.insert(self.editor.getCursorPosition(), textToInsert)
   };
+
+  this.getTagBeforeCursor = function() {
+    selectionRange = self.editor.getSelectionRange();
+    var currline = selectionRange.start.row;
+    var cursorPosition = selectionRange.end.column;
+    var curLineText = self.editor.session.getLine(currline);
+
+    var textBeforeCursor = curLineText.substring(0,cursorPosition);
+    if (!textBeforeCursor) {return}
+    var tagBeforeCursor = (textBeforeCursor.lastIndexOf('[') !== -1) ? textBeforeCursor.substring(textBeforeCursor.lastIndexOf('['), textBeforeCursor.length) : ""
+    if (tagBeforeCursor.includes(']')) { tagBeforeCursor = "" }
+
+    if (textBeforeCursor.substring(textBeforeCursor.length-2, textBeforeCursor.length) === "[[") { tagBeforeCursor = "[[" }
+    if (textBeforeCursor.substring(textBeforeCursor.length-2, textBeforeCursor.length) === "<<") { tagBeforeCursor = "<<" }
+    console.log(tagBeforeCursor)
+    return tagBeforeCursor
+  }
 
   // basic autocompletion
   $(document).on("keyup", function(e) {
@@ -753,48 +853,35 @@ var App = function(name, version) {
       if (key === 37 || key === 38 || key === 39 || key === 40) { return } // Dont trigger if moved cursor using arrow keys
       if (key === 8 || key === 46 || key === 17 || key === 90) { return } // Dont trigger if backspace or ctrl+z pressed
 
-      selectionRange = self.editor.getSelectionRange();
-      var currline = selectionRange.start.row;
-      var cursorPosition = selectionRange.end.column;
-      var curLineText = self.editor.session.getLine(currline);
-
-      var textBeforeCursor = curLineText.substring(0,cursorPosition);
-      if (!textBeforeCursor) {return}
-      var tagBeforeCursor = (textBeforeCursor.lastIndexOf('[') !== -1) ? textBeforeCursor.substring(textBeforeCursor.lastIndexOf('['), textBeforeCursor.length) : ""
-      if (tagBeforeCursor.includes(']')) { tagBeforeCursor = "" }
-
-      if (textBeforeCursor.substring(textBeforeCursor.length-2, textBeforeCursor.length) === "[[") { tagBeforeCursor = "[[" }
-      if (textBeforeCursor.substring(textBeforeCursor.length-2, textBeforeCursor.length) === "<<") { tagBeforeCursor = "<<" }
-
-      var text = self.editing().body();
-      switch (tagBeforeCursor) {
+      switch (self.getTagBeforeCursor()) {
         case "[[":
-          app.insertTextAtCursor(" answer: | ]] ");
-          app.moveEditCursor(-6);
+          self.insertTextAtCursor(" answer: | ]] ");
+          self.moveEditCursor(-4);
           break;
         case "<<":
-          app.insertTextAtCursor(" >> ");
-          app.moveEditCursor(-3);
+          self.insertTextAtCursor(" >> ");
+          self.moveEditCursor(-3);
           break;
         case "[colo":
-          app.insertTextAtCursor("r=][/color] ");
-          app.moveEditCursor(-9);
+          self.insertTextAtCursor("r=#][/color] ");
+          self.moveEditCursor(-10);
+          self.insertColorCode()
           break;
         case "[b":
-          app.insertTextAtCursor("][/b] ")
-          app.moveEditCursor(-5);
+          self.insertTextAtCursor("][/b] ")
+          self.moveEditCursor(-5);
           break;
         case "[i":
-          app.insertTextAtCursor("][/i] ")
-          app.moveEditCursor(-5);
+          self.insertTextAtCursor("][/i] ")
+          self.moveEditCursor(-5);
           break;
         case "[u":
-          app.insertTextAtCursor("][/u] ")
-          app.moveEditCursor(-5);
+          self.insertTextAtCursor("][/u] ")
+          self.moveEditCursor(-5);
           break;
         case "[img":
-          app.insertTextAtCursor("=][/img] ")
-          app.moveEditCursor(-7);
+          self.insertTextAtCursor("=][/img] ")
+          self.moveEditCursor(-7);
           break;
       }
     };
