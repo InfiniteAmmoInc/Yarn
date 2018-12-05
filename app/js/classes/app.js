@@ -801,6 +801,7 @@ var App = function(name, version) {
       editorPreviewer.innerHTML = "";
       editorPreviewer.style.visibility = "hidden";
       editor.style.visibility = "visible";
+      self.editor.session.setScrollTop(editorPreviewer.scrollTop );
       self.editor.focus();
     }
   };
