@@ -795,11 +795,13 @@ var App = function(name, version) {
     if (previewModeOverwrite) { //preview mode
       editor.style.visibility = "hidden";
       editorPreviewer.style.visibility = "visible";
-      editorPreviewer.innerHTML = self.editing().textToHtml(self.editing().body());
+      editorPreviewer.innerHTML = self.editing().textToHtml(self.editing().body(), true);
+      editorPreviewer.scrollTop = self.editor.renderer.scrollTop;
     } else { //edit mode
       editorPreviewer.innerHTML = "";
       editorPreviewer.style.visibility = "hidden";
       editor.style.visibility = "visible";
+      self.editor.focus();
     }
   };
 

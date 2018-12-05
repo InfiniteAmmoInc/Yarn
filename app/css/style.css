@@ -524,13 +524,11 @@ a:hover { color: #000;}
 	overflow-y: scroll;
 	white-space: pre;
 	box-sizing: border-box;
-	/* padding: 0; */
-	font-size: 0.9em;
-	line-height: 1.1em;
+	font-size: 0.8em;
+	line-height: 1.3em;
 	color: #666;
 	font-family: "Lucida Console", Monaco, monospace;
 	cursor: pointer;
-	/* margin-right: 200px; */
 }
 
 .node-editor .form .editor-footer

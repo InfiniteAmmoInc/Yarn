@@ -37,9 +37,16 @@ var Node = function()
         return output;
 	}, this);
 	
-	this.textToHtml = function(text) {
-		var result = "     " + text;
-		result = result.replace(/[\n\r]/g,"<br />      ")
+	this.textToHtml = function(text, showRowNumbers=false) {
+		var rowCounter = 1;
+		var result = showRowNumbers ? '<font color="pink">' + rowCounter + '.   </font>' + text : text
+		result = result.replace(/[\n\r]/g, function (row) {
+			var rowAppend = '<br/>';
+			rowCounter += 1;
+			if (showRowNumbers) { rowAppend += '<font color="pink">' + rowCounter + '.   </font>'};
+			return rowAppend
+		})
+
 		result = result.replace(/\[\[[^\[]+\]\]/gi, function (goto) {
 			var extractedGoto = goto.match(/\|(.*)\]\]/i)[1]
 			return '<font color="tomato">(go:' + extractedGoto + ')</font>';
