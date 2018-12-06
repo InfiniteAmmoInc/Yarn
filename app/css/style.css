@@ -467,7 +467,7 @@ a:hover { color: #000;}
 	top: 5%;
 	width: 90%;
 	height: 90%;
-	padding: 20px 20px 30px 20px;
+	padding: 20px 20px 40px 20px;
 	background: #fff;
 	border-radius: 4px;
 	box-shadow: 0px 1px 1px #000;
@@ -494,10 +494,72 @@ a:hover { color: #000;}
 	font-family: "Lucida Console", Monaco, monospace;
 }
 
+.node-editor .form .bbcode-toolbar
+{
+	float: left;
+	width: 100%;
+	font-size: 0.8em;
+    overflow: auto;
+}
+
+.node-editor .form .bbcode-toolbar .bbcode-button
+{
+	cursor: pointer;
+	border: none;
+	text-align:center;
+	border-radius: 12px;
+	background-color: white;
+	color: black;
+	border: 2px solid #e7e7e7;
+	-webkit-transition-duration: 0.4s; /* Safari */
+	transition-duration: 0.4s;
+	text-decoration: none;
+	display: inline-block;
+}
+
+.node-editor .form .bbcode-toolbar .bbcode-button:hover {background-color: #e7e7e7;}
+
+.node-editor .form .bbcode-toolbar .bbcode-button:active 
+{
+	color: purple;
+	background-color: yellow;
+}
+
+/* SPECIAL CHECKBOX START */
+.node-editor .form .bbcode-toolbar .styled-checkbox input
+{
+	-webkit-transition-duration: 0.4s; /* Safari */
+	transition-duration: 0.4s;
+	outline:none;
+	opacity:0;
+}
+.node-editor .form .bbcode-toolbar .styled-checkbox label {
+	color: grey;
+	border-radius: 12px;
+	left:15px;
+	right:15px;
+	box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.2);
+	border: 1px solid rgba(0, 0, 0, 0);
+}
+.node-editor .form .bbcode-toolbar .styled-checkbox input:checked + label {
+	color: black;
+	background-color: #F9FBB7;
+	border: 2px solid rgba(0, 0, 0, 0);
+	box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.5);
+}
+/* SPECIAL CHECKBOX END */
+
+.node-editor .form .bbcode-toolbar .editor-counter
+{
+	right: 20px;
+	width: 100%;
+	color: #666;
+	/* text-align:right; */
+}
 
 .node-editor .form .editor-container
 {
-	margin-top: 20px;
+	margin-top: 2px;
 	width: 100%;
 	height: calc(100% - 120px);
 	float: left;
@@ -524,18 +586,11 @@ a:hover { color: #000;}
 	overflow-y: scroll;
 	white-space: pre;
 	box-sizing: border-box;
-	font-size: 0.8em;
+	font-size: 0.9em;
 	line-height: 1.3em;
 	color: #666;
 	font-family: "Lucida Console", Monaco, monospace;
 	cursor: pointer;
-}
-
-.node-editor .form .editor-footer
-{
-	width: 100%;
-	text-align:center;
-	font-size: 0.8em;
 }
 
 /* --- EDITOR HIGHLIGHTING --- */

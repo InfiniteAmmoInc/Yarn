@@ -471,6 +471,46 @@ var App = function(name, version) {
       }
     };
 
+    this.insertBBcodeTags = function(tagOpen,tagClose=null) {
+      if (tagClose === null) {
+        tagClose = '[/' + tagOpen.replace(/[\"#=]/gi, '') + ']'
+      };
+      tagOpen = '[' + tagOpen + ']';
+      var selectRange = JSON.parse(JSON.stringify(self.editor.selection.getRange()));
+      // console.log(selectRange)
+      // console.log(tagOpen.length)
+      // console.log(tagClose)
+
+      self.editor.session.insert(selectRange.start, tagOpen)
+      self.editor.session.insert({
+        column: selectRange.end.column + tagOpen.length,
+        row: selectRange.end.row
+      }
+      ,tagClose)
+
+      if (tagOpen === '[color=#]') {
+        self.editor.selection.setRange({
+          start: {
+            row:self.editor.selection.getRange().start.row,
+            column: self.editor.selection.getRange().start.column -1
+          },
+          end: {
+            row:self.editor.selection.getRange().start.row,
+            column: self.editor.selection.getRange().start.column -1
+          }
+        });
+        // self.insertTextAtCursor('"1223"')
+        self.insertColorCode()
+      } else {
+        self.editor.selection.setRange({
+          start: self.editor.selection.getRange().start,
+          end: {
+            row: self.editor.selection.getRange().end.row,
+            column: self.editor.selection.getRange().end.column - tagClose.length
+          }
+        });
+      }
+    }
 
     $(document).on("mousemove", function(e) {
       self.mouseX = e.pageX; 
@@ -729,6 +769,14 @@ var App = function(name, version) {
       self.nodes.splice(index, 1);
     }
     self.updateNodeLinks();
+  };
+
+  this.searchTextInEditor = function(show=true){
+    if (show) {
+      self.editor.execCommand("find")
+    } else if (self.editor.searchBox){
+      self.editor.searchBox.hide()
+    }
   };
 
   this.editNode = function(node) {
@@ -1510,9 +1558,9 @@ var App = function(name, version) {
     var cursor = self.editor.getCursorPosition();
 
     var lines = text.split("\n");
-    $(".editor-footer .character-count").html(text.length);
-    $(".editor-footer .line-count").html(lines.length);
-    $(".editor-footer .row-index").html(cursor.row);
-    $(".editor-footer .column-index").html(cursor.column);
+    $(".editor-counter .character-count").html(text.length);
+    $(".editor-counter .line-count").html(lines.length);
+    $(".editor-counter .row-index").html(cursor.row);
+    $(".editor-counter .column-index").html(cursor.column);
   };
 };

@@ -148,38 +148,64 @@
 					
 					<!-- <div float="left"> </div> -->
 					
-					<div class="app-menu">
+					<!-- <div class="app-menu">
 						<div class="menu" style="float:left">
 							<span class="title" onmouseover="app.openNodeListMenu('link')">Add Link</span>
 							<div id="linkHelperMenu" class="dropdown">
 								<input class="search-field" style="text-align:center" placeholder="search" type="text" id="linkHelperMenuFilter" oninput="app.openNodeListMenu('link')"></input>
 							</div>
 						</div>
-					</div>
+					</div> -->
 
 					<input type="text" data-bind="value: app.editing().tags;" onfocus="app.togglePreviewMode(true)">
+
+					<div class="bbcode-toolbar">
+						<button class="bbcode-button" onclick="app.insertBBcodeTags('b')"><b>B</b></button>
+						<button class="bbcode-button" onclick="app.insertBBcodeTags('u')"><u>U</u></button>
+						<button class="bbcode-button" onclick="app.insertBBcodeTags('i')"><i>I</i></button>
+						<button class="bbcode-button" onclick="app.insertBBcodeTags('color=#')"><text color="pink">Col</text></button>
+						&nbsp;&nbsp;&nbsp;&nbsp;&#9733
+						<span class="styled-checkbox">
+							<input type="checkbox" id="toglAutocomplete"></input>
+							<label for="toglAutocomplete"> Autocomplete </label>
+						</span>
+						<span class="styled-checkbox">
+							<input class="styled-checkbox" type="checkbox" id="toglSpellCheck" onclick="app.toggleSpellCheck()"></input>
+							<label for="toglSpellCheck"> Spellcheck </label>
+						</span>
+						
+						<div class="app-menu" style.position="relative">
+							<div class="menu">
+								<span class="title" onmouseover="app.openNodeListMenu('link')">Add Link</span>
+								<div id="linkHelperMenu" class="dropdown">
+									<input class="search-field" style="text-align:center" placeholder="search" type="text" id="linkHelperMenuFilter" oninput="app.openNodeListMenu('link')"></input>
+								</div>
+							</div>
+						</div>
+
+						<span class="editor-counter">
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#9779&nbsp;&nbsp;&nbsp;&nbsp;
+							Length: <span class="character-count">0</span>
+							&nbsp;
+							Lines: <span class="line-count">0</span>
+							&nbsp;&nbsp;&#9749&nbsp;&nbsp;
+							Line: <span class="row-index">0</span>
+							&nbsp;
+							Col: <span class="column-index">0</span>
+							&nbsp;&nbsp;
+							<span class="find-text" onclick="app.searchTextInEditor()">&#128269 Find</span>
+						</span>
+					</div>
+
 					<div class="editor-container" onclick="app.togglePreviewMode(false)">
 						<div class="editor-preview" id="editor-preview"></div>
-						<div class="editor" id="editor"
+						<div class="editor" id="editor" onclick="app.searchTextInEditor(false)"
 							data-bind="
 							ace: app.editing().body, 
 							aceOptions: { mode: 'yarn', theme: 'yarn', showPrintMargin: false }">
-						</div>	
+						</div>
 					</div>
 					<!--<div class="icon close" data-bind="click:app.saveNode"></div>-->
-					<div class="editor-footer">
-						Length: <span class="character-count">0</span>
-						&nbsp;
-						Lines: <span class="line-count">0</span>
-						&nbsp;&nbsp;|&nbsp;&nbsp;
-						Line: <span class="line-index">0</span>
-						&nbsp;
-						Col: <span class="column-index">0</span>
-						&nbsp;&nbsp;|&nbsp;&nbsp;
-						<input type="checkbox" id="toglAutocomplete"/> Autocomplete
-						&nbsp;
-						<input type="checkbox" id="toglSpellCheck" onclick="app.toggleSpellCheck()"/> Spellcheck
-					</div>
 
 					<div id="tooltip" hidden>
 						<input type='text' id="colorPicker" data-bind="preventBubble: 'click', preventBubble: 'mousedown'"/>
