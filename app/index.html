@@ -163,7 +163,9 @@
 						<button class="bbcode-button" onclick="app.insertBBcodeTags('b')"><b>B</b></button>
 						<button class="bbcode-button" onclick="app.insertBBcodeTags('u')"><u>U</u></button>
 						<button class="bbcode-button" onclick="app.insertBBcodeTags('i')"><i>I</i></button>
-						<button class="bbcode-button" onclick="app.insertBBcodeTags('color=#')"><text color="pink">Col</text></button>
+						<button class="bbcode-button" style="color:green" onclick="app.insertBBcodeTags('color=#')"><text color="pink">Col</text></button>
+						<button class="bbcode-button" style="color:purple" onclick="app.insertBBcodeTags('cmd')">Cmd</button>
+						<button class="bbcode-button" style="color:#19a4a8" onclick="app.insertBBcodeTags('opt')">Opt</button>
 						&nbsp;&nbsp;&nbsp;&nbsp;&#9733
 						<span class="styled-checkbox">
 							<input type="checkbox" id="toglAutocomplete"></input>
@@ -174,14 +176,15 @@
 							<label for="toglSpellCheck"> Spellcheck </label>
 						</span>
 						
-						<div class="app-menu" style.position="relative">
-							<div class="menu">
-								<span class="title" onmouseover="app.openNodeListMenu('link')">Add Link</span>
-								<div id="linkHelperMenu" class="dropdown">
-									<input class="search-field" style="text-align:center" placeholder="search" type="text" id="linkHelperMenuFilter" oninput="app.openNodeListMenu('link')"></input>
+							<div class="app-menu" style="position: absolute;">
+								<div class="menu">
+									<span class="title" onmouseover="app.openNodeListMenu('link')">Add Link</span>
+									<div id="linkHelperMenu" class="dropdown">
+										<input class="search-field" style="text-align:center" placeholder="search" type="text" id="linkHelperMenuFilter" oninput="app.openNodeListMenu('link')"></input>
+									</div>
 								</div>
 							</div>
-						</div>
+
 
 						<span class="editor-counter">
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#9779&nbsp;&nbsp;&nbsp;&nbsp;
@@ -199,7 +202,7 @@
 
 					<div class="editor-container" onclick="app.togglePreviewMode(false)">
 						<div class="editor-preview" id="editor-preview"></div>
-						<div class="editor" id="editor" onclick="app.searchTextInEditor(false)"
+						<div class="editor" id="editor" onclick="app.searchTextInEditor(false);"
 							data-bind="
 							ace: app.editing().body, 
 							aceOptions: { mode: 'yarn', theme: 'yarn', showPrintMargin: false }">
@@ -207,7 +210,7 @@
 					</div>
 					<!--<div class="icon close" data-bind="click:app.saveNode"></div>-->
 
-					<div id="tooltip" hidden>
+					<div class="tooltip" id="colorPicker-container" hidden>
 						<input type='text' id="colorPicker" data-bind="preventBubble: 'click', preventBubble: 'mousedown'"/>
 					</div>
 	

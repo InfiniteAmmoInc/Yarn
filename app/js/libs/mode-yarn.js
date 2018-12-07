@@ -24,10 +24,6 @@ var YarnHighlightRules = function() {
                 regex: "\\[\\[",
                 next: "link"
             },
-            {
-                token: "hashtag",
-                regex: "#.+$"
-            }
         ],
         link: [
             {

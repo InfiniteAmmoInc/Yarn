@@ -534,18 +534,21 @@ a:hover { color: #000;}
 	opacity:0;
 }
 .node-editor .form .bbcode-toolbar .styled-checkbox label {
+	padding-right: 4px;
+	padding-left: 4px;
 	color: grey;
 	border-radius: 12px;
-	left:15px;
-	right:15px;
-	box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.2);
-	border: 1px solid rgba(0, 0, 0, 0);
-}
-.node-editor .form .bbcode-toolbar .styled-checkbox input:checked + label {
-	color: black;
-	background-color: #F9FBB7;
 	border: 2px solid rgba(0, 0, 0, 0);
 	box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.5);
+
+}
+.node-editor .form .bbcode-toolbar .styled-checkbox input:checked + label {
+	padding-right: 5px;
+	padding-left: 5px;
+	color: black;
+	background-color: #F9FBB7;
+	box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.2);
+	border: 1px solid rgba(0, 0, 0, 0);
 }
 /* SPECIAL CHECKBOX END */
 
@@ -554,7 +557,6 @@ a:hover { color: #000;}
 	right: 20px;
 	width: 100%;
 	color: #666;
-	/* text-align:right; */
 }
 
 .node-editor .form .editor-container
@@ -682,9 +684,10 @@ a:hover { color: #000;}
 	}
 }
 
-#tooltip
+.tooltip
 {
   /* width: 200px; */
+  opacity:0.7;
   position: absolute;
   text-align: center;
 }

@@ -461,34 +461,39 @@ var App = function(name, version) {
     });
 
     this.guessPopUpHelper = function() {
-      console.log("trigger guess menu")
       if (self.getTagBeforeCursor().match(/\[.*\|/)) {
-        alert("trigger NODE MENU");
+        console.log("todo - trigger NODE LIST MENU");
       }
       if (self.getTagBeforeCursor().match(/\[color=#/)) {
-        // alert("trigger color Menu");
         self.insertColorCode()
       }
     };
 
-    this.insertBBcodeTags = function(tagOpen,tagClose=null) {
-      if (tagClose === null) {
-        tagClose = '[/' + tagOpen.replace(/[\"#=]/gi, '') + ']'
-      };
-      tagOpen = '[' + tagOpen + ']';
-      var selectRange = JSON.parse(JSON.stringify(self.editor.selection.getRange()));
-      // console.log(selectRange)
-      // console.log(tagOpen.length)
-      // console.log(tagClose)
-
-      self.editor.session.insert(selectRange.start, tagOpen)
-      self.editor.session.insert({
-        column: selectRange.end.column + tagOpen.length,
-        row: selectRange.end.row
+    this.insertBBcodeTags = function(tag) {
+      var tagClose = '[/' + tag.replace(/[\"#=]/gi, '') + ']'
+      if (tag === 'cmd') {
+        tag = '<<';
+        tagClose = '>>';
+      } else if (tag === 'opt') {
+        tag = '[[';
+        tagClose = '|]]';
+      } else {
+        tag = '[' + tag + ']';
       }
-      ,tagClose)
+      
+      var selectRange = JSON.parse(JSON.stringify(self.editor.selection.getRange()));
+      self.editor.session.insert(selectRange.start, tag)
+      self.editor.session.insert({
+        column: selectRange.end.column + tag.length,
+        row: selectRange.end.row
+      },tagClose)
 
-      if (tagOpen === '[color=#]') {
+      if (tag === '[color=#]') {
+        if (self.editor.getSelectedText().length === 0) {
+          self.moveEditCursor(-9);
+          self.insertColorCode();
+          return
+        } 
         self.editor.selection.setRange({
           start: {
             row:self.editor.selection.getRange().start.row,
@@ -499,8 +504,9 @@ var App = function(name, version) {
             column: self.editor.selection.getRange().start.column -1
           }
         });
-        // self.insertTextAtCursor('"1223"')
         self.insertColorCode()
+      } else if (self.editor.getSelectedText().length === 0) {
+        self.moveEditCursor(-tagClose.length);
       } else {
         self.editor.selection.setRange({
           start: self.editor.selection.getRange().start,
@@ -509,8 +515,9 @@ var App = function(name, version) {
             column: self.editor.selection.getRange().end.column - tagClose.length
           }
         });
-      }
-    }
+      };
+      self.editor.focus();
+    };
 
     $(document).on("mousemove", function(e) {
       self.mouseX = e.pageX; 
@@ -518,13 +525,12 @@ var App = function(name, version) {
     });
 
     this.insertColorCode = function() {
+      if ($('#colorPicker-container').is(':visible')) {return}
       // http://bgrins.github.io/spectrum/
-      if ($('#tooltip').is(':visible')) { return }
-
       $("#colorPicker").spectrum("set", self.editor.getSelectedText());
       $("#colorPicker").spectrum("toggle");
-      $('#tooltip').css({'top':self.mouseY - 50,'left':self.mouseX - 70}); 
-      $('#tooltip').show();
+      $('#colorPicker-container').css({'top':self.mouseY - 50,'left':self.mouseX - 70}); 
+      $('#colorPicker-container').show();
       $("#colorPicker").on("dragstop.spectrum", function(e, color) {
         self.applyPickerColorEditor(color);
       });
@@ -808,12 +814,12 @@ var App = function(name, version) {
           ["#f4cccc","#fce5cd","#fff2cc","#d9ead3","#d0e0e3","#cfe2f3","#d9d2e9","#ead1dc"],
         ],
         change: function (color) {
-          if ($('#tooltip').is(':visible')) {
+          if ($('#colorPicker-container').is(':visible')) {
             // self.editor.session.insert(cursorPos, color.toHexString().replace("#",""))
             // app.moveEditCursor(1);
             self.applyPickerColorEditor(color)
             $("#colorPicker").spectrum("hide");
-            $('#tooltip').hide();
+            $('#colorPicker-container').hide();
             self.togglePreviewMode(false);
             self.moveEditCursor(color.toHexString().length)
           };
@@ -877,6 +883,7 @@ var App = function(name, version) {
   this.insertTextAtCursor = function(textToInsert) {
     // self.editor.session.replace(self.editor.selection.getRange(), "");
     self.editor.session.insert(self.editor.getCursorPosition(), textToInsert)
+    // $('#nodeList-container').hide();
   };
 
   this.getTagBeforeCursor = function() {
