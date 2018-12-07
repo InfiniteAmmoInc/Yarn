@@ -864,17 +864,15 @@ var App = function(name, version) {
         getCompletions: function(editor, session, pos, prefix, callback) {
             var wordList = self.getOtherNodeTitles();
             var token = editor.session.getTokenAt(pos.row, pos.column);
-            if (token.type !== "string.llink" || token.type !== "string.rlink") {
-              callback(null, []);
-              return
-            }
             // console.log(token.type)
             callback(null, wordList.map(function(word) {
-              return {
-                caption: word,
-                value: word,
-                meta: "link"
-              };
+              if (token.type === "string.llink" || token.type === "string.rlink") {
+                return {
+                  caption: word,
+                  value: word,
+                  meta: "Node Link"
+                };
+              }
             }));
         }
       };
