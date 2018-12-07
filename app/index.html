@@ -15,9 +15,10 @@
 		<script type="text/javascript" src="js/libs/transit.js"></script>
 		<script type="text/javascript" src="js/libs/knockout-3.3.0.js"></script>
 		<script type="text/javascript" src="js/libs/knockout.ace.js"></script>
-		<script type="text/javascript" src="js/libs/ace.js"> ace.require("ace/ext/language_tools") </script>
+		<script type="text/javascript" src="js/libs/ace.js"></script>
 		<script type="text/javascript" src="js/libs/typo.js"></script>
 		<script type="text/javascript" src="js/libs/spellcheck_ace.js"></script>
+		<script type="text/javascript" src="js/libs/ext-language_tools.js"></script>
 		<script type="text/javascript" src="js/libs/theme-yarn.js"></script>
 		<script type="text/javascript" src="js/libs/mode-yarn.js"></script>
 
@@ -166,7 +167,7 @@
 						<button class="bbcode-button" style="color:green" onclick="app.insertBBcodeTags('color=#')"><text color="pink">Col</text></button>
 						<button class="bbcode-button" style="color:purple" onclick="app.insertBBcodeTags('cmd')">Cmd</button>
 						<button class="bbcode-button" style="color:#19a4a8" onclick="app.insertBBcodeTags('opt')">Opt</button>
-						&nbsp;&nbsp;&nbsp;&nbsp;&#9733
+						&nbsp;&nbsp;&nbsp;&nbsp; <span class="editor-counter">&#9733</span>
 						<span class="styled-checkbox">
 							<input type="checkbox" id="toglAutocomplete"></input>
 							<label for="toglAutocomplete"> Autocomplete </label>
@@ -205,7 +206,9 @@
 						<div class="editor" id="editor" onclick="app.searchTextInEditor(false);"
 							data-bind="
 							ace: app.editing().body, 
-							aceOptions: { mode: 'yarn', theme: 'yarn', showPrintMargin: false }">
+							aceOptions: { mode: 'yarn', theme: 'yarn', showPrintMargin: false,
+							enableBasicAutocompletion: true,
+							enableLiveAutocompletion: true }">
 						</div>
 					</div>
 					<!--<div class="icon close" data-bind="click:app.saveNode"></div>-->

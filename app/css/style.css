@@ -522,7 +522,7 @@ a:hover { color: #000;}
 .node-editor .form .bbcode-toolbar .bbcode-button:active 
 {
 	color: purple;
-	background-color: yellow;
+	background-color: rgb(255, 255, 172);
 }
 
 /* SPECIAL CHECKBOX START */
@@ -546,7 +546,7 @@ a:hover { color: #000;}
 	padding-right: 5px;
 	padding-left: 5px;
 	color: black;
-	background-color: #F9FBB7;
+	background-color: rgb(254, 255, 218);
 	box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.2);
 	border: 1px solid rgba(0, 0, 0, 0);
 }

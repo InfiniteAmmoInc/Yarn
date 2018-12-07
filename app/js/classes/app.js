@@ -415,7 +415,7 @@ var App = function(name, version) {
       }
       // Spacebar toggle between nodes
       if (e.keyCode === 32) {
-        if (self.editing() !== null && !e.ctrlKey) {
+        if (self.editing() !== null && !e.altKey) {
           return; // Ctrl+spacebar to toggle between open nodes
         }
         var selectedNodes = self.getSelectedNodes();
@@ -826,7 +826,62 @@ var App = function(name, version) {
         },
         clickoutFiresChange : true,
       })
+
+      /// Enable autocompletion via word guessing
+      var langTools = ace.require("ace/ext/language_tools");
+      self.editor.setOptions({
+        enableBasicAutocompletion: true,
+        enableLiveAutocompletion: true
+      });
       
+      var rhymeCompleter = {
+        // uses http://rhymebrain.com/api.html
+        getCompletions: function(editor, session, pos, prefix, callback) {
+          var token = editor.session.getTokenAt(pos.row, pos.column);
+          console.log(token.type)
+          if (prefix.length === 0 || token.type !== "text") {
+            callback(null, []);
+            return
+          }
+          $.getJSON(
+            "http://rhymebrain.com/talk?function=getRhymes&word=" + prefix,
+            function(wordList) {
+              // wordList like [{"word":"flow","freq":24,"score":300,"flags":"bc","syllables":"1"}]
+              callback(null, wordList.map(function(ea) {         
+                return {
+                  name: ea.word,
+                  value: ea.word,
+                  score: ea.score,
+                  meta: "rhyme"
+                }     
+              }));
+            })
+        }
+      };
+      langTools.addCompleter(rhymeCompleter);
+
+      var nodeLinksCompleter = {
+        getCompletions: function(editor, session, pos, prefix, callback) {
+            var wordList = self.getOtherNodeTitles();
+            var token = editor.session.getTokenAt(pos.row, pos.column);
+            if (token.type !== "string.llink" || token.type !== "string.rlink") {
+              callback(null, []);
+              return
+            }
+            // console.log(token.type)
+            callback(null, wordList.map(function(word) {
+              return {
+                caption: word,
+                value: word,
+                meta: "link"
+              };
+            }));
+        }
+      };
+      langTools.addCompleter(nodeLinksCompleter);
+
+      var nextTokenCompleter = "TODO , see mode-yarn.js --> check current, give next"
+
       self.toggleSpellCheck();
       self.updateEditorStats();
     }
@@ -1055,12 +1110,10 @@ var App = function(name, version) {
   };
   
   this.makeNewNodesFromLinks = function(){
-    var otherNodeTitles = [];
-    app.nodes().forEach((node) => {
-      otherNodeTitles.push(node.title().trim());
-    });
+    var otherNodeTitles = self.getOtherNodeTitles()
 
     var nodeLinks = self.editing().getLinksInNode();
+    console.log(nodeLinks)
     if (nodeLinks == undefined){return}
     for (var i = 0; i < nodeLinks.length; i ++)
     {
@@ -1070,7 +1123,17 @@ var App = function(name, version) {
         self.newNodeAt(self.editing().x() + newNodeOffset, self.editing().y() - 120).title(nodeLinks[i].trim());
       }
     }
-  }
+  };
+
+  this.getOtherNodeTitles = function() {
+    var result = [];
+    app.nodes().forEach((node) => {
+      if (node.title() !== self.editing().title()) {
+        result.push(node.title().trim());
+      }  
+    })
+    return result
+  };
 
   this.updateArrows = function() {
     self.canvas.width = $(window).width();
