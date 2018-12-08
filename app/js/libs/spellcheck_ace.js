@@ -120,3 +120,11 @@ function clear_spellcheck_markers() {
 		session.removeGutterDecoration(i, "misspelled");
 	};
 }
+
+function suggest_word_for_misspelled(misspelledWord) {
+	var is_spelled_correctly = dictionary.check(misspelledWord);
+	
+	var array_of_suggestions = dictionary.suggest(misspelledWord);
+	if (is_spelled_correctly || array_of_suggestions.length === 0) { return false }
+	return array_of_suggestions
+}

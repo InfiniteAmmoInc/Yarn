@@ -28,6 +28,8 @@
     "bondage": "2.0.0",
     "electron-is": "^2.4.1",
     "electron-updater": "^2.21.10",
-    "jquery": "^3.3.1"
+    "jquery": "^3.3.1",
+    "jquery-contextmenu": "^2.7.1",
+    "most-common-words-by-language": "^2.17.0"
   }
 }

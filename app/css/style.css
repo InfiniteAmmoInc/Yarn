@@ -580,7 +580,7 @@ a:hover { color: #000;}
 	cursor: text;
 }
 
-.node-editor .form .editor-preview
+.node-editor .form .editor-container .editor-preview
 {
 	visibility: hidden;
 	max-height: 100%;

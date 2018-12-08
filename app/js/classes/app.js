@@ -1,5 +1,8 @@
 const electron = require("electron");
 const remote = electron.remote;
+const contextMenu = require("jquery-contextmenu")
+const { getWordsList } = require('most-common-words-by-language')
+
 //todo store color palette
 var App = function(name, version) {
   var self = this;
@@ -463,10 +466,13 @@ var App = function(name, version) {
     this.guessPopUpHelper = function() {
       if (self.getTagBeforeCursor().match(/\[.*\|/)) {
         console.log("todo - trigger NODE LIST MENU");
+        return
       }
       if (self.getTagBeforeCursor().match(/\[color=#/)) {
         self.insertColorCode()
+        return
       }
+
     };
 
     this.insertBBcodeTags = function(tag) {
@@ -833,55 +839,65 @@ var App = function(name, version) {
         enableBasicAutocompletion: true,
         enableLiveAutocompletion: true
       });
-      
-      var rhymeCompleter = {
-        // uses http://rhymebrain.com/api.html
-        getCompletions: function(editor, session, pos, prefix, callback) {
-          var token = editor.session.getTokenAt(pos.row, pos.column);
-          console.log(token.type)
-          if (prefix.length === 0 || token.type !== "text") {
-            callback(null, []);
-            return
-          }
-          $.getJSON(
-            "http://rhymebrain.com/talk?function=getRhymes&word=" + prefix,
-            function(wordList) {
-              // wordList like [{"word":"flow","freq":24,"score":300,"flags":"bc","syllables":"1"}]
-              callback(null, wordList.map(function(ea) {         
-                return {
-                  name: ea.word,
-                  value: ea.word,
-                  score: ea.score,
-                  meta: "rhyme"
-                }     
-              }));
-            })
-        }
-      };
-      langTools.addCompleter(rhymeCompleter);
 
-      var nodeLinksCompleter = {
-        getCompletions: function(editor, session, pos, prefix, callback) {
-            var wordList = self.getOtherNodeTitles();
-            var token = editor.session.getTokenAt(pos.row, pos.column);
-            // console.log(token.type)
-            callback(null, wordList.map(function(word) {
-              if (token.type === "string.llink" || token.type === "string.rlink") {
-                return {
-                  caption: word,
-                  value: word,
-                  meta: "Node Link"
-                };
-              }
-            }));
-        }
-      };
+      var commonWordCompleter = Utils.createAutocompleter(["text"], getWordsList('english',5000), "Common word");
+      langTools.addCompleter(commonWordCompleter);
+      var nodeLinksCompleter = Utils.createAutocompleter(["string.llink", "string.rlink"], self.getOtherNodeTitles(), "Node Link");
       langTools.addCompleter(nodeLinksCompleter);
 
-      var nextTokenCompleter = "TODO , see mode-yarn.js --> check current, give next"
+      // Create a context menu
+      $.contextMenu({
+        selector: '.node-editor .form .editor',
+        trigger: 'right',
+        build: function($trigger) {
+          var options = {
+            items: {}
+          };
 
+          // These is some text selected
+          if (self.editor.getSelectedText().length > 1) {
+            options.items = {
+              "cut": { name: "Cut", icon: "cut", callback: () => {
+                electron.clipboard.writeText(self.editor.getSelectedText());
+                self.insertTextAtCursor("")
+              }},
+              "copy": { name: "Copy", icon: "copy", callback: () => {
+                electron.clipboard.writeText(self.editor.getSelectedText());
+              }},
+              "paste": { name: "Paste", icon: "paste", callback: () => {
+                self.insertTextAtCursor(electron.clipboard.readText())
+              }},
+              "sep1": "---------"
+            };
+            var suggestedCorrections = self.getSpellCheckSuggestionItems();
+            if (self.spellcheckEnabled && suggestedCorrections) {
+              options.items.corrections = {name: "Correct word" ,items: suggestedCorrections} 
+            }
+          } else {
+            options.items = {
+              "paste": { name: "Paste", icon: "paste", callback: () => {
+                self.insertTextAtCursor(electron.clipboard.readText())
+              }},       
+            }; 
+          }
+          return options;
+        }
+      });
       self.toggleSpellCheck();
       self.updateEditorStats();
+    }
+  };
+
+  this.getSpellCheckSuggestionItems = function () {
+    var wordSuggestions = suggest_word_for_misspelled(self.editor.getSelectedText())
+    if (wordSuggestions) {
+      var suggestionObject = {}
+      wordSuggestions.forEach(suggestion => {
+        suggestionObject[suggestion] = { name: suggestion, icon: "edit",callback: key => {self.insertTextAtCursor(key)}}
+      })
+      return suggestionObject
+    } else {
+      return false
     }
   };
 
@@ -934,7 +950,7 @@ var App = function(name, version) {
   };
 
   this.insertTextAtCursor = function(textToInsert) {
-    // self.editor.session.replace(self.editor.selection.getRange(), "");
+    self.editor.session.replace(self.editor.selection.getRange(), "");
     self.editor.session.insert(self.editor.getCursorPosition(), textToInsert)
     // $('#nodeList-container').hide();
   };

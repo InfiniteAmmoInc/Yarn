@@ -6,7 +6,7 @@
 		<link rel="stylesheet" href="css/normalize.css">
 		<link rel="stylesheet" href="css/style.css">
 		<link rel="stylesheet" href="css/spectrum.css">
-
+		<link rel="stylesheet" href="css/jquery.contextMenu.css">
 
 		<!-- libraries -->
 		<script>window.$ = window.jQuery = require('jquery');</script>
@@ -23,6 +23,7 @@
 		<script type="text/javascript" src="js/libs/mode-yarn.js"></script>
 
 		<script type="text/javascript" src="js/libs/spectrum.js"></script>
+
 		<!-- various models / classes -->
 		<script type="text/javascript" src="js/classes/app.js"></script>
 		<script type="text/javascript" src="js/classes/data.js"></script>
@@ -203,13 +204,14 @@
 
 					<div class="editor-container" onclick="app.togglePreviewMode(false)">
 						<div class="editor-preview" id="editor-preview"></div>
-						<div class="editor" id="editor" onclick="app.searchTextInEditor(false);"
+						<div class="editor context-menu-one" id="editor" onclick="app.searchTextInEditor(false);"
 							data-bind="
 							ace: app.editing().body, 
 							aceOptions: { mode: 'yarn', theme: 'yarn', showPrintMargin: false,
 							enableBasicAutocompletion: true,
 							enableLiveAutocompletion: true }">
 						</div>
+						
 					</div>
 					<!--<div class="icon close" data-bind="click:app.saveNode"></div>-->
 

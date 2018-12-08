@@ -1,5 +1,25 @@
 var Utils = 
 {
+	createAutocompleter: function(allowedTokens, wordList, meta, prefixLength = 1)
+	{
+		return {
+			getCompletions: function(editor, session, pos, prefix, callback) {
+				var token = editor.session.getTokenAt(pos.row, pos.column);
+				if (prefix.length < prefixLength || !allowedTokens.includes(token.type)) {
+				  callback(null, []);
+				  return
+				}
+				callback(null, wordList.map(function(word) {         
+				  return {
+					caption: word,
+					value: word,
+					meta: meta
+				  }     
+				})); 
+			}
+		}
+	},
+
 	pushToTop: function(element)
 	{
 		var current = element.css("z-index");
