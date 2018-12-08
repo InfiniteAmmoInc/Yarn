@@ -839,8 +839,8 @@ var App = function(name, version) {
       /// Enable autocompletion via word guessing
       var langTools = ace.require("ace/ext/language_tools");
       self.editor.setOptions({
-        enableBasicAutocompletion: true,
-        enableLiveAutocompletion: true
+        enableBasicAutocompletion: self.autocompleteWordsEnabled,
+        enableLiveAutocompletion: self.autocompleteWordsEnabled
       });
 
       var commonWordList = getWordsList('english',5000);
