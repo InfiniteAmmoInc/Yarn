@@ -32,6 +32,7 @@ var App = function(name, version) {
   this.isElectron = false;
   this.editor = null;
   this.autocompleteEnabled = true;
+  this.autocompleteWordsEnabled = true;
   this.spellcheckEnabled = true;
   this.mouseX = 0; 
   this.mouseY = 0;
@@ -804,6 +805,8 @@ var App = function(name, version) {
       self.editor = ace.edit("editor");
       var autoCompleteButton = document.getElementById("toglAutocomplete");
       autoCompleteButton.checked = self.autocompleteEnabled;
+      var autoCompleteWordsButton = document.getElementById("toglAutocompleteWords");
+      autoCompleteWordsButton.checked = self.autocompleteWordsEnabled;
       var spellCheckButton = document.getElementById("toglSpellCheck");
       spellCheckButton.checked = self.spellcheckEnabled;
 
@@ -841,7 +844,7 @@ var App = function(name, version) {
       });
 
       var commonWordList = getWordsList('english',5000);
-      var commonWordCompleter = Utils.createAutocompleter(["text"],commonWordList , "Common word");
+      var commonWordCompleter = Utils.createAutocompleter(["text"], commonWordList, "Common word");
       langTools.addCompleter(commonWordCompleter);
       var nodeLinksCompleter = Utils.createAutocompleter(["string.llink", "string.rlink"], self.getOtherNodeTitles(), "Node Link");
       langTools.addCompleter(nodeLinksCompleter);
@@ -856,7 +859,7 @@ var App = function(name, version) {
             // callback: () => { self.editor.focus() }
           };
 
-          // These is some text selected
+          // There is some text selected
           if (self.editor.getSelectedText().length > 1) {
             options.items = {
               "cut": { name: "Cut", icon: "cut", callback: () => {
@@ -912,6 +915,15 @@ var App = function(name, version) {
       disable_spellcheck();
     }
   };
+
+  this.toggleWordCompletion = function() {
+    var wordCompletionButton = document.getElementById("toglAutocompleteWords");
+    self.autocompleteWordsEnabled = wordCompletionButton.checked;
+    self.editor.setOptions({
+      enableBasicAutocompletion: self.autocompleteWordsEnabled,
+      enableLiveAutocompletion: self.autocompleteWordsEnabled
+    });
+  }
 
   this.togglePreviewMode = function(previewModeOverwrite) {
     var editor = $(".editor")[0];
@@ -1066,6 +1078,9 @@ var App = function(name, version) {
 
       var autoCompleteButton = document.getElementById("toglAutocomplete");
       self.autocompleteEnabled = autoCompleteButton.checked;
+
+      var autoCompleteWordsButton = document.getElementById("toglAutocompleteWords");
+      self.autocompleteWordsEnabled = autoCompleteWordsButton.checked;
 
       setTimeout(self.updateSearch, 100);
     }

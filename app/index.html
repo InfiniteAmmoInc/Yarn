@@ -168,25 +168,22 @@
 						<button class="bbcode-button" style="color:green" onclick="app.insertBBcodeTags('color=#')"><text color="pink">Col</text></button>
 						<button class="bbcode-button" style="color:purple" onclick="app.insertBBcodeTags('cmd')">Cmd</button>
 						<button class="bbcode-button" style="color:#19a4a8" onclick="app.insertBBcodeTags('opt')">Opt</button>
-						&nbsp;&nbsp;&nbsp;&nbsp; <span class="editor-counter">&#9733</span>
 						<span class="styled-checkbox">
 							<input type="checkbox" id="toglAutocomplete"></input>
-							<label for="toglAutocomplete"> Autocomplete </label>
+							<label for="toglAutocomplete"> Close tags </label>
 						</span>
-						<span class="styled-checkbox">
-							<input class="styled-checkbox" type="checkbox" id="toglSpellCheck" onclick="app.toggleSpellCheck()"></input>
-							<label for="toglSpellCheck"> Spellcheck </label>
-						</span>
-						
-							<div class="app-menu" style="position: absolute;">
-								<div class="menu">
-									<span class="title" onmouseover="app.openNodeListMenu('link')">Add Link</span>
-									<div id="linkHelperMenu" class="dropdown">
-										<input class="search-field" style="text-align:center" placeholder="search" type="text" id="linkHelperMenuFilter" oninput="app.openNodeListMenu('link')"></input>
-									</div>
+
+						&nbsp;&nbsp;&nbsp;&nbsp; <span class="editor-counter">&#9733</span>
+						 
+						<div class="app-menu" style="position: absolute;">
+							<!-- todo: move to toolbar -->
+							<div class="menu">
+								<span class="title" onmouseover="app.openNodeListMenu('link')">Add Link</span>
+								<div id="linkHelperMenu" class="dropdown">
+									<input class="search-field" style="text-align:center" placeholder="search" type="text" id="linkHelperMenuFilter" oninput="app.openNodeListMenu('link')"></input>
 								</div>
 							</div>
-
+						</div>
 
 						<span class="editor-counter">
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#9779&nbsp;&nbsp;&nbsp;&nbsp;
@@ -199,6 +196,14 @@
 							Col: <span class="column-index">0</span>
 							&nbsp;&nbsp;
 							<span class="find-text" onclick="app.searchTextInEditor()">&#128269 Find</span>
+						</span>
+						<span class="styled-checkbox">
+							<input type="checkbox" id="toglAutocompleteWords" onclick="app.toggleWordCompletion()"></input>
+							<label for="toglAutocompleteWords"> Autocomplete </label>
+						</span>
+						<span class="styled-checkbox">
+							<input class="styled-checkbox" type="checkbox" id="toglSpellCheck" onclick="app.toggleSpellCheck()"></input>
+							<label for="toglSpellCheck"> Spellcheck </label>
 						</span>
 					</div>
 
