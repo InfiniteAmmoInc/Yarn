@@ -840,7 +840,8 @@ var App = function(name, version) {
         enableLiveAutocompletion: true
       });
 
-      var commonWordCompleter = Utils.createAutocompleter(["text"], getWordsList('english',5000), "Common word");
+      var commonWordList = getWordsList('english',5000);
+      var commonWordCompleter = Utils.createAutocompleter(["text"],commonWordList , "Common word");
       langTools.addCompleter(commonWordCompleter);
       var nodeLinksCompleter = Utils.createAutocompleter(["string.llink", "string.rlink"], self.getOtherNodeTitles(), "Node Link");
       langTools.addCompleter(nodeLinksCompleter);
@@ -851,7 +852,8 @@ var App = function(name, version) {
         trigger: 'right',
         build: function($trigger) {
           var options = {
-            items: {}
+            items: {},
+            // callback: () => { self.editor.focus() }
           };
 
           // These is some text selected
@@ -952,7 +954,7 @@ var App = function(name, version) {
   this.insertTextAtCursor = function(textToInsert) {
     self.editor.session.replace(self.editor.selection.getRange(), "");
     self.editor.session.insert(self.editor.getCursorPosition(), textToInsert)
-    // $('#nodeList-container').hide();
+    self.editor.focus();
   };
 
   this.getTagBeforeCursor = function() {
