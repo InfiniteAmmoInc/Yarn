@@ -920,12 +920,15 @@ var App = function(name, version) {
     self.nightModeEnabled = nightModeButton.checked;
     var cssOverwrite = {};
     if (self.nightModeEnabled) {
-      cssOverwrite = {filter: 'invert(80)'}
+      cssOverwrite = {filter: 'invert(100%)'}
     } else {
-      cssOverwrite = {filter: 'invert(0)'}
-    }
+      cssOverwrite = {filter: 'invert(0%)'}
+    };
     $("#app").css(cssOverwrite);
     $("#app-bg").css(cssOverwrite);
+    $(".tooltip").css(cssOverwrite);
+    $(".tooltip").css(cssOverwrite);
+    $(".node-editor .form .editor-container .editor-preview").css(cssOverwrite);
   };
 
   this.toggleWordCompletion = function() {

@@ -10,7 +10,6 @@ body
 
 #app-bg
 {
-	filter: invert(0);
 	position: fixed;
 	top: 0px;
 	left: 0px;
@@ -23,7 +22,6 @@ body
 
 #app
 {
-	filter: invert(0);
 	position: absolute;
 	width: 100%;
 	height: 100%;
@@ -534,6 +532,7 @@ a:hover { color: #000;}
 	transition-duration: 0.4s;
 	outline:none;
 	opacity:0;
+	display: none;
 }
 .node-editor .form .bbcode-toolbar .styled-checkbox label {
 	padding-right: 4px;
@@ -595,7 +594,6 @@ a:hover { color: #000;}
 	color: #666;
 	font-family: "Lucida Console", Monaco, monospace;
 	cursor: pointer;
-	filter: invert(0);
 }
 
 /* --- EDITOR HIGHLIGHTING --- */
@@ -689,7 +687,6 @@ a:hover { color: #000;}
 
 .tooltip
 {
-  /* width: 200px; */
   opacity:0.7;
   position: absolute;
   text-align: center;
