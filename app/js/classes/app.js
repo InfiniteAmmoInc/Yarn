@@ -421,7 +421,7 @@ var App = function(name, version) {
       // Spacebar toggle between nodes
       if (e.keyCode === 32) {
         if (self.editing() !== null && !e.altKey) {
-          return; // Ctrl+spacebar to toggle between open nodes
+          return; // alt+spacebar to toggle between open nodes
         }
         var selectedNodes = self.getSelectedNodes();
         var nodes = selectedNodes.length > 0 ? selectedNodes : self.nodes();
@@ -858,6 +858,7 @@ var App = function(name, version) {
             // callback: () => { self.editor.focus() }
           };
 
+          // color picker is being called instead
           if (self.getTagBeforeCursor().match(/\[color=#/)) {return}
           // There is some text selected
           if (self.editor.getSelectedText().length > 1) {
@@ -874,6 +875,13 @@ var App = function(name, version) {
               }},
               "sep1": "---------"
             };
+            // add menu option to go to selected node if an option is selected
+            if (self.getTagBeforeCursor().match(/\[\[.*|/)) {
+              options.items["go to node"] = { name: "Edit node: " + self.editor.getSelectedText(),
+              callback: () => { self.openNodeByTitle(self.editor.getSelectedText()) }
+              }
+            }
+            // suggest wordcorrections if the selected word is misspelled
             var suggestedCorrections = self.getSpellCheckSuggestionItems();
             if (self.spellcheckEnabled && suggestedCorrections) {
               options.items.corrections = {name: "Correct word" ,items: suggestedCorrections} 
@@ -882,7 +890,7 @@ var App = function(name, version) {
             options.items = {
               "paste": { name: "Paste", icon: "paste", callback: () => {
                 self.insertTextAtCursor(electron.clipboard.readText())
-              }},       
+              }},      
             }; 
           }
           return options;
@@ -891,6 +899,14 @@ var App = function(name, version) {
       self.toggleSpellCheck();
       self.updateEditorStats();
     }
+  };
+
+  this.openNodeByTitle = function(nodeTitle) {
+    app.nodes().forEach((node, i) => {
+      if (node.title() === nodeTitle){
+        self.editNode(node)
+      }
+    })
   };
 
   this.getSpellCheckSuggestionItems = function () {
