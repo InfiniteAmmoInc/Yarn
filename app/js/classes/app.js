@@ -927,7 +927,6 @@ var App = function(name, version) {
     $("#app").css(cssOverwrite);
     $("#app-bg").css(cssOverwrite);
     $(".tooltip").css(cssOverwrite);
-    $(".tooltip").css(cssOverwrite);
     $(".node-editor .form .editor-container .editor-preview").css(cssOverwrite);
   };
 
