@@ -876,7 +876,7 @@ var App = function(name, version) {
               "sep1": "---------"
             };
             // add menu option to go to selected node if an option is selected
-            if (self.getTagBeforeCursor().match(/\[\[.*|/)) {
+            if (self.getTagBeforeCursor().match(/\|/g)) {
               options.items["go to node"] = { name: "Edit node: " + self.editor.getSelectedText(),
               callback: () => { self.openNodeByTitle(self.editor.getSelectedText()) }
               }
