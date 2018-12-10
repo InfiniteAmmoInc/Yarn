@@ -10,6 +10,7 @@ body
 
 #app-bg
 {
+	filter: invert(0);
 	position: fixed;
 	top: 0px;
 	left: 0px;
@@ -22,6 +23,7 @@ body
 
 #app
 {
+	filter: invert(0);
 	position: absolute;
 	width: 100%;
 	height: 100%;
@@ -593,6 +595,7 @@ a:hover { color: #000;}
 	color: #666;
 	font-family: "Lucida Console", Monaco, monospace;
 	cursor: pointer;
+	filter: invert(0);
 }
 
 /* --- EDITOR HIGHLIGHTING --- */

@@ -34,6 +34,7 @@ var App = function(name, version) {
   this.autocompleteEnabled = true;
   this.autocompleteWordsEnabled = true;
   this.spellcheckEnabled = true;
+  this.nightModeEnabled = false;
   this.mouseX = 0; 
   this.mouseY = 0;
 
@@ -804,6 +805,8 @@ var App = function(name, version) {
       autoCompleteWordsButton.checked = self.autocompleteWordsEnabled;
       var spellCheckButton = document.getElementById("toglSpellCheck");
       spellCheckButton.checked = self.spellcheckEnabled;
+      var nightModeButton = document.getElementById("toglNightMode");
+      nightModeButton.checked = self.nightModeEnabled;  
 
       $("#colorPicker").spectrum({
         flat: true,
@@ -910,6 +913,19 @@ var App = function(name, version) {
     } else {
       disable_spellcheck();
     }
+  };
+
+  this.toggleNightMode = function() {
+    var nightModeButton = document.getElementById("toglNightMode");
+    self.nightModeEnabled = nightModeButton.checked;
+    var cssOverwrite = {};
+    if (self.nightModeEnabled) {
+      cssOverwrite = {filter: 'invert(80)'}
+    } else {
+      cssOverwrite = {filter: 'invert(0)'}
+    }
+    $("#app").css(cssOverwrite);
+    $("#app-bg").css(cssOverwrite);
   };
 
   this.toggleWordCompletion = function() {
@@ -1140,7 +1156,6 @@ var App = function(name, version) {
     var otherNodeTitles = self.getOtherNodeTitles()
 
     var nodeLinks = self.editing().getLinksInNode();
-    console.log(nodeLinks)
     if (nodeLinks == undefined){return}
     for (var i = 0; i < nodeLinks.length; i ++)
     {
