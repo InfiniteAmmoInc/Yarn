@@ -162,6 +162,7 @@
 					<input type="text" data-bind="value: app.editing().tags;" onfocus="app.togglePreviewMode(true)">
 
 					<div class="bbcode-toolbar">
+						<button class="bbcode-button" onclick="app.openLastEditedNode()">Go Back</button>
 						<button class="bbcode-button" onclick="app.insertBBcodeTags('b')"><b>B</b></button>
 						<button class="bbcode-button" onclick="app.insertBBcodeTags('u')"><u>U</u></button>
 						<button class="bbcode-button" onclick="app.insertBBcodeTags('i')"><i>I</i></button>

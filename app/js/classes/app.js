@@ -35,6 +35,7 @@ var App = function(name, version) {
   this.autocompleteWordsEnabled = true;
   this.spellcheckEnabled = true;
   this.nightModeEnabled = false;
+  this.nodeVisitHistory = [];
   this.mouseX = 0; 
   this.mouseY = 0;
 
@@ -896,6 +897,10 @@ var App = function(name, version) {
           return options;
         }
       });
+      if (!self.nodeVisitHistory.includes(node.title())) {
+        self.nodeVisitHistory.push(node.title());
+      }
+      
       self.toggleSpellCheck();
       self.updateEditorStats();
     }
@@ -909,6 +914,16 @@ var App = function(name, version) {
       }
     })
   };
+
+  this.openLastEditedNode = function() {
+    if (self.nodeVisitHistory.length < 2) {
+      self.saveNode();
+      return
+    } else {
+      self.nodeVisitHistory.pop();
+      self.openNodeByTitle(self.nodeVisitHistory.pop());
+    }
+  }
 
   this.getSpellCheckSuggestionItems = function () {
     var wordSuggestions = suggest_word_for_misspelled(self.editor.getSelectedText());
