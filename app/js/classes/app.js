@@ -902,7 +902,8 @@ var App = function(name, version) {
   };
 
   this.openNodeByTitle = function(nodeTitle) {
-    app.nodes().forEach((node, i) => {
+    self.makeNewNodesFromLinks();
+    app.nodes().forEach((node) => {
       if (node.title() === nodeTitle){
         self.editNode(node)
       }
