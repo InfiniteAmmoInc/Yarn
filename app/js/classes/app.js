@@ -807,6 +807,7 @@ var App = function(name, version) {
       spellCheckButton.checked = self.spellcheckEnabled;
       var nightModeButton = document.getElementById("toglNightMode");
       nightModeButton.checked = self.nightModeEnabled;  
+      self.toggleNightMode();
 
       $("#colorPicker").spectrum({
         flat: true,
