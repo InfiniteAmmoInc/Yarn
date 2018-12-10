@@ -465,15 +465,10 @@ var App = function(name, version) {
     });
 
     this.guessPopUpHelper = function() {
-      if (self.getTagBeforeCursor().match(/\[.*\|/)) {
-        console.log("todo - trigger NODE LIST MENU");
-        return
-      }
       if (self.getTagBeforeCursor().match(/\[color=#/)) {
         self.insertColorCode()
         return
       }
-
     };
 
     this.insertBBcodeTags = function(tag) {
@@ -561,7 +556,7 @@ var App = function(name, version) {
     }
 
     $(document).on("mouseup",function(e) {
-      if (self.editing() && e.button === 2 && self.isElectron) {
+      if (self.editing() && e.button === 2) {
         self.guessPopUpHelper();
       }
     });
@@ -843,7 +838,7 @@ var App = function(name, version) {
         enableLiveAutocompletion: self.autocompleteWordsEnabled
       });
 
-      var commonWordList = getWordsList('english',5000);
+      var commonWordList = getWordsList('english');
       var commonWordCompleter = Utils.createAutocompleter(["text"], commonWordList, "Common word");
       langTools.addCompleter(commonWordCompleter);
       var nodeLinksCompleter = Utils.createAutocompleter(["string.llink", "string.rlink"], self.getOtherNodeTitles(), "Node Link");
@@ -859,6 +854,7 @@ var App = function(name, version) {
             // callback: () => { self.editor.focus() }
           };
 
+          if (self.getTagBeforeCursor().match(/\[color=#/)) {return}
           // There is some text selected
           if (self.editor.getSelectedText().length > 1) {
             options.items = {
@@ -894,7 +890,7 @@ var App = function(name, version) {
   };
 
   this.getSpellCheckSuggestionItems = function () {
-    var wordSuggestions = suggest_word_for_misspelled(self.editor.getSelectedText())
+    var wordSuggestions = suggest_word_for_misspelled(self.editor.getSelectedText());
     if (wordSuggestions) {
       var suggestionObject = {}
       wordSuggestions.forEach(suggestion => {
@@ -982,7 +978,7 @@ var App = function(name, version) {
 
     if (textBeforeCursor.substring(textBeforeCursor.length-2, textBeforeCursor.length) === "[[") { tagBeforeCursor = "[[" }
     if (textBeforeCursor.substring(textBeforeCursor.length-2, textBeforeCursor.length) === "<<") { tagBeforeCursor = "<<" }
-    console.log(tagBeforeCursor)
+    // console.log(tagBeforeCursor)
     return tagBeforeCursor
   }
 
