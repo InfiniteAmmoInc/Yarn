@@ -841,7 +841,7 @@ var App = function(name, version) {
             self.togglePreviewMode(false);
           };
         },
-        clickoutFiresChange : true,
+        clickoutFiresChange: true,
       });
 
       /// Enable autocompletion via word guessing

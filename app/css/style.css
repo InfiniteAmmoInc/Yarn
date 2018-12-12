@@ -560,14 +560,6 @@ a:hover { color: #000;}
 	color: #666;
 }
 
-.node-editor .form .editor-container
-{
-	margin-top: 2px;
-	width: 100%;
-	height: calc(100% - 120px);
-	float: left;
-}
-
 .node-editor .form .editor
 {
 	white-space: pre;
@@ -579,6 +571,16 @@ a:hover { color: #000;}
 	color: #666;
 	font-family: "Lucida Console", Monaco, monospace;
 	cursor: text;
+}
+
+.node-editor .form .editor-container
+{
+	margin-top: 2px;
+	width: 100%;
+	height: calc(100% - 120px);
+	float: left;
+	overflow: hidden;
+	position: relative;
 }
 
 .node-editor .form .editor-container .editor-preview
@@ -594,6 +596,8 @@ a:hover { color: #000;}
 	color: #666;
 	font-family: "Lucida Console", Monaco, monospace;
 	cursor: pointer;
+	height: 100%;
+	position: absolute;
 }
 
 /* --- EDITOR HIGHLIGHTING --- */
