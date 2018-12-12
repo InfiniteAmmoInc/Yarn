@@ -993,10 +993,10 @@ var App = function(name, version) {
       editorPreviewer.innerHTML = self.editing().textToHtml(self.editing().body(), true);
       editorPreviewer.scrollTop = self.editor.renderer.scrollTop;
     } else { //edit mode
+      self.editor.session.setScrollTop(editorPreviewer.scrollTop);
       editorPreviewer.innerHTML = "";
       editorPreviewer.style.visibility = "hidden";
       editor.style.visibility = "visible";
-      self.editor.session.setScrollTop(editorPreviewer.scrollTop );
       self.editor.focus();
     }
   };
