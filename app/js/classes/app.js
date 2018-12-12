@@ -844,7 +844,7 @@ var App = function(name, version) {
             self.moveEditCursor(color.toHexString().length)
           };
         },
-        // clickoutFiresChange : true,
+        clickoutFiresChange : false,
       })
 
       /// Enable autocompletion via word guessing
