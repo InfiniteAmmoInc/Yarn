@@ -844,7 +844,7 @@ var App = function(name, version) {
             self.moveEditCursor(color.toHexString().length)
           };
         },
-        clickoutFiresChange : true,
+        // clickoutFiresChange : true,
       })
 
       /// Enable autocompletion via word guessing
@@ -893,7 +893,7 @@ var App = function(name, version) {
               callback: () => { self.openNodeByTitle(self.editor.getSelectedText()) }
               }
             }
-            // suggest wordcorrections if the selected word is misspelled
+            // suggest word corrections if the selected word is misspelled
             var suggestedCorrections = self.getSpellCheckSuggestionItems();
             if (self.spellcheckEnabled && suggestedCorrections) {
               options.items.corrections = {name: "Correct word" ,items: suggestedCorrections} 
@@ -972,6 +972,7 @@ var App = function(name, version) {
     $("#app-bg").css(cssOverwrite);
     $(".tooltip").css(cssOverwrite);
     $(".node .body").css(cssOverwrite);
+    $(".node-editor .form .editor-container .editor-preview").css(cssOverwrite);
   };
 
   this.toggleWordCompletion = function() {
