@@ -823,8 +823,7 @@ var App = function(name, version) {
 
       $("#colorPicker").spectrum({
         flat: true,
-        showButtons: true,
-        // color:'#' + self.editor.getSelectedText(),
+        showButtons: false,
         showInput: true,
         showPalette: true,
         preferredFormat: "hex",
@@ -842,7 +841,7 @@ var App = function(name, version) {
           };
         },
         clickoutFiresChange : true,
-      })
+      });
 
       /// Enable autocompletion via word guessing
       var langTools = ace.require("ace/ext/language_tools");
