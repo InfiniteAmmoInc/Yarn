@@ -891,9 +891,11 @@ var App = function(name, version) {
               }
             }
             // suggest word corrections if the selected word is misspelled
-            var suggestedCorrections = self.getSpellCheckSuggestionItems();
-            if (self.spellcheckEnabled && suggestedCorrections) {
-              options.items.corrections = {name: "Correct word" ,items: suggestedCorrections} 
+            if (self.spellcheckEnabled) {
+              var suggestedCorrections = self.getSpellCheckSuggestionItems();
+              if (suggestedCorrections !== false) {
+                options.items.corrections = {name: "Correct word" ,items: suggestedCorrections} 
+              }
             }
           } else {
             options.items = {
