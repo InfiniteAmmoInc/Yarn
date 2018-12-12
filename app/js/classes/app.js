@@ -837,7 +837,8 @@ var App = function(name, version) {
             self.applyPickerColorEditor(color)
             $("#colorPicker").spectrum("hide");
             $('#colorPicker-container').hide();
-            self.moveEditCursor(color.toHexString().length)
+            self.moveEditCursor(color.toHexString().length);
+            self.togglePreviewMode(false);
           };
         },
         clickoutFiresChange : true,
