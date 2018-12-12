@@ -781,12 +781,23 @@ var App = function(name, version) {
     self.updateNodeLinks();
   };
 
-  this.searchTextInEditor = function(show=true){
+  this.searchTextInEditor = function(show=true) {
     if (show) {
       self.editor.execCommand("find")
     } else if (self.editor.searchBox){
       self.editor.searchBox.hide()
     }
+  };
+
+  this.showRandomQuote = function() {
+    $.ajax({
+      url: "https://api.forismatic.com/api/1.0/?",
+      dataType: "jsonp",
+      data: "method=getQuote&format=jsonp&lang=en&jsonp=?",
+      success: function( response ) {
+        alert(response.quoteText + "\n-" + response.quoteAuthor)
+      }
+    }); 
   };
 
   this.editNode = function(node) {
@@ -900,7 +911,7 @@ var App = function(name, version) {
       if (!self.nodeVisitHistory.includes(node.title())) {
         self.nodeVisitHistory.push(node.title());
       }
-      
+
       self.toggleSpellCheck();
       self.updateEditorStats();
     }
@@ -961,7 +972,6 @@ var App = function(name, version) {
     $("#app-bg").css(cssOverwrite);
     $(".tooltip").css(cssOverwrite);
     $(".node .body").css(cssOverwrite);
-    $(".node-editor .form .editor-container .editor-preview").css(cssOverwrite);
   };
 
   this.toggleWordCompletion = function() {
@@ -1514,21 +1524,7 @@ var App = function(name, version) {
   };
 
   this.zoom = function(zoomLevel) {
-    switch (zoomLevel) {
-      case 1:
-        self.cachedScale = 0.25;
-        break;
-      case 2:
-        self.cachedScale = 0.5;
-        break;
-      case 3:
-        self.cachedScale = 0.75;
-        break;
-      case 4:
-        self.cachedScale = 1;
-        break;
-    }
-
+    self.cachedScale = zoomLevel / 4;
     self.translate(200);
   };
 

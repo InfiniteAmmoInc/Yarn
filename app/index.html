@@ -68,20 +68,20 @@
 			</div>
 
 			<!-- zoom controls -->
-			<!--
-			<div class="app-zoom">
+			
+			<!-- <div class="app-zoom">
 				<span data-bind="click: function() { app.zoom(4); }"></span>
 				<span data-bind="click: function() { app.zoom(3); }"></span>
 				<span data-bind="click: function() { app.zoom(2); }"></span>
 				<span data-bind="click: function() { app.zoom(1); }"></span>
-			</div>
-			-->
+			</div> -->
+			
 
 			<div class="app-sort">
 				<span data-bind="click: app.arrangeX"></span>
 				<span data-bind="click: app.arrangeY"></span>
-				<!-- <span data-bind="click: app.arrangeSpiral"></span> -->
-				<!-- <span data-bind="click: app.sortAlphabetical"></span> -->
+				<!-- <span data-bind="click: app.arrangeSpiral"></span>
+				<span data-bind="click: app.sortAlphabetical"></span> -->
 			</div>
 
 			<!-- navigation / menu -->
@@ -162,7 +162,7 @@
 					<input type="text" data-bind="value: app.editing().tags;" onfocus="app.togglePreviewMode(true)">
 
 					<div class="bbcode-toolbar">
-						<button class="bbcode-button" onclick="app.openLastEditedNode()">Go Back</button>
+						<button class="bbcode-button" onclick="app.openLastEditedNode()">&#8617</button>
 						<button class="bbcode-button" onclick="app.insertBBcodeTags('b')"><b>B</b></button>
 						<button class="bbcode-button" onclick="app.insertBBcodeTags('u')"><u>U</u></button>
 						<button class="bbcode-button" onclick="app.insertBBcodeTags('i')"><i>I</i></button>
@@ -171,11 +171,9 @@
 						<button class="bbcode-button" style="color:#19a4a8" onclick="app.insertBBcodeTags('opt')">Opt</button>
 						<span class="styled-checkbox">
 							<input type="checkbox" id="toglAutocomplete"></input>
-							<label for="toglAutocomplete"> Close tags </label>
+							<label for="toglAutocomplete" title="Auto Close tags" style="color:#808080">[/.]</label>
 						</span>
 
-						&nbsp;&nbsp;&nbsp;&nbsp; <span class="editor-counter">&#9733</span>
-						 
 						<div class="app-menu" style="position: absolute;">
 							<!-- todo: move to toolbar -->
 							<div class="menu">
@@ -191,27 +189,29 @@
 							Length: <span class="character-count">0</span>
 							&nbsp;
 							Lines: <span class="line-count">0</span>
-							&nbsp;&nbsp;&#9749&nbsp;&nbsp;
+							&nbsp;&nbsp;
+							<span class="find-text" onclick="app.showRandomQuote()" title="Show a random quote =)">&#9749</span>
+							&nbsp;&nbsp;
 							Line: <span class="row-index">0</span>
 							&nbsp;
 							Col: <span class="column-index">0</span>
 							&nbsp;&nbsp;
-							<span class="find-text" onclick="app.searchTextInEditor()">&#128269 Find</span>
+							<span class="find-text" onclick="app.searchTextInEditor()" title="Search">&#128269</span>
 						</span>
 						&nbsp;
 						<span class="styled-checkbox">
 							<input type="checkbox" id="toglAutocompleteWords" onclick="app.toggleWordCompletion()"></input>
-							<label for="toglAutocompleteWords"> Autocomplete </label>
+							<label for="toglAutocompleteWords" title="auto-completion">&#9000</label>
 						</span>
 						&nbsp;
 						<span class="styled-checkbox">
 							<input class="styled-checkbox" type="checkbox" id="toglSpellCheck" onclick="app.toggleSpellCheck()"></input>
-							<label for="toglSpellCheck"> Spellcheck </label>
+							<label for="toglSpellCheck" title="Spellcheck">&#9745abc</label>
 						</span>
 						&nbsp;
 						<span class="styled-checkbox">
 							<input class="styled-checkbox" type="checkbox" id="toglNightMode" onclick="app.toggleNightMode()"></input>
-							<label for="toglNightMode"> Night Mode </label>
+							<label for="toglNightMode" title="Night Mode"> &#9728 </label>
 						</span>
 					</div>
 
