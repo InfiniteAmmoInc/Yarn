@@ -835,16 +835,13 @@ var App = function(name, version) {
         ],
         change: function (color) {
           if ($('#colorPicker-container').is(':visible')) {
-            // self.editor.session.insert(cursorPos, color.toHexString().replace("#",""))
-            // app.moveEditCursor(1);
             self.applyPickerColorEditor(color)
             $("#colorPicker").spectrum("hide");
             $('#colorPicker-container').hide();
-            self.togglePreviewMode(false);
             self.moveEditCursor(color.toHexString().length)
           };
         },
-        clickoutFiresChange : false,
+        clickoutFiresChange : true,
       })
 
       /// Enable autocompletion via word guessing
