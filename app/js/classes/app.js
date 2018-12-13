@@ -796,7 +796,7 @@ var App = function(name, version) {
       dataType: "jsonp",
       data: "method=getQuote&format=jsonp&lang=en&jsonp=?",
       success: function( response ) {
-        alert(response.quoteText + "\n-" + response.quoteAuthor)
+        alert(response.quoteText + "\n\n-" + response.quoteAuthor)
       }
     }); 
   };
