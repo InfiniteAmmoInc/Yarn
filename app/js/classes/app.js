@@ -922,7 +922,7 @@ var App = function(name, version) {
   this.openNodeByTitle = function(nodeTitle) {
     self.makeNewNodesFromLinks();
     app.nodes().forEach((node) => {
-      if (node.title() === nodeTitle){
+      if (node.title() === nodeTitle.trim()){
         self.editNode(node)
       }
     })
