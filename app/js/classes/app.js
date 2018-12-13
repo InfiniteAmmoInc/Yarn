@@ -33,6 +33,7 @@ var App = function(name, version) {
   this.editor = null;
   this.autocompleteEnabled = true;
   this.autocompleteWordsEnabled = true;
+  this.showCounter = false;
   this.spellcheckEnabled = true;
   this.nightModeEnabled = false;
   this.nodeVisitHistory = [];
@@ -820,7 +821,9 @@ var App = function(name, version) {
       var nightModeButton = document.getElementById("toglNightMode");
       nightModeButton.checked = self.nightModeEnabled;  
       self.toggleNightMode();
-
+      var showCounterButton = document.getElementById("toglShowCounter");
+      showCounterButton.checked = self.showCounter;  
+      self.toggleShowCounter()
       $("#colorPicker").spectrum({
         flat: true,
         showButtons: false,
@@ -972,6 +975,16 @@ var App = function(name, version) {
     $(".tooltip").css(cssOverwrite);
     $(".node .body").css(cssOverwrite);
     $(".node-editor .form .editor-container .editor-preview").css(cssOverwrite);
+  };
+
+  this.toggleShowCounter = function() {
+    var showCounterButton = document.getElementById("toglShowCounter");
+    self.showCounter = showCounterButton.checked;
+    if (self.showCounter) {
+      $(".node-editor .form .bbcode-toolbar .editor-counter").css({display: "initial"});
+    } else {
+      $(".node-editor .form .bbcode-toolbar .editor-counter").css({display: "none"});
+    };
   };
 
   this.toggleWordCompletion = function() {

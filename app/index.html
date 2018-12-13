@@ -160,16 +160,16 @@
 					<input type="text" data-bind="value: app.editing().tags;" onfocus="app.togglePreviewMode(true)">
 
 					<div class="bbcode-toolbar">
-						<button class="bbcode-button" onclick="app.openLastEditedNode()">&#8617</button>
-						<button class="bbcode-button" onclick="app.insertBBcodeTags('b')"><b>B</b></button>
-						<button class="bbcode-button" onclick="app.insertBBcodeTags('u')"><u>U</u></button>
-						<button class="bbcode-button" onclick="app.insertBBcodeTags('i')"><i>I</i></button>
-						<button class="bbcode-button" style="color:green" onclick="app.insertBBcodeTags('color=#')"><text color="pink">Col</text></button>
-						<button class="bbcode-button" style="color:purple" onclick="app.insertBBcodeTags('cmd')">Cmd</button>
-						<button class="bbcode-button" style="color:#19a4a8" onclick="app.insertBBcodeTags('opt')">Opt</button>
+						<button class="bbcode-button" onclick="app.openLastEditedNode()" title="Go Back to last edited">&#8617</button>
+						<button class="bbcode-button" onclick="app.insertBBcodeTags('b')" title="Bold"><b>B</b></button>
+						<button class="bbcode-button" onclick="app.insertBBcodeTags('u')" title="Underlined"><u>U</u></button>
+						<button class="bbcode-button" onclick="app.insertBBcodeTags('i')" title="Italic"><i>I</i></button>
+						<button class="bbcode-button" style="color:green" onclick="app.insertBBcodeTags('color=#')"><text color="pink" title="Insert Color">🌈</text></button>
+						<button class="bbcode-button" style="color:purple" onclick="app.insertBBcodeTags('cmd')" title="Insert Command">🎮</button>
+						<button class="bbcode-button" style="color:#19a4a8" onclick="app.insertBBcodeTags('opt')" title="Insert Choice/Link">❔</button>
 						<span class="styled-checkbox">
 							<input type="checkbox" id="toglAutocomplete"></input>
-							<label for="toglAutocomplete" title="Auto Close tags" style="color:#292929">[/.]</label>
+							<label for="toglAutocomplete" title="Auto Close tags" style="color:#292929">🔮</label>
 						</span>
 
 						<div class="app-menu" style="position: absolute;">
@@ -182,8 +182,13 @@
 							</div>
 						</div>
 
+						&nbsp;&nbsp;&nbsp;&nbsp;
+						<span class="styled-checkbox">
+								<input type="checkbox" id="toglShowCounter" onclick="app.toggleShowCounter()"></input>
+								<label for="toglShowCounter" title="Show line counter" style="color:#292929">&#9779</label>
+						</span>
 						<span class="editor-counter">
-							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#9779&nbsp;&nbsp;&nbsp;&nbsp;
+							&nbsp;&nbsp;&nbsp;&nbsp;
 							Length: <span class="character-count">0</span>
 							&nbsp;
 							Lines: <span class="line-count">0</span>
@@ -199,7 +204,7 @@
 						&nbsp;
 						<span class="styled-checkbox">
 							<input type="checkbox" id="toglAutocompleteWords" onclick="app.toggleWordCompletion()"></input>
-							<label for="toglAutocompleteWords" title="auto-completion">&#9000</label>
+							<label for="toglAutocompleteWords" title="auto-completion">💬</label>
 						</span>
 						&nbsp;
 						<span class="styled-checkbox">
