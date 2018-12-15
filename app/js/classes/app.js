@@ -1,4 +1,3 @@
-const electron = require("electron");
 const remote = electron.remote;
 const contextMenu = require("jquery-contextmenu")
 const { getWordsList } = require('most-common-words-by-language')
@@ -415,8 +414,8 @@ var App = function(name, version) {
           } else {
             self.editNode(self.nodes()[0]);
           }
-        } else if (e.ctrlKey) {
-          //ctrl+ enter closes/saves an open node
+        } else if (e.ctrlKey && e.altKey) {
+          //ctrl+alt+ enter closes/saves an open node
           self.saveNode();
         }
       }
@@ -824,6 +823,8 @@ var App = function(name, version) {
       var showCounterButton = document.getElementById("toglShowCounter");
       showCounterButton.checked = self.showCounter;  
       self.toggleShowCounter()
+      
+      /// set color picker
       $("#colorPicker").spectrum({
         flat: true,
         showButtons: false,
@@ -837,79 +838,21 @@ var App = function(name, version) {
         ],
         change: function (color) {
           if ($('#colorPicker-container').is(':visible')) {
-            self.applyPickerColorEditor(color)
+            app.applyPickerColorEditor(color)
             $("#colorPicker").spectrum("hide");
             $('#colorPicker-container').hide();
-            self.moveEditCursor(color.toHexString().length);
-            self.togglePreviewMode(false);
+            app.moveEditCursor(color.toHexString().length);
+            app.togglePreviewMode(false);
           };
         },
         clickoutFiresChange: true,
       });
 
-      /// Enable autocompletion via word guessing
+      /// Enable autocompletion for node links
       var langTools = ace.require("ace/ext/language_tools");
-      self.editor.setOptions({
-        enableBasicAutocompletion: self.autocompleteWordsEnabled,
-        enableLiveAutocompletion: self.autocompleteWordsEnabled
-      });
-
-      var commonWordList = getWordsList('english');
-      var commonWordCompleter = Utils.createAutocompleter(["text"], commonWordList, "Common word");
-      langTools.addCompleter(commonWordCompleter);
       var nodeLinksCompleter = Utils.createAutocompleter(["string.llink", "string.rlink"], self.getOtherNodeTitles(), "Node Link");
       langTools.addCompleter(nodeLinksCompleter);
 
-      // Create a context menu
-      $.contextMenu({
-        selector: '.node-editor .form .editor',
-        trigger: 'right',
-        build: function($trigger) {
-          var options = {
-            items: {},
-            // callback: () => { self.editor.focus() }
-          };
-
-          // color picker is being called instead
-          if (self.getTagBeforeCursor().match(/\[color=#/)) {return}
-          // There is some text selected
-          if (self.editor.getSelectedText().length > 1) {
-            options.items = {
-              "cut": { name: "Cut", icon: "cut", callback: () => {
-                electron.clipboard.writeText(self.editor.getSelectedText());
-                self.insertTextAtCursor("")
-              }},
-              "copy": { name: "Copy", icon: "copy", callback: () => {
-                electron.clipboard.writeText(self.editor.getSelectedText());
-              }},
-              "paste": { name: "Paste", icon: "paste", callback: () => {
-                self.insertTextAtCursor(electron.clipboard.readText())
-              }},
-              "sep1": "---------"
-            };
-            // add menu option to go to selected node if an option is selected
-            if (self.getTagBeforeCursor().match(/\|/g)) {
-              options.items["go to node"] = { name: "Edit node: " + self.editor.getSelectedText(),
-              callback: () => { self.openNodeByTitle(self.editor.getSelectedText()) }
-              }
-            }
-            // suggest word corrections if the selected word is misspelled
-            if (self.spellcheckEnabled) {
-              var suggestedCorrections = self.getSpellCheckSuggestionItems();
-              if (suggestedCorrections !== false) {
-                options.items.corrections = {name: "Correct word" ,items: suggestedCorrections} 
-              }
-            }
-          } else {
-            options.items = {
-              "paste": { name: "Paste", icon: "paste", callback: () => {
-                self.insertTextAtCursor(electron.clipboard.readText())
-              }},      
-            }; 
-          }
-          return options;
-        }
-      });
       if (!self.nodeVisitHistory.includes(node.title())) {
         self.nodeVisitHistory.push(node.title());
       }
@@ -1057,7 +1000,7 @@ var App = function(name, version) {
     return tagBeforeCursor
   }
 
-  // basic autocompletion
+  // close tag autocompletion
   $(document).on("keyup", function(e) {
     var autoCompleteButton = document.getElementById("toglAutocomplete");
     if (self.editing() && autoCompleteButton.checked) {

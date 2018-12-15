@@ -7,10 +7,10 @@
 		<link rel="stylesheet" href="css/style.css">
 		<link rel="stylesheet" href="css/spectrum.css">
 		<link rel="stylesheet" href="css/jquery.contextMenu.css">
-
 		<!-- libraries -->
 		<script>window.$ = window.jQuery = require('jquery');</script>
-		<!-- <script type="text/javascript" src="js/libs/jquery-1.11.2.min.js"></script> -->
+		<script>const electron = require("electron");</script>
+
 		<script type="text/javascript" src="js/libs/jquery.mousewheel.min.js"></script>
 		<script type="text/javascript" src="js/libs/transit.js"></script>
 		<script type="text/javascript" src="js/libs/knockout-3.3.0.js"></script>
@@ -18,10 +18,10 @@
 		<script type="text/javascript" src="js/libs/ace.js"></script>
 		<script type="text/javascript" src="js/libs/spellcheck_ace.js"></script>
 		<script type="text/javascript" src="js/libs/ext-language_tools.js"></script>
-		<script type="text/javascript" src="js/libs/theme-yarn.js"></script>
-		<script type="text/javascript" src="js/libs/mode-yarn.js"></script>
 		<script type="text/javascript" src="js/libs/spectrum.js"></script>
 
+		<script type="text/javascript" src="js/libs/theme-yarn.js"></script>
+		<script type="text/javascript" src="js/libs/mode-yarn.js"></script>
 		<!-- various models / classes -->
 		<script type="text/javascript" src="js/classes/app.js"></script>
 		<script type="text/javascript" src="js/classes/data.js"></script>
@@ -165,9 +165,10 @@
 						<button class="bbcode-button" onclick="app.insertBBcodeTags('b')" title="Bold"><b>B</b></button>
 						<button class="bbcode-button" onclick="app.insertBBcodeTags('u')" title="Underlined"><u>U</u></button>
 						<button class="bbcode-button" onclick="app.insertBBcodeTags('i')" title="Italic"><i>I</i></button>
-						<button class="bbcode-button" style="color:green" onclick="app.insertBBcodeTags('color=#')"><text color="pink" title="Insert Color">🌈</text></button>
-						<button class="bbcode-button" style="color:purple" onclick="app.insertBBcodeTags('cmd')" title="Insert Command">🎮</button>
-						<button class="bbcode-button" style="color:#19a4a8" onclick="app.insertBBcodeTags('opt')" title="Insert Choice/Link">❔</button>
+						<button class="bbcode-button" style="color:green" onclick="app.insertBBcodeTags('color=#')"><text color="pink" title="Color">🌈</text></button>
+						<button class="bbcode-button" style="color:purple" onclick="app.insertBBcodeTags('cmd')" title="Command">🎮</button>
+						<button class="bbcode-button" style="color:#19a4a8" onclick="app.insertBBcodeTags('opt')" title="Choice/Link">❔</button>
+						
 						<span class="styled-checkbox">
 							<input type="checkbox" id="toglAutocomplete"></input>
 							<label for="toglAutocomplete" title="Auto Close tags" style="color:#292929">🔮</label>
@@ -211,12 +212,12 @@
 							<label for="toglSpellCheck" title="Spellcheck">&#9745abc</label>
 						</span>
 						&nbsp;
+						<button class="bbcode-button" onclick="app.searchTextInEditor()" title="Search (Ctrl+f)">🔎</button>
+						&nbsp;&nbsp;&nbsp;&nbsp;
 						<span class="styled-checkbox">
 							<input class="styled-checkbox" type="checkbox" id="toglNightMode" onclick="app.toggleNightMode()"></input>
 							<label for="toglNightMode" title="Night Mode"> &#9728 </label>
 						</span>
-						&nbsp;&nbsp;&nbsp;&nbsp;
-						<button class="bbcode-button" onclick="app.searchTextInEditor()" title="Search (Ctrl+f)">🔎</button>
 					</div>
 
 					<div class="editor-container">
@@ -289,7 +290,6 @@
 					document.getElementById('sendToParentAppMenu').innerHTML = "";
 				}
 				console.log("Version:"+version);
-
 				app = new App("Yarn", version);
 				app.run();
 			})	
