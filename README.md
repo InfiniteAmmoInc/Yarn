@@ -71,9 +71,6 @@ Node connections work similar to Twine.
 
 ![Screenshot](http://infiniteammo.com/Yarn/node-connections.jpg)
 
-With the difference that there is now a helper menu to create links:
-![yarn-linkmaking](https://user-images.githubusercontent.com/6495061/41685764-7bf48d1a-74d9-11e8-89bc-b7bae39470f6.gif)
-
 # Shortcut Options
 
 Shortcut options are a new method of creating dialogue branches that does not require creating new nodes.
