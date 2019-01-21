@@ -2,6 +2,7 @@ var globalNodeIndex = 0;
 const NodeExpandWidth = 300;
 const NodeExpandHeight = 150;
 const ClipNodeTextLength = 1024;
+const bbcode = require('bbcode')
 
 var Node = function()
 {
@@ -34,17 +35,42 @@ var Node = function()
 				output += '<span>' + tags[i] + '</span>';
 		}
         return output;
-    }, this);
+	}, this);
+	
+	this.textToHtml = function(text, showRowNumbers=false) {
+		var rowCounter = 1;
+		var result = showRowNumbers ? '<font color="pink">' + rowCounter + '.   </font>' + text : text
+		result = result.replace(/[\n\r]/g, function (row) {
+			var rowAppend = '<br/>';
+			rowCounter += 1;
+			if (showRowNumbers) { rowAppend += '<font color="pink">' + rowCounter + '.   </font>'};
+			return rowAppend
+		})
 
-	this.clippedBody = ko.computed(function() 
+		result = result.replace(/\[\[[^\[]+\]\]/gi, function (goto) {
+			var extractedGoto = goto.match(/\|(.*)\]\]/i)[1]
+			return '<font color="tomato">(go:' + extractedGoto + ')</font>';
+		})
+		result = result.replace(/<</gi, "<font color='violet'>(run:");
+		result = result.replace(/>>/gi, ")</font>");
+
+		// bbcode color tag previewing
+		result = result.replace(/\[color=#[A-Za-z0-9]+\]/gi, function (colorCode) {
+			var extractedCol = colorCode.match(/\[color=#([A-Za-z0-9]+)\]/i)[1]
+			return '[color=#'+ extractedCol + ']<font color=#' + extractedCol + ">&#9751</font>"
+		})
+
+		// bbcode tag parsing
+		result = bbcode.parse(result);
+    return result;
+	}
+
+	this.clippedBody = ko.computed(function()
 	{
 		var result = app.getHighlightedText(this.body());
-		while (result.indexOf("\n") >= 0)
-			result = result.replace("\n", "<br />");
-		while (result.indexOf("\r") >= 0)
-			result = result.replace("\r", "<br />");
+		result = self.textToHtml(result);
 		result = result.substr(0, ClipNodeTextLength);
-        return result;
+    return result;
     }, this);
 
 	// internal cache
@@ -276,7 +302,7 @@ var Node = function()
 
 		$(self.element).on("mouseup", function (e)
 		{
-			//alert("" + e.target.nodeName);
+			// alert("" + e.target.nodeName);
 			if (!moved)
 				app.mouseUpOnNodeNotMoved();
 
@@ -334,7 +360,7 @@ var Node = function()
 			var exists = {};
 			for (var i = links.length - 1; i >= 0; i --)
 			{
-				links[i] = links[i].substr(2, links[i].length - 4)//.toLowerCase(); 
+				links[i] = links[i].substr(2, links[i].length - 4).trim()//.toLowerCase(); 
 				
 				if (links[i].indexOf("|") >= 0)
 				{
@@ -369,12 +395,12 @@ var Node = function()
 				for (var i = 0; i < links.length; i ++)
 				{
 					// if (other != self && other.title().toLowerCase() == links[i])
-					if (other != self && other.title() == links[i])
+					if (other != self && other.title().trim() == links[i].trim())
 					{
 						self.linkedTo.push(other);
 					}
 				}
-			}	
+			}
 		}
 	}
 

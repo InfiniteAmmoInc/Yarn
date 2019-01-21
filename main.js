@@ -12,7 +12,7 @@ const BrowserWindow = electron.BrowserWindow;
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 let yarnRunnerWindow;
-let yarnVersion = "0.3.2";
+let yarnVersion = "0.3.5";
 
 function createWindow() {
   // Create the browser window.
@@ -43,8 +43,10 @@ function createWindow() {
   });
 
   mainWindow.webContents.on('dom-ready', () => { // in case you want to send data to yarn window on init
-    // mainWindow.webContents.send('loadYarnDataObject', yarnData);
-    mainWindow.webContents.send('setVersionNumber', yarnVersion);
+    // if(yarnData){
+    //   mainWindow.webContents.send('loadYarnDataObject', yarnData)
+    // };
+    mainWindow.webContents.send('initiate', yarnVersion);
     mainWindow.show();
     mainWindow.maximize();
   });
@@ -73,8 +75,8 @@ function createWindow() {
 
   ipcMain.on("sendYarnDataToObject", (event, content, startTestNode) => {
     // in case you wannt to export yarn object to another embedded app
-    // otherApp.webContents.send('yarnSavedStory',content);
-    // mainWindow.close();
+    otherApp.webContents.send('yarnSavedStory',content);
+    mainWindow.close();
   });
 
   ipcMain.on("testYarnStoryFrom", (event, content, startTestNode) => {

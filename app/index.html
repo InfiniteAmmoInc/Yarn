@@ -5,20 +5,23 @@
 		<title>Yarn</title>
 		<link rel="stylesheet" href="css/normalize.css">
 		<link rel="stylesheet" href="css/style.css">
-
+		<link rel="stylesheet" href="css/spectrum.css">
+		<link rel="stylesheet" href="css/jquery.contextMenu.css">
 		<!-- libraries -->
 		<script>window.$ = window.jQuery = require('jquery');</script>
-		<!-- <script type="text/javascript" src="js/libs/jquery-1.11.2.min.js"></script> -->
+		<script>const electron = require("electron");</script>
+
 		<script type="text/javascript" src="js/libs/jquery.mousewheel.min.js"></script>
 		<script type="text/javascript" src="js/libs/transit.js"></script>
 		<script type="text/javascript" src="js/libs/knockout-3.3.0.js"></script>
 		<script type="text/javascript" src="js/libs/knockout.ace.js"></script>
 		<script type="text/javascript" src="js/libs/ace.js"></script>
-		<script type="text/javascript" src="js/libs/typo.js"></script>
 		<script type="text/javascript" src="js/libs/spellcheck_ace.js"></script>
+		<script type="text/javascript" src="js/libs/ext-language_tools.js"></script>
+		<script type="text/javascript" src="js/libs/spectrum.js"></script>
+
 		<script type="text/javascript" src="js/libs/theme-yarn.js"></script>
 		<script type="text/javascript" src="js/libs/mode-yarn.js"></script>
-
 		<!-- various models / classes -->
 		<script type="text/javascript" src="js/classes/app.js"></script>
 		<script type="text/javascript" src="js/classes/data.js"></script>
@@ -63,20 +66,20 @@
 			</div>
 
 			<!-- zoom controls -->
-			<!--
-			<div class="app-zoom">
+			
+			<!-- <div class="app-zoom">
 				<span data-bind="click: function() { app.zoom(4); }"></span>
 				<span data-bind="click: function() { app.zoom(3); }"></span>
 				<span data-bind="click: function() { app.zoom(2); }"></span>
 				<span data-bind="click: function() { app.zoom(1); }"></span>
-			</div>
-			-->
+			</div> -->
+			
 
 			<div class="app-sort">
 				<span data-bind="click: app.arrangeX"></span>
 				<span data-bind="click: app.arrangeY"></span>
-				<!-- <span data-bind="click: app.arrangeSpiral"></span> -->
-				<!-- <span data-bind="click: app.sortAlphabetical"></span> -->
+				<!-- <span data-bind="click: app.arrangeSpiral"></span>
+				<span data-bind="click: app.sortAlphabetical"></span> -->
 			</div>
 
 			<!-- navigation / menu -->
@@ -110,9 +113,10 @@
 					</div>
 				</div>
 
-				<!-- <div class="menu">
-					<span class="title" data-bind="click:data.sendToExternalApp">[ SAVE ]</span>
-				</div> -->
+				<div class="menu" id="sendToParentAppMenu">
+					<span class="title" data-bind="click:data.sendToExternalApp">APPLY</span>
+				</div>
+
 			</div>
 
 			<!-- arrow bg canvas for linked nodes -->
@@ -137,40 +141,101 @@
 			</div>
 
 			<!-- ko if:app.editing() != null -->
-			<div class="node-editor" data-bind="mousedown:app.saveNode">
+			<div class="node-editor" data-bind="mousedown:app.saveNode">				
+			
 				<div class="form" data-bind="preventBubble: 'click', preventBubble: 'mousedown'">
-					<input type="text" class="title" data-bind="value: app.editing().title">
+					<input type="text" class="title" data-bind="value: app.editing().title;" onfocus="app.togglePreviewMode(true)">
 					
 					<!-- <div float="left"> </div> -->
 					
-					<div class="app-menu">
+					<!-- <div class="app-menu">
 						<div class="menu" style="float:left">
 							<span class="title" onmouseover="app.openNodeListMenu('link')">Add Link</span>
 							<div id="linkHelperMenu" class="dropdown">
 								<input class="search-field" style="text-align:center" placeholder="search" type="text" id="linkHelperMenuFilter" oninput="app.openNodeListMenu('link')"></input>
 							</div>
 						</div>
-					</div>
+					</div> -->
 
-					<input type="text" data-bind="value: app.editing().tags">
+					<input type="text" data-bind="value: app.editing().tags;" onfocus="app.togglePreviewMode(true)">
+
+					<div class="bbcode-toolbar">
+						<button class="bbcode-button" onclick="app.openLastEditedNode()" title="Go Back to last edited">&#8617</button>
+						&nbsp;&nbsp;&nbsp;
+						<button class="bbcode-button" onclick="app.insertBBcodeTags('b')" title="Bold"><b>B</b></button>
+						<button class="bbcode-button" onclick="app.insertBBcodeTags('u')" title="Underlined"><u>U</u></button>
+						<button class="bbcode-button" onclick="app.insertBBcodeTags('i')" title="Italic"><i>I</i></button>
+						<button class="bbcode-button" style="color:green" onclick="app.insertBBcodeTags('color=#')"><text color="pink" title="Color">🌈</text></button>
+						<button class="bbcode-button" style="color:purple" onclick="app.insertBBcodeTags('cmd')" title="Command">🎮</button>
+						<button class="bbcode-button" style="color:#19a4a8" onclick="app.insertBBcodeTags('opt')" title="Choice/Link">❔</button>
+						
+						<span class="styled-checkbox">
+							<input type="checkbox" id="toglAutocomplete"></input>
+							<label for="toglAutocomplete" title="Auto Close tags" style="color:#292929">🔮</label>
+						</span>
+
+						<div class="app-menu" style="position: absolute;">
+							<!-- todo: move to toolbar -->
+							<div class="menu">
+								<span class="title" onmouseover="app.openNodeListMenu('link')">Add Link</span>
+								<div id="linkHelperMenu" class="dropdown">
+									<input class="search-field" style="text-align:center" placeholder="search" type="text" id="linkHelperMenuFilter" oninput="app.openNodeListMenu('link')"></input>
+								</div>
+							</div>
+						</div>
+
+						&nbsp;&nbsp;
+						<span class="styled-checkbox">
+								<input type="checkbox" id="toglShowCounter" onclick="app.toggleShowCounter()"></input>
+								<label for="toglShowCounter" title="Show line counter" style="color:#292929">&#9779</label>
+						</span>
+						<span class="editor-counter">
+							&nbsp;&nbsp;&nbsp;&nbsp;
+							Length: <span class="character-count">0</span>
+							&nbsp;
+							Lines: <span class="line-count">0</span>
+							&nbsp;&nbsp;
+							<span class="find-text" onclick="app.showRandomQuote()">&#9749</span>
+							&nbsp;&nbsp;
+							Line: <span class="row-index">0</span>
+							&nbsp;
+							Col: <span class="column-index">0</span>
+						</span>
+						&nbsp;&nbsp;&nbsp;
+						<span class="styled-checkbox">
+							<input type="checkbox" id="toglAutocompleteWords" onclick="app.toggleWordCompletion()"></input>
+							<label for="toglAutocompleteWords" title="auto-completion">💬</label>
+						</span>
+						&nbsp;
+						<span class="styled-checkbox">
+							<input class="styled-checkbox" type="checkbox" id="toglSpellCheck" onclick="app.toggleSpellCheck()"></input>
+							<label for="toglSpellCheck" title="Spellcheck">&#9745abc</label>
+						</span>
+						&nbsp;
+						<button class="bbcode-button" onclick="app.searchTextInEditor()" title="Search (Ctrl+f)">🔎</button>
+						&nbsp;&nbsp;&nbsp;&nbsp;
+						<span class="styled-checkbox">
+							<input class="styled-checkbox" type="checkbox" id="toglNightMode" onclick="app.toggleNightMode()"></input>
+							<label for="toglNightMode" title="Night Mode"> &#9728 </label>
+						</span>
+					</div>
 
 					<div class="editor-container">
-						<div class="editor" id="editor"
+						<div class="editor-preview" id="editor-preview" onclick="app.togglePreviewMode(false)"></div>
+						<div class="editor context-menu-one" id="editor" onclick="app.searchTextInEditor(false);"
 							data-bind="
 							ace: app.editing().body, 
-							aceOptions: { mode: 'yarn', theme: 'yarn', showPrintMargin: false }">
-						</div> 
+							aceOptions: { mode: 'yarn', theme: 'yarn', showPrintMargin: false,
+							enableBasicAutocompletion: true,
+							enableLiveAutocompletion: true }">
+						</div>
 					</div>
 					<!--<div class="icon close" data-bind="click:app.saveNode"></div>-->
-					<div class="editor-footer">
-						Length: <span class="character-count">0</span>
-						&nbsp;
-						Lines: <span class="line-count">0</span>
-						&nbsp;&nbsp;|&nbsp;&nbsp;
-						Line: <span class="line-index">0</span>
-						&nbsp;
-						Col: <span class="column-index">0</span>
+
+					<div class="tooltip" id="colorPicker-container" hidden>
+						<input type='text' id="colorPicker" data-bind="preventBubble: 'click', preventBubble: 'mousedown'"/>
 					</div>
+	
 				</div>
 			</div>
 			<!-- /ko -->
@@ -218,8 +283,13 @@
 		<!-- start it all up! -->
 		<script type="text/javascript">
 			var app  
-			ipcRenderer.on('setVersionNumber', function(event, version) {
-				console.log(version)
+			ipcRenderer.on('initiate', function(event, version="") {	
+				if (!version || version.length == 0) {
+					version = "";
+				}else{ // if app is not running in embedded state, disable send data to parent app
+					document.getElementById('sendToParentAppMenu').innerHTML = "";
+				}
+				console.log("Version:"+version);
 				app = new App("Yarn", version);
 				app.run();
 			})	

@@ -14,7 +14,7 @@ This is a port to electron, made possible by Todor Imreorov. It adds a number of
 
 # Builds
 
-Win64: https://github.com/blurymind/Yarn/releases/tag/untagged-1933231011a749959b56
+Win64: https://github.com/blurymind/Yarn/releases/tag/v0.3.2
 
 MacOS: in Progress
 

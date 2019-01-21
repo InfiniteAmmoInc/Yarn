@@ -1,6 +1,8 @@
-const electron = require("electron");
 const remote = electron.remote;
+const contextMenu = require("jquery-contextmenu")
+const { getWordsList } = require('most-common-words-by-language')
 
+//todo store color palette
 var App = function(name, version) {
   var self = this;
 
@@ -27,6 +29,15 @@ var App = function(name, version) {
   this.transformOrigin = [0, 0];
   this.shifted = false;
   this.isElectron = false;
+  this.editor = null;
+  this.autocompleteEnabled = true;
+  this.autocompleteWordsEnabled = true;
+  this.showCounter = false;
+  this.spellcheckEnabled = true;
+  this.nightModeEnabled = false;
+  this.nodeVisitHistory = [];
+  this.mouseX = 0; 
+  this.mouseY = 0;
 
   this.UPDATE_ARROWS_THROTTLE_MS = 25;
 
@@ -143,12 +154,8 @@ var App = function(name, version) {
 
               var nodes = self.nodes();
               for (var i in nodes) {
-                nodes[i].x(
-                  nodes[i].x() + (e.pageX - offset.x) / self.cachedScale
-                );
-                nodes[i].y(
-                  nodes[i].y() + (e.pageY - offset.y) / self.cachedScale
-                );
+                nodes[i].x(nodes[i].x() + (e.pageX - offset.x) / self.cachedScale);
+                nodes[i].y(nodes[i].y() + (e.pageY - offset.y) / self.cachedScale);
               }
               offset.x = e.pageX;
               offset.y = e.pageY;
@@ -201,11 +208,9 @@ var App = function(name, version) {
               var holder = $(".nodes-holder").offset();
               var marqueeOverNode =
                 (MarqRect.x2 - holder.left) / scale > nodes[i].x() &&
-                (MarqRect.x1 - holder.left) / scale <
-                  nodes[i].x() + nodes[i].tempWidth &&
+                (MarqRect.x1 - holder.left) / scale < nodes[i].x() + nodes[i].tempWidth &&
                 (MarqRect.y2 - holder.top) / scale > nodes[i].y() &&
-                (MarqRect.y1 - holder.top) / scale <
-                  nodes[i].y() + nodes[i].tempHeight;
+                (MarqRect.y1 - holder.top) / scale < nodes[i].y() + nodes[i].tempHeight;
 
               if (marqueeOverNode) {
                 if (!inMarqueeSelection) {
@@ -238,7 +243,7 @@ var App = function(name, version) {
         MarqRect = { x1: 0, y1: 0, x2: 0, y2: 0 };
         $("#marquee").css({ x: 0, y: 0, width: 0, height: 0 });
         MarqueeOn = false;
-      });
+      });  
     })();
 
     // search field
@@ -289,7 +294,7 @@ var App = function(name, version) {
 
       if (e.button == 2 && isAllowedEl) {
         var x = (self.transformOrigin[0] * -1) / self.cachedScale,
-          y = (self.transformOrigin[1] * -1) / self.cachedScale;
+        y = (self.transformOrigin[1] * -1) / self.cachedScale;
 
         x += event.pageX / self.cachedScale;
         y += event.pageY / self.cachedScale;
@@ -394,10 +399,10 @@ var App = function(name, version) {
     $(document).on("keyup", function(e) {
       // console.log(e.keyCode+"-"+e.key)
       if (e.keyCode === 46 || e.key === "Delete") {
-		// Delete selected
-		if (self.editing() === null){
-			self.deleteSelectedNodes();
-		}
+        // Delete selected
+        if (self.editing() === null){
+          self.deleteSelectedNodes();
+        }
       }
       if (e.keyCode === 31 || e.key === "Enter") {
         // Open active node, if already active, close it
@@ -409,15 +414,15 @@ var App = function(name, version) {
           } else {
             self.editNode(self.nodes()[0]);
           }
-        } else if (e.ctrlKey) {
-          //ctrl+ enter closes an open node
+        } else if (e.ctrlKey && e.altKey) {
+          //ctrl+alt+ enter closes/saves an open node
           self.saveNode();
         }
       }
       // Spacebar toggle between nodes
       if (e.keyCode === 32) {
-        if (self.editing() !== null && !e.ctrlKey) {
-          return; // Ctrl+spacebar to toggle between open nodes
+        if (self.editing() !== null && !e.altKey) {
+          return; // alt+spacebar to toggle between open nodes
         }
         var selectedNodes = self.getSelectedNodes();
         var nodes = selectedNodes.length > 0 ? selectedNodes : self.nodes();
@@ -458,6 +463,103 @@ var App = function(name, version) {
     $(document).on("keyup keydown mousedown mouseup", function(e) {
       if (self.editing() != null) {
         self.updateEditorStats();
+      }
+    });
+
+    this.guessPopUpHelper = function() {
+      if (self.getTagBeforeCursor().match(/\[color=#/)) {
+        self.insertColorCode()
+        return
+      }
+    };
+
+    this.insertBBcodeTags = function(tag) {
+      var tagClose = '[/' + tag.replace(/[\"#=]/gi, '') + ']'
+      if (tag === 'cmd') {
+        tag = '<<';
+        tagClose = '>>';
+      } else if (tag === 'opt') {
+        tag = '[[';
+        tagClose = '|]]';
+      } else {
+        tag = '[' + tag + ']';
+      }
+      
+      var selectRange = JSON.parse(JSON.stringify(self.editor.selection.getRange()));
+      self.editor.session.insert(selectRange.start, tag)
+      self.editor.session.insert({
+        column: selectRange.end.column + tag.length,
+        row: selectRange.end.row
+      },tagClose)
+
+      if (tag === '[color=#]') {
+        if (self.editor.getSelectedText().length === 0) {
+          self.moveEditCursor(-9);
+          self.insertColorCode();
+          return
+        } 
+        self.editor.selection.setRange({
+          start: {
+            row:self.editor.selection.getRange().start.row,
+            column: self.editor.selection.getRange().start.column -1
+          },
+          end: {
+            row:self.editor.selection.getRange().start.row,
+            column: self.editor.selection.getRange().start.column -1
+          }
+        });
+        self.insertColorCode()
+      } else if (self.editor.getSelectedText().length === 0) {
+        self.moveEditCursor(-tagClose.length);
+      } else {
+        self.editor.selection.setRange({
+          start: self.editor.selection.getRange().start,
+          end: {
+            row: self.editor.selection.getRange().end.row,
+            column: self.editor.selection.getRange().end.column - tagClose.length
+          }
+        });
+      };
+      self.editor.focus();
+    };
+
+    $(document).on("mousemove", function(e) {
+      self.mouseX = e.pageX; 
+      self.mouseY = e.pageY;
+    });
+
+    this.insertColorCode = function() {
+      if ($('#colorPicker-container').is(':visible')) {return}
+      // http://bgrins.github.io/spectrum/
+      $("#colorPicker").spectrum("set", self.editor.getSelectedText());
+      $("#colorPicker").spectrum("toggle");
+      $('#colorPicker-container').css({'top':self.mouseY - 50,'left':self.mouseX - 70}); 
+      $('#colorPicker-container').show();
+      $("#colorPicker").on("dragstop.spectrum", function(e, color) {
+        self.applyPickerColorEditor(color);
+      });
+
+      self.togglePreviewMode(true);
+    };
+
+    this.applyPickerColorEditor = function(color) {
+      var selectRange = JSON.parse(JSON.stringify(self.editor.selection.getRange()));
+      self.editor.selection.setRange(selectRange);
+      var colorCode = color.toHexString().replace("#","");
+      self.editor.session.replace(selectRange, colorCode);
+      self.editor.selection.setRange({
+        start: self.editor.getCursorPosition(),
+        end: {
+          row: self.editor.getCursorPosition().row,
+          column: self.editor.getCursorPosition().column - colorCode.length
+        }
+      });
+      self.togglePreviewMode(true)
+    }
+
+    $(document).on("mouseup",function(e) {
+      if (self.editing() && e.button === 2) {
+        self.guessPopUpHelper();
       }
     });
 
@@ -679,6 +781,25 @@ var App = function(name, version) {
     self.updateNodeLinks();
   };
 
+  this.searchTextInEditor = function(show=true) {
+    if (show) {
+      self.editor.execCommand("find")
+    } else if (self.editor.searchBox){
+      self.editor.searchBox.hide()
+    }
+  };
+
+  this.showRandomQuote = function() {
+    $.ajax({
+      url: "https://api.forismatic.com/api/1.0/?",
+      dataType: "jsonp",
+      data: "method=getQuote&format=jsonp&lang=en&jsonp=?",
+      success: function( response ) {
+        alert(response.quoteText + "\n\n-" + response.quoteAuthor)
+      }
+    }); 
+  };
+
   this.editNode = function(node) {
     if (node.active()) {
       self.editing(node);
@@ -689,12 +810,150 @@ var App = function(name, version) {
       $(".node-editor .form")
         .css({ y: "-100" })
         .transition({ y: "0" }, 250);
+      self.editor = ace.edit("editor");
+      var autoCompleteButton = document.getElementById("toglAutocomplete");
+      autoCompleteButton.checked = self.autocompleteEnabled;
+      var autoCompleteWordsButton = document.getElementById("toglAutocompleteWords");
+      autoCompleteWordsButton.checked = self.autocompleteWordsEnabled;
+      var spellCheckButton = document.getElementById("toglSpellCheck");
+      spellCheckButton.checked = self.spellcheckEnabled;
+      var nightModeButton = document.getElementById("toglNightMode");
+      nightModeButton.checked = self.nightModeEnabled;  
+      self.toggleNightMode();
+      var showCounterButton = document.getElementById("toglShowCounter");
+      showCounterButton.checked = self.showCounter;  
+      self.toggleShowCounter()
+      
+      /// set color picker
+      $("#colorPicker").spectrum({
+        flat: true,
+        showButtons: false,
+        showInput: true,
+        showPalette: true,
+        preferredFormat: "hex",
+        palette: [
+          ["#000","#444","#666","#999","#ccc","#eee","#f3f3f3","#fff"],
+          ["#f00","#f90","#ff0","#0f0","#0ff","#00f","#90f","#f0f"],
+          ["#f4cccc","#fce5cd","#fff2cc","#d9ead3","#d0e0e3","#cfe2f3","#d9d2e9","#ead1dc"],
+        ],
+        change: function (color) {
+          if ($('#colorPicker-container').is(':visible')) {
+            app.applyPickerColorEditor(color)
+            $("#colorPicker").spectrum("hide");
+            $('#colorPicker-container').hide();
+            app.moveEditCursor(color.toHexString().length);
+            app.togglePreviewMode(false);
+          };
+        },
+        clickoutFiresChange: true,
+      });
 
-      //enable_spellcheck();
-      contents_modified = true;
-      //spell_check();
+      /// Enable autocompletion for node links
+      var langTools = ace.require("ace/ext/language_tools");
+      var nodeLinksCompleter = Utils.createAutocompleter(["string.llink", "string.rlink"], self.getOtherNodeTitles(), "Node Link");
+      langTools.addCompleter(nodeLinksCompleter);
 
+      if (!self.nodeVisitHistory.includes(node.title())) {
+        self.nodeVisitHistory.push(node.title());
+      }
+
+      self.toggleSpellCheck();
       self.updateEditorStats();
+    }
+  };
+
+  this.openNodeByTitle = function(nodeTitle) {
+    self.makeNewNodesFromLinks();
+    app.nodes().forEach((node) => {
+      if (node.title() === nodeTitle.trim()){
+        self.editNode(node)
+      }
+    })
+  };
+
+  this.openLastEditedNode = function() {
+    if (self.nodeVisitHistory.length < 2) {
+      self.saveNode();
+      return
+    } else {
+      self.nodeVisitHistory.pop();
+      self.openNodeByTitle(self.nodeVisitHistory.pop());
+    }
+  }
+
+  this.getSpellCheckSuggestionItems = function () {
+    var wordSuggestions = suggest_word_for_misspelled(self.editor.getSelectedText());
+    if (wordSuggestions) {
+      var suggestionObject = {}
+      wordSuggestions.forEach(suggestion => {
+        suggestionObject[suggestion] = { name: suggestion, icon: "edit",callback: key => {self.insertTextAtCursor(key)}}
+      })
+      return suggestionObject
+    } else {
+      return false
+    }
+  };
+
+  this.toggleSpellCheck = function() {
+    var spellCheckButton = document.getElementById("toglSpellCheck");
+    self.spellcheckEnabled = spellCheckButton.checked;
+    if (spellCheckButton.checked) {
+      enable_spellcheck();
+    } else {
+      disable_spellcheck();
+    }
+  };
+
+  this.toggleNightMode = function() {
+    var nightModeButton = document.getElementById("toglNightMode");
+    self.nightModeEnabled = nightModeButton.checked;
+    var cssOverwrite = {};
+    if (self.nightModeEnabled) {
+      cssOverwrite = {filter: 'invert(100%)'}
+    } else {
+      cssOverwrite = {filter: 'invert(0%)'}
+    };
+    $("#app").css(cssOverwrite);
+    $("#app-bg").css(cssOverwrite);
+    $(".tooltip").css(cssOverwrite);
+    $(".node .body").css(cssOverwrite);
+    $(".node-editor .form .editor-container .editor-preview").css(cssOverwrite);
+  };
+
+  this.toggleShowCounter = function() {
+    var showCounterButton = document.getElementById("toglShowCounter");
+    self.showCounter = showCounterButton.checked;
+    if (self.showCounter) {
+      $(".node-editor .form .bbcode-toolbar .editor-counter").css({display: "initial"});
+    } else {
+      $(".node-editor .form .bbcode-toolbar .editor-counter").css({display: "none"});
+    };
+  };
+
+  this.toggleWordCompletion = function() {
+    var wordCompletionButton = document.getElementById("toglAutocompleteWords");
+    self.autocompleteWordsEnabled = wordCompletionButton.checked;
+    self.editor.setOptions({
+      enableBasicAutocompletion: self.autocompleteWordsEnabled,
+      enableLiveAutocompletion: self.autocompleteWordsEnabled
+    });
+  }
+
+  this.togglePreviewMode = function(previewModeOverwrite) {
+    var editor = $(".editor")[0];
+    var editorPreviewer = document.getElementById("editor-preview")
+    
+    if (previewModeOverwrite) { //preview mode
+      editor.style.visibility = "hidden";
+      editorPreviewer.style.visibility = "visible";
+      editorPreviewer.innerHTML = self.editing().textToHtml(self.editing().body(), true);
+      editorPreviewer.scrollTop = self.editor.renderer.scrollTop;
+    } else { //edit mode
+      self.editor.session.setScrollTop(editorPreviewer.scrollTop);
+      editorPreviewer.innerHTML = "";
+      editorPreviewer.style.visibility = "hidden";
+      editor.style.visibility = "visible";
+      self.editor.focus();
     }
   };
 
@@ -703,17 +962,85 @@ var App = function(name, version) {
   };
 
   this.appendText = function(textToAppend) {
-    self
-      .editing()
-      .body(
-        self.editing().body() +
-          " [[Answer:" +
-          textToAppend +
-          "|" +
-          textToAppend +
-          "]]"
-      );
+    self.editing().body(self.editing().body() +
+      textToAppend
+    );
+    // scroll to end of line
+    var row = self.editor.session.getLength() - 1;
+    var column = self.editor.session.getLine(row).length;
+    self.editor.gotoLine(row + 1, column);
   };
+
+  this.moveEditCursor = function(offset) {
+    var position = self.editor.getCursorPosition();
+    self.editor.gotoLine(position.row + 1, position.column + offset);
+    self.editor.focus();
+  };
+
+  this.insertTextAtCursor = function(textToInsert) {
+    self.editor.session.replace(self.editor.selection.getRange(), "");
+    self.editor.session.insert(self.editor.getCursorPosition(), textToInsert)
+    self.editor.focus();
+  };
+
+  this.getTagBeforeCursor = function() {
+    selectionRange = self.editor.getSelectionRange();
+    var currline = selectionRange.start.row;
+    var cursorPosition = selectionRange.end.column;
+    var curLineText = self.editor.session.getLine(currline);
+
+    var textBeforeCursor = curLineText.substring(0,cursorPosition);
+    if (!textBeforeCursor) {return}
+    var tagBeforeCursor = (textBeforeCursor.lastIndexOf('[') !== -1) ? textBeforeCursor.substring(textBeforeCursor.lastIndexOf('['), textBeforeCursor.length) : ""
+    if (tagBeforeCursor.includes(']')) { tagBeforeCursor = "" }
+
+    if (textBeforeCursor.substring(textBeforeCursor.length-2, textBeforeCursor.length) === "[[") { tagBeforeCursor = "[[" }
+    if (textBeforeCursor.substring(textBeforeCursor.length-2, textBeforeCursor.length) === "<<") { tagBeforeCursor = "<<" }
+    // console.log(tagBeforeCursor)
+    return tagBeforeCursor
+  }
+
+  // close tag autocompletion
+  $(document).on("keyup", function(e) {
+    var autoCompleteButton = document.getElementById("toglAutocomplete");
+    if (self.editing() && autoCompleteButton.checked) {
+      var key = e.keyCode || e.charCode || e.which;
+      if (key === 37 || key === 38 || key === 39 || key === 40) { return } // Dont trigger if moved cursor using arrow keys
+      if (key === 8 || key === 46 || key === 17 || key === 90) { return } // Dont trigger if backspace or ctrl+z pressed
+
+      switch (self.getTagBeforeCursor()) {
+        case "[[":
+          self.insertTextAtCursor(" answer: | ]] ");
+          self.moveEditCursor(-4);
+          break;
+        case "<<":
+          self.insertTextAtCursor(" >> ");
+          self.moveEditCursor(-3);
+          break;
+        case "[colo":
+          self.insertTextAtCursor("r=#][/color] ");
+          self.moveEditCursor(-10);
+          self.insertColorCode()
+          break;
+        case "[b":
+          self.insertTextAtCursor("][/b] ")
+          self.moveEditCursor(-5);
+          break;
+        case "[i":
+          self.insertTextAtCursor("][/i] ")
+          self.moveEditCursor(-5);
+          break;
+        case "[u":
+          self.insertTextAtCursor("][/u] ")
+          self.moveEditCursor(-5);
+          break;
+        case "[img":
+          self.insertTextAtCursor("=][/img] ")
+          self.moveEditCursor(-7);
+          break;
+      }
+    };
+  });
 
   this.testRunFrom = function(startTestNode) {
     ipc.send(
@@ -724,20 +1051,13 @@ var App = function(name, version) {
   };
 
   this.openNodeListMenu = function(action) {
-    var helperLinkSearch = document.getElementById(action + "HelperMenuFilter")
-      .value;
+    var helperLinkSearch = document.getElementById(action + "HelperMenuFilter").value;
     var rootMenu = document.getElementById(action + "HelperMenu");
     for (let i = rootMenu.childNodes.length - 1; i > 1; i--) {
       rootMenu.removeChild(rootMenu.childNodes[i]);
     }
     app.nodes().forEach((node, i) => {
-      if (
-        node
-          .title()
-          .toLowerCase()
-          .indexOf(helperLinkSearch) >= 0 ||
-        helperLinkSearch.length == 0
-      ) {
+      if (node.title().toLowerCase().indexOf(helperLinkSearch) >= 0 || helperLinkSearch.length == 0) {
         var p = document.createElement("span");
         p.innerHTML = node.title();
         p.setAttribute("class", "item");
@@ -746,21 +1066,12 @@ var App = function(name, version) {
 
         if (action == "link") {
           if (node.title() !== self.editing().title()) {
-            p.setAttribute("onclick", "app.appendText('" + node.title() + "')");
+            p.setAttribute("onclick", "app.insertTextAtCursor(' [[Answer:" + node.title() + "|" + node.title() + "]]')");
             rootMenu.appendChild(p);
           }
         } else if (action == "run") {
-          if (
-            node
-              .title()
-              .toLowerCase()
-              .indexOf(helperLinkSearch) >= 0 ||
-            helperLinkSearch.length == 0
-          ) {
-            p.setAttribute(
-              "onclick",
-              "app.testRunFrom('" + node.title() + "')"
-            );
+          if (node.title().toLowerCase().indexOf(helperLinkSearch) >= 0 || helperLinkSearch.length == 0) {
+            p.setAttribute("onclick", "app.testRunFrom('" + node.title() + "')");
             rootMenu.appendChild(p);
           }
         }
@@ -778,6 +1089,12 @@ var App = function(name, version) {
       $(".node-editor .form").transition({ y: "-100" }, 250, function() {
         self.editing(null);
       });
+
+      var autoCompleteButton = document.getElementById("toglAutocomplete");
+      self.autocompleteEnabled = autoCompleteButton.checked;
+
+      var autoCompleteWordsButton = document.getElementById("toglAutocompleteWords");
+      self.autocompleteWordsEnabled = autoCompleteWordsButton.checked;
 
       setTimeout(self.updateSearch, 100);
     }
@@ -838,22 +1155,29 @@ var App = function(name, version) {
   };
   
   this.makeNewNodesFromLinks = function(){
-    var otherNodeTitles = [];
-    app.nodes().forEach((node) => {
-      otherNodeTitles.push(node.title());
-    });
+    var otherNodeTitles = self.getOtherNodeTitles()
 
     var nodeLinks = self.editing().getLinksInNode();
     if (nodeLinks == undefined){return}
     for (var i = 0; i < nodeLinks.length; i ++)
     {
       // Create new Nodes from Node Links
-      if (!otherNodeTitles.includes(nodeLinks[i])){
+      if (!otherNodeTitles.includes(nodeLinks[i].trim())){
         var newNodeOffset = 220 * (i+1);
-        self.newNodeAt(self.editing().x() + newNodeOffset, self.editing().y() - 120).title(nodeLinks[i]);
+        self.newNodeAt(self.editing().x() + newNodeOffset, self.editing().y() - 120).title(nodeLinks[i].trim());
       }
     }
-  }
+  };
+
+  this.getOtherNodeTitles = function() {
+    var result = [];
+    app.nodes().forEach((node) => {
+      if (node.title() !== self.editing().title()) {
+        result.push(node.title().trim());
+      }  
+    })
+    return result
+  };
 
   this.updateArrows = function() {
     self.canvas.width = $(window).width();
@@ -878,6 +1202,7 @@ var App = function(name, version) {
       var node = nodes[index];
       if (node.linkedTo().length > 0) {
         for (var link in node.linkedTo()) {
+          link = link.trim()
           var linked = node.linkedTo()[link];
 
           // get origins
@@ -1093,10 +1418,7 @@ var App = function(name, version) {
         }
 
         // save history (in chunks)
-        if (
-          self.editingHistory.length == 0 ||
-          text != self.editingHistory[self.editingHistory.length - 1].text
-        ) {
+        if (self.editingHistory.length == 0 || text != self.editingHistory[self.editingHistory.length - 1].text) {
           if (self.editingSaveHistoryTimeout == null)
             self.editingHistory.push({
               text: text,
@@ -1139,21 +1461,11 @@ var App = function(name, version) {
 
       for (var i = 0, textNode; (textNode = textNodes[i++]); ) {
         endCharCount = charCount + textNode.length;
-        if (
-          !foundStart &&
-          startOffset >= charCount &&
-          (startOffset <= endCharCount ||
-            (startOffset == endCharCount && i < textNodes.length))
-        ) {
+        if (!foundStart && startOffset >= charCount && (startOffset <= endCharCount || (startOffset == endCharCount && i < textNodes.length))) {
           range.setStart(textNode, startOffset - charCount);
           foundStart = true;
         }
-        if (
-          !foundEnd &&
-          endOffset >= charCount &&
-          (endOffset <= endCharCount ||
-            (endOffset == endCharCount && i < textNodes.length))
-        ) {
+        if (!foundEnd && endOffset >= charCount && (endOffset <= endCharCount || (endOffset == endCharCount && i < textNodes.length))) {
           range.setEnd(textNode, endOffset - charCount);
           foundEnd = true;
         }
@@ -1168,21 +1480,7 @@ var App = function(name, version) {
   };
 
   this.zoom = function(zoomLevel) {
-    switch (zoomLevel) {
-      case 1:
-        self.cachedScale = 0.25;
-        break;
-      case 2:
-        self.cachedScale = 0.5;
-        break;
-      case 3:
-        self.cachedScale = 0.75;
-        break;
-      case 4:
-        self.cachedScale = 1;
-        break;
-    }
-
+    self.cachedScale = zoomLevel / 4;
     self.translate(200);
   };
 
@@ -1191,16 +1489,8 @@ var App = function(name, version) {
 
     $(".nodes-holder").transition(
       {
-        transform:
-          "matrix(" +
-          self.cachedScale +
-          ",0,0," +
-          self.cachedScale +
-          "," +
-          self.transformOrigin[0] +
-          "," +
-          self.transformOrigin[1] +
-          ")"
+        transform: "matrix(" + self.cachedScale + ",0,0," + self.cachedScale + "," +
+          self.transformOrigin[0] + "," + self.transformOrigin[1] + ")"
       },
       speed || 0,
       "easeInQuad",
@@ -1246,12 +1536,9 @@ var App = function(name, version) {
   this.arrangeY = function() {
     var SPACING = 250;
 
-    var selectedNodes = self
-        .nodes()
-        .filter(function(el) {
+    var selectedNodes = self.nodes().filter(function(el) {
           return el.selected;
-        })
-        .sort(function(a, b) {
+        }).sort(function(a, b) {
           if (a.y() > b.y()) return 1;
           if (a.y() < b.y()) return -1;
           return 0;
@@ -1367,15 +1654,13 @@ var App = function(name, version) {
   };
 
   this.updateEditorStats = function() {
-    var editor = ace.edit("editor");
-    var text = editor.getSession().getValue();
-    var cursor = editor.getCursorPosition();
+    var text = self.editor.getSession().getValue();
+    var cursor = self.editor.getCursorPosition();
 
     var lines = text.split("\n");
-
-    $(".editor-footer .character-count").html(text.length);
-    $(".editor-footer .line-count").html(lines.length);
-    $(".editor-footer .row-index").html(cursor.row);
-    $(".editor-footer .column-index").html(cursor.column);
+    $(".editor-counter .character-count").html(text.length);
+    $(".editor-counter .line-count").html(lines.length);
+    $(".editor-counter .row-index").html(cursor.row);
+    $(".editor-counter .column-index").html(cursor.column);
   };
 };
