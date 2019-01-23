@@ -27,9 +27,7 @@ This is a port to electron, made possible by Todor Imreorov. It adds a number of
 
 # Builds
 
-Win64: https://github.com/blurymind/Yarn/releases/latest
-
-MacOS: waiting for someone to submit one
+Win64 and MacOS: https://github.com/blurymind/Yarn/releases/latest
 
 # To compile and run from source:
 Make sure you have nodejs and electron installed. Then
