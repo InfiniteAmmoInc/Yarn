@@ -1220,17 +1220,25 @@ var App = function(name, version) {
             y: (toY - fromY) / distance
           };
 
-          var dist =
-            110 + 160 * (1 - Math.max(Math.abs(normal.x), Math.abs(normal.y)));
+          const margin = 10;
+          // Get the size of the 2 nodes. It's a square, so width and height are the same.
+          let sizeFrom = node.tempWidth / 2 + margin;
+          let sizeTo = linked.tempWidth / 2 + margin;
+          // Get the length from the center of the node to it's corner.
+          let diagonalFrom = Math.sqrt(node.tempWidth * node.tempWidth + node.tempHeight * node.tempHeight) / 2 + margin;
+          let diagonalTo = Math.sqrt(linked.tempWidth * linked.tempWidth + linked.tempHeight * linked.tempHeight) / 2 + margin;
+
+          let distFrom = sizeFrom + diagonalFrom * (1 - Math.max(Math.abs(normal.x), Math.abs(normal.y)));
+          let distTo = sizeTo + diagonalTo * (1 - Math.max(Math.abs(normal.x), Math.abs(normal.y)));
 
           // get from / to
           var from = {
-            x: fromX + normal.x * dist * scale,
-            y: fromY + normal.y * dist * scale
+            x: fromX + normal.x * distFrom * scale,
+            y: fromY + normal.y * distFrom * scale
           };
           var to = {
-            x: toX - normal.x * dist * scale,
-            y: toY - normal.y * dist * scale
+            x: toX - normal.x * distTo * scale,
+            y: toY - normal.y * distTo * scale
           };
 
           self.context.strokeStyle =

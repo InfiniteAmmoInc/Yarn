@@ -1,6 +1,4 @@
 var globalNodeIndex = 0;
-const NodeExpandWidth = 300;
-const NodeExpandHeight = 150;
 const ClipNodeTextLength = 1024;
 const bbcode = require('bbcode')
 
@@ -23,6 +21,7 @@ var Node = function()
 	this.colorID = ko.observable(0);
 	this.checked = false;
 	this.selected = false;
+	this.resizeHandle = null;
 
 	// clipped values for display
 	this.clippedTags = ko.computed(function() 
@@ -110,6 +109,9 @@ var Node = function()
 					app.updateArrowsThrottled();
 				}
 			);
+
+		self.resizeHandle = $(self.element).children(".resize")[0];
+
 		self.drag();
 
 		$(self.element).on("dblclick", function()
@@ -158,6 +160,20 @@ var Node = function()
 		if (inY != undefined)
 			$(self.element).css({y:Math.floor(inY)});
 		return Math.floor((new WebKitCSSMatrix(self.style.webkitTransform)).m42);
+	}
+	
+	this.width = function(inWidth)
+	{
+		if (inWidth != undefined)
+			$(self.element).width(Math.floor(inWidth));
+		return Math.floor($(self.element).width());
+	}
+
+	this.height = function(inHeight)
+	{
+		if (inHeight != undefined)
+			$(self.element).height(Math.floor(inHeight));
+		return Math.floor($(self.element).height());
 	}
 
 	this.resetDoubleClick = function()
@@ -230,6 +246,7 @@ var Node = function()
 	{
 		var dragging = false;
 		var groupDragging = false;
+		var resizing = false;
 
 		var offset = [0, 0];
 		var moved = false;
@@ -275,6 +292,28 @@ var Node = function()
 				//app.refresh();
 				app.updateArrowsThrottled();
 			}
+			else if (resizing)
+			{
+				const scale = self.getScale();
+				const mouseX = (e.pageX / scale);
+				const mouseY = (e.pageY / scale);
+				const nodeX = $(self.element).offset().left / scale;
+				const nodeY = $(self.element).offset().top / scale;
+				const width = mouseX - nodeX;
+				const height = mouseY - nodeY;
+				const size = Math.max(width, height);
+
+				// resize
+				self.width(size);
+				self.height(size);
+
+				app.updateArrowsThrottled();
+			}
+		});
+
+		$(self.resizeHandle).on("mousedown", function(e) {
+			resizing = true;
+			e.stopPropagation();
 		});
 
 		$(self.element).on("mousedown", function (e) 
@@ -314,6 +353,7 @@ var Node = function()
 			dragging = false;
 			groupDragging = false;
 			moved = false;
+			resizing = false;
 
 			app.updateArrowsThrottled();
 		});
