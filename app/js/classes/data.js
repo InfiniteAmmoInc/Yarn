@@ -265,13 +265,13 @@ var data = {
       if (object.body != undefined) node.body(object.body);
       if (object.tags != undefined) node.tags(object.tags);
       if (object.position != undefined && object.position.x != undefined) {
-        node.x(object.position.x);
-        avgX += object.position.x;
+        node.x(parseInt(object.position.x));
+        avgX += parseInt(object.position.x);
         numAvg++;
       }
       if (object.position != undefined && object.position.y != undefined) {
-        node.y(object.position.y);
-        avgY += object.position.y;
+        node.y(parseInt(object.position.y));
+        avgY += parseInt(object.position.y);
       }
       if (object.colorID != undefined) node.colorID(object.colorID);
     }
