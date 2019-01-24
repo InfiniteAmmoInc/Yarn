@@ -50,7 +50,7 @@ var Node = function()
 		/// Links in preview mode
 		result = result.replace(/\[\[[^\[]+\]\]/gi, function (goto) {	
 			const extractedGoto = goto.match(/\[\[(.*)\]\]/i)
-			if (extractedGoto && extractedGoto.length > 0 )
+			if (extractedGoto.length > 1 )
 			{
 				return '<font color="tomato">(go:' + extractedGoto[1] + ')</font>';
 			}	
