@@ -73,10 +73,10 @@ function spell_check() {
 	    // Check spelling of this line.
 	    var misspellings = misspelled(lines[i]);
 	    
-	    // Add markers and gutter markings.
-	    if (misspellings.length > 4) {
-	      session.addGutterDecoration(i, "misspelled");
-	    }
+			// Add markers and gutter markings.
+	    // if (misspellings.length > 0) {
+	    //   session.addGutterDecoration(i, "misspelled");
+	    // }
 	    for (var j in misspellings) {
 	      var range = new Range(i, misspellings[j][0], i, misspellings[j][1]);
 	      markers_present[markers_present.length] = session.addMarker(range, "misspelled", "typo", true);
