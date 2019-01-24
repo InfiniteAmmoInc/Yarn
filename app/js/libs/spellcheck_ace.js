@@ -74,7 +74,7 @@ function spell_check() {
 	    var misspellings = misspelled(lines[i]);
 	    
 	    // Add markers and gutter markings.
-	    if (misspellings.length > 0) {
+	    if (misspellings.length > 4) {
 	      session.addGutterDecoration(i, "misspelled");
 	    }
 	    for (var j in misspellings) {
