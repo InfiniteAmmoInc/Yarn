@@ -105,11 +105,11 @@ let yarnRender = function () {
 	self.goToNext = () => {
 		const nextNode = VNdata.next().value
 		if (!this.isFinishedParsing(nextNode)) {
-			if (nextNode.constructor.name === 'TextResult') {
-				if (node.title !== nextNode.data.title) {
-					node = self.jsonCopy(nextNode.data)
-					visitedNodes.push(nextNode.data.title)
-					emiter.emit('startedNode', node)
+			if (nextNode.constructor.name === 'TextResult') {	
+				if (nextNode.data && this.node.title !== nextNode.data.title) {
+					this.node = self.jsonCopy(nextNode.data)
+					this.visitedNodes.push(nextNode.data.title)
+					this.emiter.emit('startedNode', this.node)
 				}
 			}
 			return nextNode
@@ -139,8 +139,8 @@ let yarnRender = function () {
 			return
 		}
 		if (vnResult.constructor.name === 'TextResult') {
-			vnText += vnResult.text
-			this.changeTextScrollSpeed()
+			vnText += '<br>' + vnResult.text
+			this.changeTextScrollSpeed(111)
 		}
 	}
 
