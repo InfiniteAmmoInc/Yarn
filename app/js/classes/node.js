@@ -47,20 +47,28 @@ var Node = function()
 			return rowAppend
 		})
 
-		result = result.replace(/\[\[[^\[]+\]\]/gi, function (goto) {
-			var extractedGoto = goto.match(/\|(.*)\]\]/i)[1]
-			return '<font color="tomato">(go:' + extractedGoto + ')</font>';
+		/// Links in preview mode
+		result = result.replace(/\[\[[^\[]+\]\]/gi, function (goto) {	
+			const extractedGoto = goto.match(/\|(.*)\]\]/i)
+			if (extractedGoto && extractedGoto.length > 1 )
+			{
+				return '<font color="tomato">(go:' + extractedGoto[1] + ')</font>';
+			}	
 		})
+
+		/// Commands in preview mode
 		result = result.replace(/<</gi, "<font color='violet'>(run:");
 		result = result.replace(/>>/gi, ")</font>");
 
-		// bbcode color tag previewing
+		/// bbcode color tags in preview mode
 		result = result.replace(/\[color=#[A-Za-z0-9]+\]/gi, function (colorCode) {
-			var extractedCol = colorCode.match(/\[color=#([A-Za-z0-9]+)\]/i)[1]
-			return '[color=#'+ extractedCol + ']<font color=#' + extractedCol + ">&#9751</font>"
+			const extractedCol = colorCode.match(/\[color=#([A-Za-z0-9]+)\]/i)
+			if (extractedCol && extractedCol.length > 1){
+				return '[color=#'+ extractedCol[1] + ']<font color=#' + extractedCol[1] + ">&#9751</font>"
+			}
 		})
 
-		// bbcode tag parsing
+		/// other bbcode tag parsing in preview mode
 		result = bbcode.parse(result);
     return result;
 	}
