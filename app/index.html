@@ -7,26 +7,37 @@
 		<link rel="stylesheet" href="css/style.css">
 		<link rel="stylesheet" href="css/spectrum.css">
 		<link rel="stylesheet" href="css/jquery.contextMenu.css">
-		<!-- libraries -->
-		<script>window.$ = window.jQuery = require('jquery');</script>
-		<script>const electron = require("electron");</script>
 
+		<!-- import and set global libraries from node_modules -->
+		<script>
+			window.$ = window.jQuery = require('jquery');
+			const electron = require("electron");
+
+			window.ace = require("ace-builds/src-min-noconflict/ace");//needed to import yarn mode
+			window.define = ace.define
+			require("ace-builds/src-min-noconflict/ext-language_tools");
+			require("ace-builds/src-min-noconflict/ext-searchbox");
+			ace.config.set("basePath", "js/libs");
+		</script>
+
+		<!-- Todo: libs - move to importing from node_modules, so we can fetch/update them via npm -->
 		<script type="text/javascript" src="js/libs/jquery.mousewheel.min.js"></script>
 		<script type="text/javascript" src="js/libs/transit.js"></script>
 		<script type="text/javascript" src="js/libs/knockout-3.3.0.js"></script>
 		<script type="text/javascript" src="js/libs/knockout.ace.js"></script>
-		<script type="text/javascript" src="js/libs/ace.js"></script>
 		<script type="text/javascript" src="js/libs/spellcheck_ace.js"></script>
-		<script type="text/javascript" src="js/libs/ext-language_tools.js"></script>
 		<script type="text/javascript" src="js/libs/spectrum.js"></script>
 
+		<!-- custom lib imports -->
 		<script type="text/javascript" src="js/libs/theme-yarn.js"></script>
 		<script type="text/javascript" src="js/libs/mode-yarn.js"></script>
-		<!-- various models / classes -->
+
+		<!-- main app classes -->
 		<script type="text/javascript" src="js/classes/app.js"></script>
 		<script type="text/javascript" src="js/classes/data.js"></script>
 		<script type="text/javascript" src="js/classes/utils.js"></script>
 		<script type="text/javascript" src="js/classes/node.js"></script>
+
 	</head>
 	<body>
 		<button id="updateButton" onClick="ipcRenderer.send('quitAndInstall')"></button>
