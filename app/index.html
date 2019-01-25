@@ -15,16 +15,15 @@
 			window.$ = window.jQuery = require('jquery');
 			require('jquery-mousewheel')($);
 
-			window.ace = require("ace-builds/src-min-noconflict/ace");//needed to import yarn mode
-			window.define = ace.define
+			window.ace = require("ace-builds/src-min-noconflict/ace");
+			window.define = ace.define;
 			require("ace-builds/src-min-noconflict/ext-language_tools");
 			require("ace-builds/src-min-noconflict/ext-searchbox");
-			ace.config.set("basePath", "js/libs");
+			ace.config.set("basePath", "js/libs"); //needed to import yarn mode
 			
 			require('spectrum-colorpicker');
 
 			require('jquery.transit');
-
 		</script>
 
 		<!-- Todo: libs - move to importing from node_modules, so we can fetch/update them via npm -->
