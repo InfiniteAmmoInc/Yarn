@@ -11,7 +11,7 @@
 		<!-- import and set global libraries from node_modules -->
 		<script>
 			const electron = require("electron");
-
+			window.ko = require('knockout'); // keep static file too for now, as this is a bit wobbly on higher zoom levels
 			window.$ = window.jQuery = require('jquery');
 			require('jquery-mousewheel')($);
 
@@ -24,11 +24,11 @@
 			require('spectrum-colorpicker');
 
 			require('jquery.transit');
-			
+
 		</script>
 
 		<!-- Todo: libs - move to importing from node_modules, so we can fetch/update them via npm -->
-		<script type="text/javascript" src="js/libs/knockout-3.3.0.js"></script>
+		<!-- <script type="text/javascript" src="js/libs/knockout-3.3.0.js"></script> -->
 		<script type="text/javascript" src="js/libs/knockout.ace.js"></script>
 
 		<!-- custom lib imports -->
