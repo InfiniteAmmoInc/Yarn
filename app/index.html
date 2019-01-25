@@ -21,16 +21,17 @@
 			require("ace-builds/src-min-noconflict/ext-searchbox");
 			ace.config.set("basePath", "js/libs");
 			
+			require('spectrum-colorpicker')
+			
 		</script>
 
 		<!-- Todo: libs - move to importing from node_modules, so we can fetch/update them via npm -->
 		<script type="text/javascript" src="js/libs/transit.js"></script>
 		<script type="text/javascript" src="js/libs/knockout-3.3.0.js"></script>
 		<script type="text/javascript" src="js/libs/knockout.ace.js"></script>
-		<script type="text/javascript" src="js/libs/spellcheck_ace.js"></script>
-		<script type="text/javascript" src="js/libs/spectrum.js"></script>
 
 		<!-- custom lib imports -->
+		<script type="text/javascript" src="js/libs/spellcheck_ace.js"></script>
 		<script type="text/javascript" src="js/libs/theme-yarn.js"></script>
 		<script type="text/javascript" src="js/libs/mode-yarn.js"></script>
 
