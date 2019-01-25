@@ -1,4 +1,7 @@
 // You also need to load in nspell.js and jquery.js
+
+// This is a custom made fork that uses nspell instead of typo.js due to major performance issues in the later.
+// Please keep this file for now...
 const nspell = require('nspell');
 // You should configure these classes.
 const editor = "editor"; // This should be the id of your editor element.
