@@ -10,18 +10,20 @@
 
 		<!-- import and set global libraries from node_modules -->
 		<script>
-			window.$ = window.jQuery = require('jquery');
 			const electron = require("electron");
+
+			window.$ = window.jQuery = require('jquery');
+			require('jquery-mousewheel')($);
 
 			window.ace = require("ace-builds/src-min-noconflict/ace");//needed to import yarn mode
 			window.define = ace.define
 			require("ace-builds/src-min-noconflict/ext-language_tools");
 			require("ace-builds/src-min-noconflict/ext-searchbox");
 			ace.config.set("basePath", "js/libs");
+			
 		</script>
 
 		<!-- Todo: libs - move to importing from node_modules, so we can fetch/update them via npm -->
-		<script type="text/javascript" src="js/libs/jquery.mousewheel.min.js"></script>
 		<script type="text/javascript" src="js/libs/transit.js"></script>
 		<script type="text/javascript" src="js/libs/knockout-3.3.0.js"></script>
 		<script type="text/javascript" src="js/libs/knockout.ace.js"></script>
