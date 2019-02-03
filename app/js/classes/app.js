@@ -469,8 +469,11 @@ var App = function(name, version) {
     this.guessPopUpHelper = function() {
       if (self.getTagBeforeCursor().match(/\[color=#/)) {
         self.insertColorCode()
-        return
+        // return
+      } else if(self.getTagBeforeCursor().match(/\[img\]/)) {
+        console.log("IMAGE")
       }
+
     };
 
     this.insertBBcodeTags = function(tag) {
@@ -862,6 +865,10 @@ var App = function(name, version) {
     }
   };
 
+  this.chooseRelativePathImage = function(selectedText) {
+    console.log(selectedText)
+  };
+
   this.openNodeByTitle = function(nodeTitle) {
     self.makeNewNodesFromLinks();
     app.nodes().forEach((node) => {
@@ -942,7 +949,6 @@ var App = function(name, version) {
   this.togglePreviewMode = function(previewModeOverwrite) {
     var editor = $(".editor")[0];
     var editorPreviewer = document.getElementById("editor-preview")
-    
     if (previewModeOverwrite) { //preview mode
       editor.style.visibility = "hidden";
       editorPreviewer.style.visibility = "visible";
@@ -1026,17 +1032,17 @@ var App = function(name, version) {
           self.insertTextAtCursor("][/b] ")
           self.moveEditCursor(-5);
           break;
-        case "[i":
-          self.insertTextAtCursor("][/i] ")
+        case "[i]":
+          self.insertTextAtCursor("[/i] ")
           self.moveEditCursor(-5);
+          break;
+        case "[img":
+          self.insertTextAtCursor("][/img] ")
+          self.moveEditCursor(-7);
           break;
         case "[u":
           self.insertTextAtCursor("][/u] ")
           self.moveEditCursor(-5);
-          break;
-        case "[img":
-          self.insertTextAtCursor("=][/img] ")
-          self.moveEditCursor(-7);
           break;
       }
     };
@@ -1282,7 +1288,7 @@ var App = function(name, version) {
       '<p class="linkbounds">[[</p>$1<p style="color:red"><p class="linkbounds">|</p><p class="linkname">$2</p><p class="linkbounds">]]</p>'
     );
     text = text.replace(
-      /\/\/(.*)?($|\n)/g,
+      /[^:]\/\/(.*)?($|\n)/g,
       '<span class="comment">//$1</span>\n'
     );
     text = text.replace(

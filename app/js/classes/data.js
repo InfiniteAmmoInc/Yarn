@@ -8,6 +8,8 @@ var FILETYPE = {
 };
 
 const ipc = require("electron").ipcRenderer;
+var path = require('path');
+var fs = require('fs');
 
 ipc.on("selected-file", function(event, path, operation) {
   if (operation == "tryOpenFile") {
@@ -31,7 +33,12 @@ var data = {
   editingPath: ko.observable(null),
   editingType: ko.observable(""),
   editingFolder: ko.observable(null),
-
+  editingFileFolder: function(addSubPath='') {
+    const filePath = data.editingPath() ? data.editingPath() : ''
+    return addSubPath.length > 0 ?
+      path.join(path.dirname(filePath),addSubPath) :
+      path.dirname(filePath)
+  },
   readFile: function(e, filename, clearNodes) {
     if (app.fs != undefined) {
       if (
@@ -454,7 +461,10 @@ var data = {
       data.saveTo(data.editingPath(), data.getSaveData(data.editingType()));
     }
   },
-
+  doesFileExist: function(filePath) {
+    if (!fs.existsSync(filePath)) {return  false}
+    return fs.lstatSync(filePath).isFile()
+  },
   sendToExternalApp: function() {
     ipc.send(
       "sendYarnDataToObject",

@@ -105,6 +105,13 @@ $.contextMenu({
           callback: () => { app.openNodeByTitle(app.editor.getSelectedText()) }
           }
         }
+        console.log(app.getTagBeforeCursor().match(/\[img\]/g))
+        // add option to add path of local image file between img tags
+        if (app.getTagBeforeCursor().match(/\[img\]/g)) {
+            options.items["Choose image"] = { name: "Choose image",
+            callback: () => { app.chooseRelativePathImage(app.editor.getSelectedText()) }
+            }
+          }
         // suggest word corrections if the selected word is misspelled
         if (app.spellcheckEnabled) {
           var suggestedCorrections = app.getSpellCheckSuggestionItems();
