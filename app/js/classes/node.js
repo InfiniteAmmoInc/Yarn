@@ -63,7 +63,7 @@ var Node = function()
 		})
 
 		/// bbcode local images with path relative to the opened yarn file
-		result = result.replace(/\[img\].*\[\/img\]/gi, function (imgTag) {
+		result = result.replace(/\[img\][^\[]+\[\/img\]/gi, function (imgTag) {
 			const extractedImgPath = imgTag.match(/\[img\](.*)\[\/img\]/i)
 			if (extractedImgPath.length > 1 )
 			{
@@ -73,8 +73,6 @@ var Node = function()
 					 '<img src="' + fullPathToFile + '"> </img>':
 					 '<img src="' + fullPathToFile + '" width="128" height="auto"> </img>'
 				} else { // if not a local file, try to load it as a link
-					console.log('<img src="' + extractedImgPath[1] + '"> </img>')
-					// return imgTag
 					return showRowNumbers ?
 					 '<img src="' + extractedImgPath[1] + '"> </img>':
 					 '<img src="' + extractedImgPath[1] + '" width="128" height="auto"> </img>'

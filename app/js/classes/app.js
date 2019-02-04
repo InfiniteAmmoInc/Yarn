@@ -865,8 +865,8 @@ var App = function(name, version) {
     }
   };
 
-  this.chooseRelativePathImage = function(selectedText) {
-    console.log(selectedText)
+  this.chooseRelativePathImage = function(imagePath) {
+    self.insertTextAtCursor(imagePath)
   };
 
   this.openNodeByTitle = function(nodeTitle) {
@@ -998,11 +998,12 @@ var App = function(name, version) {
     var textBeforeCursor = curLineText.substring(0,cursorPosition);
     if (!textBeforeCursor) {return}
     var tagBeforeCursor = (textBeforeCursor.lastIndexOf('[') !== -1) ? textBeforeCursor.substring(textBeforeCursor.lastIndexOf('['), textBeforeCursor.length) : ""
-    if (tagBeforeCursor.includes(']')) { tagBeforeCursor = "" }
+    
+    // if (tagBeforeCursor.includes(']')) { tagBeforeCursor = "" }
 
     if (textBeforeCursor.substring(textBeforeCursor.length-2, textBeforeCursor.length) === "[[") { tagBeforeCursor = "[[" }
     if (textBeforeCursor.substring(textBeforeCursor.length-2, textBeforeCursor.length) === "<<") { tagBeforeCursor = "<<" }
-    // console.log(tagBeforeCursor)
+
     return tagBeforeCursor
   }
 
@@ -1168,9 +1169,10 @@ var App = function(name, version) {
     for (var i = 0; i < nodeLinks.length; i ++)
     {
       // Create new Nodes from Node Links
-      if (!otherNodeTitles.includes(nodeLinks[i].trim())){
+      const newNodeName = nodeLinks[i].trim()
+      if (newNodeName && newNodeName.length > 0 && !otherNodeTitles.includes(newNodeName) && newNodeName != self.editing().title()){
         var newNodeOffset = 220 * (i+1);
-        self.newNodeAt(self.editing().x() + newNodeOffset, self.editing().y() - 120).title(nodeLinks[i].trim());
+        self.newNodeAt(self.editing().x() + newNodeOffset, self.editing().y() - 120).title(newNodeName);
       }
     }
   };

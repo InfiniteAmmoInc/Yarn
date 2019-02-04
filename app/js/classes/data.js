@@ -11,18 +11,21 @@ const ipc = require("electron").ipcRenderer;
 var path = require('path');
 var fs = require('fs');
 
-ipc.on("selected-file", function(event, path, operation) {
+ipc.on("selected-file", function(event, selectedPath, operation) {
   if (operation == "tryOpenFile") {
-    data.openFile($("#open-file"), path);
+    data.openFile($("#open-file"), selectedPath);
   } else if (operation == "tryAppend") {
-    data.openFileDialog($("#open-file"), path);
+    data.openFileDialog($("#open-file"), selectedPath);
+  } else if (operation == "addImgTag") {
+    const relativePath = path.relative(data.editingFileFolder(), selectedPath);
+    app.chooseRelativePathImage(relativePath)
   }
 });
 
-ipc.on("saved-file", function(event, path, type, content) {
+ipc.on("saved-file", function(event, selectedPath, type, content) {
   data.editingType(type);
-  data.saveTo(path, content);
-  app.refreshWindowTitle(path);
+  data.saveTo(selectedPath, content);
+  app.refreshWindowTitle(selectedPath);
 });
 
 ipc.on("loadYarnDataObject", function(event, yarnData) {
@@ -438,7 +441,7 @@ var data = {
 
   tryOpenFile: function() /// Refactor to send signal to the main process
   {
-    ipc.send("openFileYarn", "tryOpenFile");
+    ipc.send("openFile", "tryOpenFile");
     // data.openFileDialog($('#open-file'), data.openFile);
   },
 
@@ -447,7 +450,7 @@ var data = {
   },
 
   tryAppend: function() {
-    ipc.send("openFileYarn", "tryAppend");
+    ipc.send("openFile", "tryAppend");
     // data.openFileDialog($('#open-file'), data.appendFile);
   },
 

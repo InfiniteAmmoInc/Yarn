@@ -12,7 +12,7 @@ const BrowserWindow = electron.BrowserWindow;
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 let yarnRunnerWindow;
-let yarnVersion = "0.3.5";
+let yarnVersion = "0.3.6";
 
 function createWindow() {
   // Create the browser window.
@@ -51,7 +51,7 @@ function createWindow() {
     mainWindow.maximize();
   });
 
-  ipcMain.on("openFileYarn", (event, operation) => {
+  ipcMain.on("openFile", (event, operation) => {
     dialog.showOpenDialog(
       {
         properties: ["openFile"]
@@ -62,6 +62,8 @@ function createWindow() {
       }
     );
   });
+
+
 
   ipcMain.on("saveFileYarn", (event, type, content) => {
     dialog.showSaveDialog(
