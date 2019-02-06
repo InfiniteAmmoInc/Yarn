@@ -84,6 +84,11 @@ var data = {
   },
 
   openFile: function(e, filename) {
+    if (data.editingPath()) {
+      if (!confirm('Are you sure you want to close \n'+ data.editingPath() + '\nAny unsaved progress will be lost...')) {
+        return
+      }
+    };
     data.readFile(e, filename, true);
     app.refreshWindowTitle(filename);
   },
