@@ -159,7 +159,7 @@
 			<div class="node-editor" data-bind="mousedown:app.saveNode">				
 			
 				<div class="form" data-bind="preventBubble: 'click', preventBubble: 'mousedown'">
-					<input type="text" class="title" data-bind="value: app.editing().title;" onfocus="app.togglePreviewMode(true)">
+					<input type="text" class="title" data-bind="value: app.editing().title;" onfocus="app.togglePreviewMode(true)" onblur="app.togglePreviewMode(false)" >
 					
 					<!-- <div float="left"> </div> -->
 					
@@ -172,7 +172,7 @@
 						</div>
 					</div> -->
 
-					<input type="text" data-bind="value: app.editing().tags;" onfocus="app.togglePreviewMode(true)">
+					<input type="text" data-bind="value: app.editing().tags;" onfocus="app.togglePreviewMode(true)" onblur="app.togglePreviewMode(false)" >
 
 					<div class="bbcode-toolbar">
 						<button class="bbcode-button" onclick="app.openLastEditedNode()" title="Go Back to last edited">&#8617</button>
