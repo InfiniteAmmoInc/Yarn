@@ -14,6 +14,10 @@ let mainWindow;
 let yarnRunnerWindow;
 let yarnVersion = "0.3.6";
 
+// var fs = require('fs')
+//   , ini = require('configurable-ini')
+// var config = ini.parse(fs.readFileSync('./config.ini', 'utf-8'))
+
 function createWindow() {
   // Create the browser window.
   mainWindow = new BrowserWindow({
@@ -81,8 +85,8 @@ function createWindow() {
     mainWindow.close();
   });
 
-  ipcMain.on("testYarnStoryFrom", (event, content, startTestNode) => {
-    createYarnTesterWindow(content, startTestNode);
+  ipcMain.on("testYarnStoryFrom", (event, content, startTestNode, resourcesPath) => {
+    createYarnTesterWindow(content, startTestNode, resourcesPath);
   });
 
   // when the update has been downloaded and is ready to be installed, notify the BrowserWindow
@@ -96,7 +100,7 @@ function createWindow() {
   });
 }
 
-function createYarnTesterWindow(content, startTestNode) {
+function createYarnTesterWindow(content, startTestNode, resourcesPath) {
   // console.log("START RUN::"+startTestNode);
   if (yarnRunnerWindow) {
     yarnRunnerWindow.destroy();
@@ -118,7 +122,8 @@ function createYarnTesterWindow(content, startTestNode) {
     yarnRunnerWindow.webContents.send(
       "loadYarnDataOnRunner",
       content,
-      startTestNode
+      startTestNode,
+      resourcesPath
     );
     yarnRunnerWindow.show();
   });

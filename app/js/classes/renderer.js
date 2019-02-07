@@ -2,6 +2,8 @@ const bondage = require('bondage')
 const bbcode = require('bbcode')
 const yarnRunner = new bondage.Runner()
 const EventEmitter = require('events').EventEmitter
+const path = require('path')
+const fs = require('fs');
 
 let yarnRender = function () {
 	let visitedNodes = []
@@ -105,7 +107,24 @@ let yarnRender = function () {
 	self.goToNext = () => {
 		const nextNode = VNdata.next().value
 		if (!this.isFinishedParsing(nextNode)) {
-			if (nextNode.constructor.name === 'TextResult') {	
+			if (nextNode.constructor.name === 'TextResult') {
+				/// bbcode local images with path relative to the resourcesPath specified on init
+				if (this.resourcesPath.length) {
+					const resourcesPath = this.resourcesPath;
+					nextNode.text = nextNode.text.replace(/\[img\][^\[]+\[\/img\]/gi, function (imgTag) {
+						const extractedImgPath = imgTag.match(/\[img\](.*)\[\/img\]/i)
+						if (extractedImgPath.length > 1 )
+						{
+							fullPathToFile = path.join(resourcesPath, extractedImgPath[1])
+							if (fs.existsSync(fullPathToFile)){
+								return '[img]' + fullPathToFile + '[/img]'
+							} else { // if not a local file, try to load it as a link
+								return '[img]' + extractedImgPath[1] + '[/img]'
+							}
+						}	
+					})
+				}
+				/// emit debug signal
 				if (nextNode.data && this.node.title !== nextNode.data.title) {
 					this.node = self.jsonCopy(nextNode.data)
 					this.visitedNodes.push(nextNode.data.title)
@@ -181,6 +200,10 @@ let yarnRender = function () {
 		let bbcodeHtml = vnTextResult
 		if (vnResult.constructor.name === 'TextResult') {
 			if (vnResult.text.includes('[')) {
+				while (vnTextResult.lastIndexOf('[img]') > vnTextResult.lastIndexOf('[/img]')) {
+					vnTextScrollIdx += 1
+					vnTextResult = vnText.substring(0, vnTextScrollIdx)
+				}
 				while (vnTextResult.lastIndexOf('[') > vnTextResult.lastIndexOf(']')) {
 					vnTextScrollIdx += 1
 					vnTextResult = vnText.substring(0, vnTextScrollIdx)
@@ -205,10 +228,11 @@ let yarnRender = function () {
 		finished = false
 	}
 
-	this.initYarn = (yarnDataObject, startChapter, htmlIdToAttachTo) => {
+	this.initYarn = (yarnDataObject, startChapter, htmlIdToAttachTo, resourcesPath) => {
 		htmIDtoAttachYarnTo = htmlIdToAttachTo
 		this.yarnDataObject = yarnDataObject
 		this.startChapter = startChapter
+		this.resourcesPath= resourcesPath
 		yarnRunner.load(yarnDataObject)
 		this.loadYarnChapter(startChapter)
 	}

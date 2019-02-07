@@ -119,12 +119,14 @@ $.contextMenu({
           }},      
         }; 
       }
-      console.log(app.getTagBeforeCursor())
       // add option to add path of local image file between img tags
       if (app.getTagBeforeCursor().match(/\[img/g)) {
           options.items["Choose image"] = { name: "Choose image",
           callback: () => { 
-            //   app.chooseRelativePathImage(app.editor.getSelectedText())
+              if (!data.editingPath()) {
+                alert("Please save the yarn file to a location first. \nIt is required for this feature to work...");
+                return
+              }
               ipc.send("openFile", "addImgTag");
             }
           }

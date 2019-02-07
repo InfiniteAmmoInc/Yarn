@@ -41,8 +41,8 @@
 		remote.getCurrentWindow().close();
 	});
 
-	ipcRenderer.on('loadYarnDataOnRunner', (event, yarnContent, startTestNode) => {
-		yarn.initYarn(yarnContent, startTestNode, "NVrichTextLabel");
+	ipcRenderer.on('loadYarnDataOnRunner', (event, yarnContent, startTestNode, resourcesPath=false) => {
+		yarn.initYarn(yarnContent, startTestNode, "NVrichTextLabel", resourcesPath);
 
 		console.log("Using Default input - press z to progress...")
 		document.addEventListener("keydown", event => {

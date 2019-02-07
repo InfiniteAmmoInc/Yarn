@@ -1053,7 +1053,8 @@ var App = function(name, version) {
     ipc.send(
       "testYarnStoryFrom",
       JSON.parse(data.getSaveData(FILETYPE.JSON)),
-      startTestNode
+      startTestNode,
+      data.editingFileFolder()
     );
   };
 
