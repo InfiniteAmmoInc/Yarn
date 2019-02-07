@@ -1178,7 +1178,7 @@ var App = function(name, version) {
   };
   
   this.makeNewNodesFromLinks = function(){
-    if (this.config && this.config.overwrites.makeNewNodesFromLinks === 'true') {
+    if (this.config && this.config.overwrites.makeNewNodesFromLinks === 'false') {
       console.info("Autocreation of new nodes from links is disabled in:\n" + this.iniFilePath)
       return
     }
