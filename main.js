@@ -14,10 +14,6 @@ let mainWindow;
 let yarnRunnerWindow;
 let yarnVersion = "0.3.6";
 
-// var fs = require('fs')
-//   , ini = require('configurable-ini')
-// var config = ini.parse(fs.readFileSync('./config.ini', 'utf-8'))
-
 function createWindow() {
   // Create the browser window.
   mainWindow = new BrowserWindow({

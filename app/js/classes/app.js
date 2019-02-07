@@ -1,6 +1,7 @@
 const remote = electron.remote;
 const contextMenu = require("jquery-contextmenu")
 const { getWordsList } = require('most-common-words-by-language')
+const ini = require('multi-ini')
 
 //todo store color palette
 var App = function(name, version) {
@@ -41,6 +42,10 @@ var App = function(name, version) {
 
   this.UPDATE_ARROWS_THROTTLE_MS = 25;
 
+  // this.parser = new ini.Parser();
+  this.iniFilePath = null
+  this.config = null
+
   //this.editingPath = ko.observable(null);
 
   this.nodeSelection = [];
@@ -76,6 +81,16 @@ var App = function(name, version) {
       // escape
       if (e.keyCode == 27) self.clearSearch();
     });
+
+    // Load ini settings
+    this.iniFilePath = path.join(remote.app.getPath('home'),'.yarn-story-editor.ini')
+    if (fs.existsSync(this.iniFilePath)){
+      // const parser = new ini.Parser();
+      // content = parser.parse(lines);
+      this.config = ini.read(this.iniFilePath, {line_breaks: 'windows'})
+      console.log("Settings loaded from:\n" + this.iniFilePath)
+      // console.log(this.config)
+    }
 
     // prevent click bubbling
     ko.bindingHandlers.preventBubble = {
@@ -1163,6 +1178,10 @@ var App = function(name, version) {
   };
   
   this.makeNewNodesFromLinks = function(){
+    if (this.config && this.config.overwrites.makeNewNodesFromLinks === 'true') {
+      console.info("Autocreation of new nodes from links is disabled in:\n" + this.iniFilePath)
+      return
+    }
     var otherNodeTitles = self.getOtherNodeTitles()
 
     var nodeLinks = self.editing().getLinksInNode();
