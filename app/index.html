@@ -189,11 +189,6 @@
 						<button class="bbcode-button" style="color:purple" onclick="app.insertBBcodeTags('cmd')" title="Command">🎮</button>
 						<button class="bbcode-button" style="color:#19a4a8" onclick="app.insertBBcodeTags('opt')" title="Choice/Link">❔</button>
 						<button class="bbcode-button" style="color:#19a4a8" onclick="app.insertEmoji()" title="Emoji">😉</button>
-						
-						<span class="styled-checkbox">
-							<input type="checkbox" id="toglAutocomplete"></input>
-							<label for="toglAutocomplete" title="Auto Close tags" style="color:#292929">🔮</label>
-						</span>
 
 						<div class="app-menu" style="position: absolute;">
 							<!-- todo: move to toolbar -->
@@ -223,6 +218,11 @@
 							Col: <span class="column-index">0</span>
 						</span>
 						&nbsp;&nbsp;&nbsp;
+						<span class="styled-checkbox">
+							<input type="checkbox" id="toglAutocomplete"></input>
+							<label for="toglAutocomplete" title="Auto Close tags" style="color:#292929">🔮</label>
+						</span>
+						&nbsp;
 						<span class="styled-checkbox">
 							<input type="checkbox" id="toglAutocompleteWords" onclick="app.toggleWordCompletion()"></input>
 							<label for="toglAutocompleteWords" title="auto-completion">💬</label>
