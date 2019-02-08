@@ -542,7 +542,7 @@ var App = function(name, version) {
 
     this.insertEmoji = function(){
       this.emPicker.toggle()
-      $('#emojiPicker-container').css({'top':self.mouseY - 140,'left':self.mouseX - 190})
+      $('#emojiPicker-container').css({'top':self.mouseY - 125,'left':self.mouseX - 200})
     }
 
     $(document).on("mousemove", function(e) {

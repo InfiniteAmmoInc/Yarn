@@ -567,6 +567,7 @@ a:hover { color: #000;}
 	min-height: 100%;
 	padding: 0;
 	margin: 0;
+	line-height: 1.5em;
 	font-size: 0.9em;
 	color: #666;
 	font-family: "Lucida Console", Monaco, monospace;
@@ -591,8 +592,8 @@ a:hover { color: #000;}
 	overflow-y: scroll;
 	white-space: pre;
 	box-sizing: border-box;
-	font-size: 0.8em;
-	line-height: 1.1em;
+	font-size: 0.9em;
+	line-height: 1.5em;
 	color: #666;
 	font-family: "Lucida Console", Monaco, monospace;
 	cursor: pointer;
@@ -694,4 +695,5 @@ a:hover { color: #000;}
   opacity:0.7;
   position: absolute;
   text-align: center;
+  z-index: 99 !important;
 }
