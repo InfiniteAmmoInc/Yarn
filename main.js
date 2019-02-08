@@ -12,7 +12,7 @@ const BrowserWindow = electron.BrowserWindow;
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 let yarnRunnerWindow;
-let yarnVersion = "0.3.6";
+let yarnVersion = "0.3.7";
 
 function createWindow() {
   // Create the browser window.
