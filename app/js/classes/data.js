@@ -34,7 +34,7 @@ ipc.on("loadYarnDataObject", function(event, yarnData) {
 
 ipc.on("appIsClosing", function(event) {
   if (app.configFilePath && app.config) {
-    fs.writeFile(app.configFilePath, JSON.stringify(app.config), function(err) {
+    fs.writeFile(app.configFilePath, JSON.stringify(app.config, null, 4), function(err) {
       if(err) {
         return console.log(err);
       }
