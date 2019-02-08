@@ -540,6 +540,11 @@ var App = function(name, version) {
       self.editor.focus();
     };
 
+    this.insertEmoji = function(){
+      this.emPicker.toggle()
+      $('#emojiPicker-container').css({'top':self.mouseY - 140,'left':self.mouseX - 190})
+    }
+
     $(document).on("mousemove", function(e) {
       self.mouseX = e.pageX; 
       self.mouseY = e.pageY;
@@ -873,6 +878,12 @@ var App = function(name, version) {
       if (!self.nodeVisitHistory.includes(node.title())) {
         self.nodeVisitHistory.push(node.title());
       }
+
+      /// init emoji picker
+      this.emPicker = new EmojiPicker(document.getElementById("emojiPickerDom"), (emoji)=> {
+        self.insertTextAtCursor(emoji.char)
+        this.emPicker.toggle()
+      });
 
       self.toggleSpellCheck();
       self.updateEditorStats();

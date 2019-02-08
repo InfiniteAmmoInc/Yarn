@@ -27,6 +27,7 @@
 			require('spectrum-colorpicker');
 
 			require('jquery.transit');
+			const emojiPicker = require('lightweight-emoji-picker/dist/picker.js');
 		</script>
 
 		<!-- Todo: libs - move to importing from node_modules, so we can fetch/update them via npm -->
@@ -187,6 +188,7 @@
 						<button class="bbcode-button" style="color:#19a4a8" onclick="app.insertBBcodeTags('img')" title="Image">🦄</button>
 						<button class="bbcode-button" style="color:purple" onclick="app.insertBBcodeTags('cmd')" title="Command">🎮</button>
 						<button class="bbcode-button" style="color:#19a4a8" onclick="app.insertBBcodeTags('opt')" title="Choice/Link">❔</button>
+						<button class="bbcode-button" style="color:#19a4a8" onclick="app.insertEmoji()" title="Emoji">😉</button>
 						
 						<span class="styled-checkbox">
 							<input type="checkbox" id="toglAutocomplete"></input>
@@ -254,7 +256,11 @@
 					<div class="tooltip" id="colorPicker-container" hidden>
 						<input type='text' id="colorPicker" data-bind="preventBubble: 'click', preventBubble: 'mousedown'"/>
 					</div>
-	
+
+					<div class="tooltip" id="emojiPicker-container">
+						<div id="emojiPickerDom"></div>
+					</div>
+
 				</div>
 			</div>
 			<!-- /ko -->

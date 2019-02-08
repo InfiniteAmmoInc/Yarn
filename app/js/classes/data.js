@@ -7,7 +7,6 @@ var FILETYPE = {
   YARNTEXT: "yarn.txt"
 };
 
-// const ipc = require("electron").ipcRenderer;
 const path = require('path');
 const fs = require('fs');
 
