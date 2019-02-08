@@ -11,6 +11,9 @@
 		<!-- import and set global libraries from node_modules -->
 		<script>
 			const electron = require("electron");
+			const ipc = require("electron").ipcRenderer;
+			const remote = electron.remote;
+			
 			window.ko = require('knockout'); // keep static file too for now, as this is a bit wobbly on higher zoom levels
 			window.$ = window.jQuery = require('jquery');
 			require('jquery-mousewheel')($);
@@ -172,10 +175,10 @@
 						</div>
 					</div> -->
 
-					<input type="text" data-bind="value: app.editing().tags;" onfocus="app.togglePreviewMode(true)" onblur="app.togglePreviewMode(false)" >
+					<input type="text" data-bind="value: app.editing().tags;" onfocus="app.togglePreviewMode(true)">
 
 					<div class="bbcode-toolbar">
-						<button class="bbcode-button" onclick="app.openLastEditedNode()" title="Go Back to last edited">&#8617</button>
+						<button class="bbcode-button" onclick="app.openLastEditedNode()" title="Go Back to last edited" onfocus="app.togglePreviewMode(false)">&#8617</button>
 						&nbsp;&nbsp;&nbsp;
 						<button class="bbcode-button" onclick="app.insertBBcodeTags('b')" title="Bold"><b>B</b></button>
 						<button class="bbcode-button" onclick="app.insertBBcodeTags('u')" title="Underlined"><u>U</u></button>

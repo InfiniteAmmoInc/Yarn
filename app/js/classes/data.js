@@ -7,9 +7,9 @@ var FILETYPE = {
   YARNTEXT: "yarn.txt"
 };
 
-const ipc = require("electron").ipcRenderer;
-var path = require('path');
-var fs = require('fs');
+// const ipc = require("electron").ipcRenderer;
+const path = require('path');
+const fs = require('fs');
 
 ipc.on("selected-file", function(event, selectedPath, operation) {
   if (operation == "tryOpenFile") {
@@ -32,6 +32,16 @@ ipc.on("loadYarnDataObject", function(event, yarnData) {
   data.loadData(JSON.stringify(yarnData), FILETYPE.JSON, true);
 });
 
+ipc.on("appIsClosing", function(event) {
+  if (app.configFilePath && app.config) {
+    fs.writeFile(app.configFilePath, JSON.stringify(app.config), function(err) {
+      if(err) {
+        return console.log(err);
+      }
+    });
+  }
+})
+
 var data = {
   editingPath: ko.observable(null),
   editingType: ko.observable(""),
@@ -41,6 +51,23 @@ var data = {
     return addSubPath.length > 0 ?
       path.join(path.dirname(filePath),addSubPath) :
       path.dirname(filePath)
+  },
+  tryLoadConfigFile: function(){
+    app.configFilePath = path.join(remote.app.getPath('home'),'.yarn-story-editor.json')
+    if (fs.existsSync(app.configFilePath)) {
+      app.config = JSON.parse(fs.readFileSync(app.configFilePath)); 
+      console.log("Settings loaded from:\n" + app.configFilePath)
+      // if autosaving has a value in the config - value is in minutes
+      if (app.config && app.config.settings && app.config.settings.autoSave) {
+        if (app.config.settings.autoSave < 0.1) {return}
+        setInterval(function () {
+          if (data.editingPath()) {
+            data.trySaveCurrent();
+            console.log("Autosaved:\n" + data.editingPath())
+          }
+        }, app.config.settings.autoSave * 60000);
+      }
+    }
   },
   readFile: function(e, filename, clearNodes) {
     if (app.fs != undefined) {

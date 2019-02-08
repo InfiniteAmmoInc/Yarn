@@ -1,7 +1,6 @@
-const remote = electron.remote;
+// const remote = electron.remote;
 const contextMenu = require("jquery-contextmenu")
 const { getWordsList } = require('most-common-words-by-language')
-const ini = require('multi-ini')
 
 //todo store color palette
 var App = function(name, version) {
@@ -31,11 +30,6 @@ var App = function(name, version) {
   this.shifted = false;
   this.isElectron = false;
   this.editor = null;
-  this.autocompleteEnabled = true;
-  this.autocompleteWordsEnabled = true;
-  this.showCounter = false;
-  this.spellcheckEnabled = true;
-  this.nightModeEnabled = false;
   this.nodeVisitHistory = [];
   this.mouseX = 0; 
   this.mouseY = 0;
@@ -43,8 +37,20 @@ var App = function(name, version) {
   this.UPDATE_ARROWS_THROTTLE_MS = 25;
 
   // this.parser = new ini.Parser();
-  this.iniFilePath = null
-  this.config = null
+  this.configFilePath = null
+  this.config = {
+    nightModeEnabled:false,
+    spellcheckEnabled:true,
+    showCounter:false,
+    autocompleteWordsEnabled:true,
+    autocompleteEnabled:true,
+    overwrites:{
+      makeNewNodesFromLinks:true
+    },
+    settings:{
+      autoSave:-1
+    }
+  }
 
   //this.editingPath = ko.observable(null);
 
@@ -82,15 +88,8 @@ var App = function(name, version) {
       if (e.keyCode == 27) self.clearSearch();
     });
 
-    // Load ini settings
-    this.iniFilePath = path.join(remote.app.getPath('home'),'.yarn-story-editor.ini')
-    if (fs.existsSync(this.iniFilePath)){
-      // const parser = new ini.Parser();
-      // content = parser.parse(lines);
-      this.config = ini.read(this.iniFilePath, {line_breaks: 'windows'})
-      console.log("Settings loaded from:\n" + this.iniFilePath)
-      // console.log(this.config)
-    }
+    // Load json app settings from home folder
+    data.tryLoadConfigFile()
 
     // prevent click bubbling
     ko.bindingHandlers.preventBubble = {
@@ -830,16 +829,16 @@ var App = function(name, version) {
         .transition({ y: "0" }, 250);
       self.editor = ace.edit("editor");
       var autoCompleteButton = document.getElementById("toglAutocomplete");
-      autoCompleteButton.checked = self.autocompleteEnabled;
+      autoCompleteButton.checked = self.config.autocompleteEnabled;
       var autoCompleteWordsButton = document.getElementById("toglAutocompleteWords");
-      autoCompleteWordsButton.checked = self.autocompleteWordsEnabled;
+      autoCompleteWordsButton.checked = self.config.autocompleteWordsEnabled;
       var spellCheckButton = document.getElementById("toglSpellCheck");
-      spellCheckButton.checked = self.spellcheckEnabled;
+      spellCheckButton.checked = self.config.spellcheckEnabled;
       var nightModeButton = document.getElementById("toglNightMode");
-      nightModeButton.checked = self.nightModeEnabled;  
+      nightModeButton.checked = self.config.nightModeEnabled;  
       self.toggleNightMode();
       var showCounterButton = document.getElementById("toglShowCounter");
-      showCounterButton.checked = self.showCounter;  
+      showCounterButton.checked = self.config.showCounter;  
       self.toggleShowCounter()
       
       /// set color picker
@@ -885,7 +884,7 @@ var App = function(name, version) {
   };
 
   this.openNodeByTitle = function(nodeTitle) {
-    self.makeNewNodesFromLinks();
+    self.makeNodeWithName(nodeTitle);
     app.nodes().forEach((node) => {
       if (node.title() === nodeTitle.trim()){
         self.editNode(node)
@@ -918,7 +917,7 @@ var App = function(name, version) {
 
   this.toggleSpellCheck = function() {
     var spellCheckButton = document.getElementById("toglSpellCheck");
-    self.spellcheckEnabled = spellCheckButton.checked;
+    self.config.spellcheckEnabled = spellCheckButton.checked;
     if (spellCheckButton.checked) {
       enable_spellcheck();
     } else {
@@ -928,9 +927,9 @@ var App = function(name, version) {
 
   this.toggleNightMode = function() {
     var nightModeButton = document.getElementById("toglNightMode");
-    self.nightModeEnabled = nightModeButton.checked;
+    self.config.nightModeEnabled = nightModeButton.checked;
     var cssOverwrite = {};
-    if (self.nightModeEnabled) {
+    if (self.config.nightModeEnabled) {
       cssOverwrite = {filter: 'invert(100%)'}
     } else {
       cssOverwrite = {filter: 'invert(0%)'}
@@ -944,8 +943,8 @@ var App = function(name, version) {
 
   this.toggleShowCounter = function() {
     var showCounterButton = document.getElementById("toglShowCounter");
-    self.showCounter = showCounterButton.checked;
-    if (self.showCounter) {
+    self.config.showCounter = showCounterButton.checked;
+    if (self.config.showCounter) {
       $(".node-editor .form .bbcode-toolbar .editor-counter").css({display: "initial"});
     } else {
       $(".node-editor .form .bbcode-toolbar .editor-counter").css({display: "none"});
@@ -954,10 +953,10 @@ var App = function(name, version) {
 
   this.toggleWordCompletion = function() {
     var wordCompletionButton = document.getElementById("toglAutocompleteWords");
-    self.autocompleteWordsEnabled = wordCompletionButton.checked;
+    self.config.autocompleteWordsEnabled = wordCompletionButton.checked;
     self.editor.setOptions({
-      enableBasicAutocompletion: self.autocompleteWordsEnabled,
-      enableLiveAutocompletion: self.autocompleteWordsEnabled
+      enableBasicAutocompletion: self.config.autocompleteWordsEnabled,
+      enableLiveAutocompletion: self.config.autocompleteWordsEnabled
     });
   }
 
@@ -1114,10 +1113,10 @@ var App = function(name, version) {
       });
 
       var autoCompleteButton = document.getElementById("toglAutocomplete");
-      self.autocompleteEnabled = autoCompleteButton.checked;
+      self.config.autocompleteEnabled = autoCompleteButton.checked;
 
       var autoCompleteWordsButton = document.getElementById("toglAutocompleteWords");
-      self.autocompleteWordsEnabled = autoCompleteWordsButton.checked;
+      self.config.autocompleteWordsEnabled = autoCompleteWordsButton.checked;
 
       setTimeout(self.updateSearch, 100);
     }
@@ -1178,22 +1177,25 @@ var App = function(name, version) {
   };
   
   this.makeNewNodesFromLinks = function(){
-    if (this.config && this.config.overwrites.makeNewNodesFromLinks === 'false') {
-      console.info("Autocreation of new nodes from links is disabled in:\n" + this.iniFilePath)
+    if (this.config && this.config.overwrites && !this.config.overwrites.makeNewNodesFromLinks) {
+      console.info("Autocreation of new nodes from links is disabled in:\n" + this.configFilePath)
       return
-    }
-    var otherNodeTitles = self.getOtherNodeTitles()
-
+    };
     var nodeLinks = self.editing().getLinksInNode();
     if (nodeLinks == undefined){return}
     for (var i = 0; i < nodeLinks.length; i ++)
     {
       // Create new Nodes from Node Links
       const newNodeName = nodeLinks[i].trim()
-      if (newNodeName && newNodeName.length > 0 && !otherNodeTitles.includes(newNodeName) && newNodeName != self.editing().title()){
-        var newNodeOffset = 220 * (i+1);
-        self.newNodeAt(self.editing().x() + newNodeOffset, self.editing().y() - 120).title(newNodeName);
-      }
+      var newNodeOffset = 220 * (i+1);
+      self.makeNodeWithName(newNodeName,newNodeOffset)
+    }
+  };
+
+  this.makeNodeWithName = function(newNodeName,newNodeOffset=220){
+    const otherNodeTitles = self.getOtherNodeTitles();
+    if (newNodeName && newNodeName.length > 0 && !otherNodeTitles.includes(newNodeName) && newNodeName != self.editing().title()){
+      self.newNodeAt(self.editing().x() + newNodeOffset, self.editing().y() - 120).title(newNodeName);
     }
   };
 

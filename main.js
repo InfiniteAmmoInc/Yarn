@@ -34,6 +34,8 @@ function createWindow() {
   }
 
   mainWindow.on("close", function(event) {
+    mainWindow.webContents.send('appIsClosing', event);
+
     event.preventDefault();
     if (yarnRunnerWindow) {
       yarnRunnerWindow.destroy();

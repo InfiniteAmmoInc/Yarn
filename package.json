@@ -36,7 +36,6 @@
     "jquery.transit": "^0.9.12",
     "knockout": "^3.4.2",
     "most-common-words-by-language": "^2.17.0",
-    "multi-ini": "^2.0.0",
     "nspell": "^2.1.1",
     "spectrum-colorpicker": "^1.8.0"
   }

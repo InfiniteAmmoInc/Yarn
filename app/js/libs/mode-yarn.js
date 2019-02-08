@@ -7,7 +7,6 @@ var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
 var Behaviour = require("./behaviour").Behaviour;
 
 var YarnHighlightRules = function() {
-
     this.$rules = {
         start: [
             {
@@ -106,7 +105,7 @@ $.contextMenu({
           }
         }
         // suggest word corrections if the selected word is misspelled
-        if (app.spellcheckEnabled) {
+        if (app.config.spellcheckEnabled) {
           var suggestedCorrections = app.getSpellCheckSuggestionItems();
           if (suggestedCorrections !== false) {
             options.items.corrections = {name: "Correct word" ,items: suggestedCorrections} 
@@ -138,8 +137,8 @@ $.contextMenu({
 /// Enable autocompletion via word guessing
 var langTools = ace.require("ace/ext/language_tools");
 app.editor.setOptions({
-enableBasicAutocompletion: app.autocompleteWordsEnabled,
-enableLiveAutocompletion: app.autocompleteWordsEnabled
+enableBasicAutocompletion: app.config.autocompleteWordsEnabled,
+enableLiveAutocompletion: app.config.autocompleteWordsEnabled
 });
 
 var commonWordList = getWordsList('english');
