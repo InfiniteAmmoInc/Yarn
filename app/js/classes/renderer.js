@@ -199,21 +199,18 @@ let yarnRender = function () {
 	self.updateVNHud = () => {
 		let bbcodeHtml = vnTextResult
 		if (vnResult.constructor.name === 'TextResult') {
-			if (vnResult.text.includes('[')) {
-				while (vnTextResult.lastIndexOf('[img]') > vnTextResult.lastIndexOf('[/img]')) {
-					vnTextScrollIdx += 1
-					vnTextResult = vnText.substring(0, vnTextScrollIdx)
-				}
-				while (vnTextResult.lastIndexOf('[') > vnTextResult.lastIndexOf(']')) {
-					vnTextScrollIdx += 1
-					vnTextResult = vnText.substring(0, vnTextScrollIdx)
-				}
-				bbcodeHtml = bbcode.parse(vnTextResult)
+			while (vnTextResult.lastIndexOf('[img]') > vnTextResult.lastIndexOf('[/img]')) {
+				vnTextScrollIdx += 1
+				vnTextResult = vnText.substring(0, vnTextScrollIdx)
+			}
+			while (vnTextResult.lastIndexOf('[') > vnTextResult.lastIndexOf(']')) {
+				vnTextScrollIdx += 1
+				vnTextResult = vnText.substring(0, vnTextScrollIdx)
 			}
 		}
 		let RenderHtml =
 			"<div style ='color: white; width:90%;position:fixed;bottom:10px;padding:10px;font:50px arial,calibri;border-radius: 25px;border: 3px solid #73AD21 ;background:rgba(1,1,1,0.5)'>"
-		RenderHtml += bbcodeHtml + '<br>'
+		RenderHtml += bbcode.parse(vnTextResult) + '<br>'
 		if (vnChoices !== undefined) {
 			RenderHtml += "<p style='padding:20px;font:30px arial,calibri'>" + vnChoices + '</p>'
 		}
