@@ -9,47 +9,11 @@
 		<link rel="stylesheet" href="css/jquery.contextMenu.css">
 
 		<!-- import and set global libraries from node_modules -->
-		<script>
-			const electron = require("electron");
-			const ipc = require("electron").ipcRenderer;
-			const remote = electron.remote;
-			
-			window.ko = require('knockout'); // keep static file too for now, as this is a bit wobbly on higher zoom levels
-			window.$ = window.jQuery = require('jquery');
-			require('jquery-mousewheel')($);
-
-			window.ace = require("ace-builds/src-min-noconflict/ace");
-			window.define = ace.define;
-			require("ace-builds/src-min-noconflict/ext-language_tools");
-			require("ace-builds/src-min-noconflict/ext-searchbox");
-			ace.config.set("basePath", "js/libs"); //needed to import yarn mode
-			
-			require('spectrum-colorpicker');
-
-			require('jquery.transit');
-			const emojiPicker = require('lightweight-emoji-picker/dist/picker.js');
-		</script>
-
-		<!-- Todo: libs - move to importing from node_modules, so we can fetch/update them via npm -->
-		<!-- <script type="text/javascript" src="js/libs/stubbed/knockout-3.3.0.js"></script> -->
-		
-		<script type="text/javascript" src="js/libs/knockout.ace.js"></script>
-
-		<!-- custom lib imports -->
-		<script type="text/javascript" src="js/libs/spellcheck_ace.js"></script>
-		<script type="text/javascript" src="js/libs/theme-yarn.js"></script>
-		<script type="text/javascript" src="js/libs/mode-yarn.js"></script>
-
-		<!-- main app classes -->
-		<script type="text/javascript" src="js/classes/app.js"></script>
-		<script type="text/javascript" src="js/classes/data.js"></script>
-		<script type="text/javascript" src="js/classes/utils.js"></script>
-		<script type="text/javascript" src="js/classes/node.js"></script>
-
+		<script type="text/javascript" src="index.js"></script>
 	</head>
 	<body>
 		<button id="updateButton" onClick="ipcRenderer.send('quitAndInstall')"></button>
-		<script>
+		<!-- <script>
 			const ipcRenderer = require('electron').ipcRenderer;
 
 			// wait for an updateReady message
@@ -59,7 +23,7 @@
 				updateButton.innerHTML = "new version ready!";
 				updateButton.style.display = 'block';
 			})
-		</script>
+		</script> -->
 		<!-- Fancy Background -->
 		<div id="app-bg">&nbsp;</div>
 
@@ -304,21 +268,6 @@
 		<!-- templates container (they get loaded into this) -->
 		<div class="templates">
 		</div>
-
-		<!-- start it all up! -->
-		<script type="text/javascript">
-			var app  
-			ipcRenderer.on('initiate', function(event, version="") {	
-				if (!version || version.length == 0) {
-					version = "";
-				}else{ // if app is not running in embedded state, disable send data to parent app
-					document.getElementById('sendToParentAppMenu').innerHTML = "";
-				}
-				console.log("Version:"+version);
-				app = new App("Yarn", version);
-				app.run();
-			})	
-		</script>
 
 	</body>
 </html>

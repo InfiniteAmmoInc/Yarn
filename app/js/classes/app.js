@@ -1,6 +1,7 @@
 // const remote = electron.remote;
 const contextMenu = require("jquery-contextmenu")
-const { getWordsList } = require('most-common-words-by-language')
+
+// require('./libs/spellcheck_ace'); //borked -todo fix
 
 //todo store color palette
 var App = function(name, version) {
@@ -1705,3 +1706,5 @@ var App = function(name, version) {
     $(".editor-counter .column-index").html(cursor.column);
   };
 };
+
+exports.App = App
