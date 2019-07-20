@@ -463,9 +463,10 @@ var App = function(name, version)
 		
 		// Callback for embedding in other webapps
 		var event = new CustomEvent('yarnReady')
-		event.data = data;
 		event.document = document;
-		window.parent.dispatchEvent(event)
+		event.data = data;
+		event.app = this;
+		window.parent.dispatchEvent(event);
 	}
 
 	this.getNodesConnectedTo = function(toNode)
