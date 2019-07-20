@@ -388,7 +388,7 @@ var data =
 		return output;
 	},
 
-	saveTo: function(path, content)
+	saveTo: function(path, content, callback = null)
 	{
 		if (app.fs != undefined)
 		{
@@ -397,6 +397,10 @@ var data =
 				data.editingPath(path);
 				if(err)
 					alert("Error Saving Data to " + path + ": " + err);
+			
+				if (callback) {
+					callback()
+				}
 			});
 		}
 	},
@@ -476,11 +480,11 @@ var data =
 		data.saveFileDialog($('#save-file'), type, data.getSaveData(type));
 	},
 
-	trySaveCurrent: function()
+	trySaveCurrent: function(callback = null)
 	{
 		if (data.editingPath().length > 0 && data.editingType().length > 0)
 		{
-			data.saveTo(data.editingPath(), data.getSaveData(data.editingType()));
+			data.saveTo(data.editingPath(), data.getSaveData(data.editingType()), callback);
 		}
 	}
 
