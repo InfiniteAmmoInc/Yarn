@@ -460,6 +460,12 @@ var App = function(name, version)
 		// apple command key
 		//$(window).on('keydown', function(e) { if (e.keyCode == 91 || e.keyCode == 93) { self.appleCmdKey = true; } });
 		//$(window).on('keyup', function(e) { if (e.keyCode == 91 || e.keyCode == 93) { self.appleCmdKey = false; } });
+		
+		// Callback for embedding in other webapps
+		var event = new CustomEvent('yarnReady')
+		event.data = data;
+		event.document = document;
+		window.parent.dispatchEvent(event)
 	}
 
 	this.getNodesConnectedTo = function(toNode)
