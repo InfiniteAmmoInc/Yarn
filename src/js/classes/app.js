@@ -3,18 +3,22 @@
 
 // import 'knockout-ace';
 
-import {enable_spellcheck, disable_spellcheck ,suggest_word_for_misspelled } from '../libs/spellcheck_ace.js';
-const emojiPicker = require('lightweight-emoji-picker/dist/picker.js');
+import {
+  enable_spellcheck,
+  disable_spellcheck,
+  suggest_word_for_misspelled
+} from "../libs/spellcheck_ace.js";
+const emojiPicker = require("lightweight-emoji-picker/dist/picker.js");
 
 // import {data} from './data';
 // window.data = data;
-
-import 'spectrum-colorpicker'
-const contextMenu = require("jquery-contextmenu")
+import { FILETYPE } from "./utils";
+import "spectrum-colorpicker";
+const contextMenu = require("jquery-contextmenu");
 // var exports = {}
 // require('./libs/spellcheck_ace'); //borked -todo fix
 
-
+const fs = require("fs");
 //todo store color palette
 export var App = function(name, version) {
   var self = this;
@@ -44,26 +48,27 @@ export var App = function(name, version) {
   this.isElectron = false;
   this.editor = null;
   this.nodeVisitHistory = [];
-  this.mouseX = 0; 
+  this.mouseX = 0;
   this.mouseY = 0;
+  this.fs = fs;
 
   this.UPDATE_ARROWS_THROTTLE_MS = 25;
 
   // this.parser = new ini.Parser();
-  this.configFilePath = null
+  this.configFilePath = null;
   this.config = {
-    nightModeEnabled:false,
-    spellcheckEnabled:true,
-    showCounter:false,
-    autocompleteWordsEnabled:true,
-    autocompleteEnabled:true,
-    overwrites:{
-      makeNewNodesFromLinks:true
+    nightModeEnabled: false,
+    spellcheckEnabled: true,
+    showCounter: false,
+    autocompleteWordsEnabled: true,
+    autocompleteEnabled: true,
+    overwrites: {
+      makeNewNodesFromLinks: true
     },
-    settings:{
-      autoSave:-1
+    settings: {
+      autoSave: -1
     }
-  }
+  };
 
   this.editingPath = ko.observable(null);
 
@@ -181,8 +186,12 @@ export var App = function(name, version) {
 
               var nodes = self.nodes();
               for (var i in nodes) {
-                nodes[i].x(nodes[i].x() + (e.pageX - offset.x) / self.cachedScale);
-                nodes[i].y(nodes[i].y() + (e.pageY - offset.y) / self.cachedScale);
+                nodes[i].x(
+                  nodes[i].x() + (e.pageX - offset.x) / self.cachedScale
+                );
+                nodes[i].y(
+                  nodes[i].y() + (e.pageY - offset.y) / self.cachedScale
+                );
               }
               offset.x = e.pageX;
               offset.y = e.pageY;
@@ -235,9 +244,11 @@ export var App = function(name, version) {
               var holder = $(".nodes-holder").offset();
               var marqueeOverNode =
                 (MarqRect.x2 - holder.left) / scale > nodes[i].x() &&
-                (MarqRect.x1 - holder.left) / scale < nodes[i].x() + nodes[i].tempWidth &&
+                (MarqRect.x1 - holder.left) / scale <
+                  nodes[i].x() + nodes[i].tempWidth &&
                 (MarqRect.y2 - holder.top) / scale > nodes[i].y() &&
-                (MarqRect.y1 - holder.top) / scale < nodes[i].y() + nodes[i].tempHeight;
+                (MarqRect.y1 - holder.top) / scale <
+                  nodes[i].y() + nodes[i].tempHeight;
 
               if (marqueeOverNode) {
                 if (!inMarqueeSelection) {
@@ -270,7 +281,7 @@ export var App = function(name, version) {
         MarqRect = { x1: 0, y1: 0, x2: 0, y2: 0 };
         $("#marquee").css({ x: 0, y: 0, width: 0, height: 0 });
         MarqueeOn = false;
-      });  
+      });
     })();
 
     // search field
@@ -317,11 +328,12 @@ export var App = function(name, version) {
     });
 
     $(document).contextmenu(function(e) {
-      var isAllowedEl = $(e.target).hasClass("nodes") || $(e.target).parents(".nodes").length;
+      var isAllowedEl =
+        $(e.target).hasClass("nodes") || $(e.target).parents(".nodes").length;
 
       if (e.button == 2 && isAllowedEl) {
         var x = (self.transformOrigin[0] * -1) / self.cachedScale,
-        y = (self.transformOrigin[1] * -1) / self.cachedScale;
+          y = (self.transformOrigin[1] * -1) / self.cachedScale;
 
         x += event.pageX / self.cachedScale;
         y += event.pageY / self.cachedScale;
@@ -427,7 +439,7 @@ export var App = function(name, version) {
       // console.log(e.keyCode+"-"+e.key)
       if (e.keyCode === 46 || e.key === "Delete") {
         // Delete selected
-        if (self.editing() === null){
+        if (self.editing() === null) {
           self.deleteSelectedNodes();
         }
       }
@@ -457,7 +469,7 @@ export var App = function(name, version) {
         if (
           self.focusedNodeIdx > -1 &&
           nodes.length > self.focusedNodeIdx &&
-          (self.transformOrigin[0] != 
+          (self.transformOrigin[0] !=
             -nodes[self.focusedNodeIdx].x() +
               $(window).width() / 2 -
               $(nodes[self.focusedNodeIdx].element).width() / 2 ||
@@ -495,50 +507,54 @@ export var App = function(name, version) {
 
     this.guessPopUpHelper = function() {
       if (self.getTagBeforeCursor().match(/\[color=#/)) {
-        self.insertColorCode()
+        self.insertColorCode();
         // return
-      } else if(self.getTagBeforeCursor().match(/\[img\]/)) {
-        console.log("IMAGE")
+      } else if (self.getTagBeforeCursor().match(/\[img\]/)) {
+        console.log("IMAGE");
       }
-
     };
 
     this.insertBBcodeTags = function(tag) {
-      var tagClose = '[/' + tag.replace(/[\"#=]/gi, '') + ']'
-      if (tag === 'cmd') {
-        tag = '<<';
-        tagClose = '>>';
-      } else if (tag === 'opt') {
-        tag = '[[';
-        tagClose = '|]]';
+      var tagClose = "[/" + tag.replace(/[\"#=]/gi, "") + "]";
+      if (tag === "cmd") {
+        tag = "<<";
+        tagClose = ">>";
+      } else if (tag === "opt") {
+        tag = "[[";
+        tagClose = "|]]";
       } else {
-        tag = '[' + tag + ']';
+        tag = "[" + tag + "]";
       }
-      
-      var selectRange = JSON.parse(JSON.stringify(self.editor.selection.getRange()));
-      self.editor.session.insert(selectRange.start, tag)
-      self.editor.session.insert({
-        column: selectRange.end.column + tag.length,
-        row: selectRange.end.row
-      },tagClose)
 
-      if (tag === '[color=#]') {
+      var selectRange = JSON.parse(
+        JSON.stringify(self.editor.selection.getRange())
+      );
+      self.editor.session.insert(selectRange.start, tag);
+      self.editor.session.insert(
+        {
+          column: selectRange.end.column + tag.length,
+          row: selectRange.end.row
+        },
+        tagClose
+      );
+
+      if (tag === "[color=#]") {
         if (self.editor.getSelectedText().length === 0) {
           self.moveEditCursor(-9);
           self.insertColorCode();
-          return
-        } 
+          return;
+        }
         self.editor.selection.setRange({
           start: {
-            row:self.editor.selection.getRange().start.row,
-            column: self.editor.selection.getRange().start.column -1
+            row: self.editor.selection.getRange().start.row,
+            column: self.editor.selection.getRange().start.column - 1
           },
           end: {
-            row:self.editor.selection.getRange().start.row,
-            column: self.editor.selection.getRange().start.column -1
+            row: self.editor.selection.getRange().start.row,
+            column: self.editor.selection.getRange().start.column - 1
           }
         });
-        self.insertColorCode()
+        self.insertColorCode();
       } else if (self.editor.getSelectedText().length === 0) {
         self.moveEditCursor(-tagClose.length);
       } else {
@@ -546,30 +562,39 @@ export var App = function(name, version) {
           start: self.editor.selection.getRange().start,
           end: {
             row: self.editor.selection.getRange().end.row,
-            column: self.editor.selection.getRange().end.column - tagClose.length
+            column:
+              self.editor.selection.getRange().end.column - tagClose.length
           }
         });
-      };
+      }
       self.editor.focus();
     };
 
-    this.insertEmoji = function(){
-      this.emPicker.toggle()
-      $('#emojiPicker-container').css({'top':self.mouseY - 125,'left':self.mouseX - 200})
-    }
+    this.insertEmoji = function() {
+      this.emPicker.toggle();
+      $("#emojiPicker-container").css({
+        top: self.mouseY - 125,
+        left: self.mouseX - 200
+      });
+    };
 
     $(document).on("mousemove", function(e) {
-      self.mouseX = e.pageX; 
+      self.mouseX = e.pageX;
       self.mouseY = e.pageY;
     });
 
     this.insertColorCode = function() {
-      if ($('#colorPicker-container').is(':visible')) {return}
+      if ($("#colorPicker-container").is(":visible")) {
+        return;
+      }
       // http://bgrins.github.io/spectrum/
       $("#colorPicker").spectrum("set", self.editor.getSelectedText());
       $("#colorPicker").spectrum("toggle");
-      $('#colorPicker-container').css({'top':self.mouseY - 50,'left':self.mouseX - 70}); 
-      $('#colorPicker-container').show();
+      $("#colorPicker-container").css({
+        top: self.mouseY - 50,
+        left: self.mouseX - 70
+      });
+      $("#colorPicker-container").show();
       $("#colorPicker").on("dragstop.spectrum", function(e, color) {
         self.applyPickerColorEditor(color);
       });
@@ -578,9 +603,11 @@ export var App = function(name, version) {
     };
 
     this.applyPickerColorEditor = function(color) {
-      var selectRange = JSON.parse(JSON.stringify(self.editor.selection.getRange()));
+      var selectRange = JSON.parse(
+        JSON.stringify(self.editor.selection.getRange())
+      );
       self.editor.selection.setRange(selectRange);
-      var colorCode = color.toHexString().replace("#","");
+      var colorCode = color.toHexString().replace("#", "");
       self.editor.session.replace(selectRange, colorCode);
       self.editor.selection.setRange({
         start: self.editor.getCursorPosition(),
@@ -589,10 +616,10 @@ export var App = function(name, version) {
           column: self.editor.getCursorPosition().column - colorCode.length
         }
       });
-      self.togglePreviewMode(true)
-    }
+      self.togglePreviewMode(true);
+    };
 
-    $(document).on("mouseup",function(e) {
+    $(document).on("mouseup", function(e) {
       if (self.editing() && e.button === 2) {
         self.guessPopUpHelper();
       }
@@ -816,11 +843,11 @@ export var App = function(name, version) {
     self.updateNodeLinks();
   };
 
-  this.searchTextInEditor = function(show=true) {
+  this.searchTextInEditor = function(show = true) {
     if (show) {
-      self.editor.execCommand("find")
-    } else if (self.editor.searchBox){
-      self.editor.searchBox.hide()
+      self.editor.execCommand("find");
+    } else if (self.editor.searchBox) {
+      self.editor.searchBox.hide();
     }
   };
 
@@ -829,10 +856,10 @@ export var App = function(name, version) {
       url: "https://api.forismatic.com/api/1.0/?",
       dataType: "jsonp",
       data: "method=getQuote&format=jsonp&lang=en&jsonp=?",
-      success: function( response ) {
-        alert(response.quoteText + "\n\n-" + response.quoteAuthor)
+      success: function(response) {
+        alert(response.quoteText + "\n\n-" + response.quoteAuthor);
       }
-    }); 
+    });
   };
 
   this.editNode = function(node) {
@@ -856,17 +883,19 @@ export var App = function(name, version) {
       // console.log(self.editor)
       var autoCompleteButton = document.getElementById("toglAutocomplete");
       autoCompleteButton.checked = self.config.autocompleteEnabled;
-      var autoCompleteWordsButton = document.getElementById("toglAutocompleteWords");
+      var autoCompleteWordsButton = document.getElementById(
+        "toglAutocompleteWords"
+      );
       autoCompleteWordsButton.checked = self.config.autocompleteWordsEnabled;
       var spellCheckButton = document.getElementById("toglSpellCheck");
       spellCheckButton.checked = self.config.spellcheckEnabled;
       var nightModeButton = document.getElementById("toglNightMode");
-      nightModeButton.checked = self.config.nightModeEnabled;  
+      nightModeButton.checked = self.config.nightModeEnabled;
       self.toggleNightMode();
       var showCounterButton = document.getElementById("toglShowCounter");
-      showCounterButton.checked = self.config.showCounter;  
-      self.toggleShowCounter()
-      
+      showCounterButton.checked = self.config.showCounter;
+      self.toggleShowCounter();
+
       /// set color picker
       $("#colorPicker").spectrum({
         flat: true,
@@ -875,20 +904,29 @@ export var App = function(name, version) {
         showPalette: true,
         preferredFormat: "hex",
         palette: [
-          ["#000","#444","#666","#999","#ccc","#eee","#f3f3f3","#fff"],
-          ["#f00","#f90","#ff0","#0f0","#0ff","#00f","#90f","#f0f"],
-          ["#f4cccc","#fce5cd","#fff2cc","#d9ead3","#d0e0e3","#cfe2f3","#d9d2e9","#ead1dc"],
+          ["#000", "#444", "#666", "#999", "#ccc", "#eee", "#f3f3f3", "#fff"],
+          ["#f00", "#f90", "#ff0", "#0f0", "#0ff", "#00f", "#90f", "#f0f"],
+          [
+            "#f4cccc",
+            "#fce5cd",
+            "#fff2cc",
+            "#d9ead3",
+            "#d0e0e3",
+            "#cfe2f3",
+            "#d9d2e9",
+            "#ead1dc"
+          ]
         ],
-        change: function (color) {
-          if ($('#colorPicker-container').is(':visible')) {
-            app.applyPickerColorEditor(color)
+        change: function(color) {
+          if ($("#colorPicker-container").is(":visible")) {
+            app.applyPickerColorEditor(color);
             $("#colorPicker").spectrum("hide");
-            $('#colorPicker-container').hide();
+            $("#colorPicker-container").hide();
             app.moveEditCursor(color.toHexString().length);
             app.togglePreviewMode(false);
-          };
+          }
         },
-        clickoutFiresChange: true,
+        clickoutFiresChange: true
       });
 
       /// Enable autocompletion for node links (borked atm)
@@ -902,10 +940,13 @@ export var App = function(name, version) {
       }
 
       /// init emoji picker
-      this.emPicker = new EmojiPicker(document.getElementById("emojiPickerDom"), (emoji)=> {
-        self.insertTextAtCursor(emoji.char)
-        this.emPicker.toggle()
-      });
+      this.emPicker = new EmojiPicker(
+        document.getElementById("emojiPickerDom"),
+        emoji => {
+          self.insertTextAtCursor(emoji.char);
+          this.emPicker.toggle();
+        }
+      );
 
       self.toggleSpellCheck();
       self.updateEditorStats();
@@ -913,38 +954,46 @@ export var App = function(name, version) {
   };
 
   this.chooseRelativePathImage = function(imagePath) {
-    self.insertTextAtCursor(imagePath)
+    self.insertTextAtCursor(imagePath);
   };
 
   this.openNodeByTitle = function(nodeTitle) {
     self.makeNodeWithName(nodeTitle);
-    app.nodes().forEach((node) => {
-      if (node.title() === nodeTitle.trim()){
-        self.editNode(node)
+    app.nodes().forEach(node => {
+      if (node.title() === nodeTitle.trim()) {
+        self.editNode(node);
       }
-    })
+    });
   };
 
   this.openLastEditedNode = function() {
     if (self.nodeVisitHistory.length < 2) {
       self.saveNode();
-      return
+      return;
     } else {
       self.nodeVisitHistory.pop();
       self.openNodeByTitle(self.nodeVisitHistory.pop());
     }
-  }
+  };
 
-  this.getSpellCheckSuggestionItems = function () {
-    var wordSuggestions = suggest_word_for_misspelled(self.editor.getSelectedText());
+  this.getSpellCheckSuggestionItems = function() {
+    var wordSuggestions = suggest_word_for_misspelled(
+      self.editor.getSelectedText()
+    );
     if (wordSuggestions) {
-      var suggestionObject = {}
+      var suggestionObject = {};
       wordSuggestions.forEach(suggestion => {
-        suggestionObject[suggestion] = { name: suggestion, icon: "edit",callback: key => {self.insertTextAtCursor(key)}}
-      })
-      return suggestionObject
+        suggestionObject[suggestion] = {
+          name: suggestion,
+          icon: "edit",
+          callback: key => {
+            self.insertTextAtCursor(key);
+          }
+        };
+      });
+      return suggestionObject;
     } else {
-      return false
+      return false;
     }
   };
 
@@ -963,10 +1012,10 @@ export var App = function(name, version) {
     self.config.nightModeEnabled = nightModeButton.checked;
     var cssOverwrite = {};
     if (self.config.nightModeEnabled) {
-      cssOverwrite = {filter: 'invert(100%)'}
+      cssOverwrite = { filter: "invert(100%)" };
     } else {
-      cssOverwrite = {filter: 'invert(0%)'}
-    };
+      cssOverwrite = { filter: "invert(0%)" };
+    }
     $("#app").css(cssOverwrite);
     $("#app-bg").css(cssOverwrite);
     $(".tooltip").css(cssOverwrite);
@@ -978,10 +1027,14 @@ export var App = function(name, version) {
     var showCounterButton = document.getElementById("toglShowCounter");
     self.config.showCounter = showCounterButton.checked;
     if (self.config.showCounter) {
-      $(".node-editor .form .bbcode-toolbar .editor-counter").css({display: "initial"});
+      $(".node-editor .form .bbcode-toolbar .editor-counter").css({
+        display: "initial"
+      });
     } else {
-      $(".node-editor .form .bbcode-toolbar .editor-counter").css({display: "none"});
-    };
+      $(".node-editor .form .bbcode-toolbar .editor-counter").css({
+        display: "none"
+      });
+    }
   };
 
   this.toggleWordCompletion = function() {
@@ -991,18 +1044,22 @@ export var App = function(name, version) {
       enableBasicAutocompletion: self.config.autocompleteWordsEnabled,
       enableLiveAutocompletion: self.config.autocompleteWordsEnabled
     });
-  }
+  };
 
   this.togglePreviewMode = function(previewModeOverwrite) {
     var editor = $(".editor")[0];
-    var editorPreviewer = document.getElementById("editor-preview")
-    if (previewModeOverwrite) { //preview mode
+    var editorPreviewer = document.getElementById("editor-preview");
+    if (previewModeOverwrite) {
+      //preview mode
       editor.style.visibility = "hidden";
       editorPreviewer.style.visibility = "visible";
-      console.log(self.editing().body())
-      editorPreviewer.innerHTML = self.editing().textToHtml(self.editing().body(), true);
+      console.log(self.editing().body());
+      editorPreviewer.innerHTML = self
+        .editing()
+        .textToHtml(self.editing().body(), true);
       editorPreviewer.scrollTop = self.editor.renderer.scrollTop;
-    } else { //edit mode
+    } else {
+      //edit mode
       self.editor.session.setScrollTop(editorPreviewer.scrollTop);
       editorPreviewer.innerHTML = "";
       editorPreviewer.style.visibility = "hidden";
@@ -1016,9 +1073,7 @@ export var App = function(name, version) {
   };
 
   this.appendText = function(textToAppend) {
-    self.editing().body(self.editing().body() +
-      textToAppend
-    );
+    self.editing().body(self.editing().body() + textToAppend);
     // scroll to end of line
     var row = self.editor.session.getLength() - 1;
     var column = self.editor.session.getLine(row).length;
@@ -1033,7 +1088,7 @@ export var App = function(name, version) {
 
   this.insertTextAtCursor = function(textToInsert) {
     self.editor.session.replace(self.editor.selection.getRange(), "");
-    self.editor.session.insert(self.editor.getCursorPosition(), textToInsert)
+    self.editor.session.insert(self.editor.getCursorPosition(), textToInsert);
     self.editor.focus();
   };
 
@@ -1043,25 +1098,51 @@ export var App = function(name, version) {
     var cursorPosition = selectionRange.end.column;
     var curLineText = self.editor.session.getLine(currline);
 
-    var textBeforeCursor = curLineText.substring(0,cursorPosition);
-    if (!textBeforeCursor) {return}
-    var tagBeforeCursor = (textBeforeCursor.lastIndexOf('[') !== -1) ? textBeforeCursor.substring(textBeforeCursor.lastIndexOf('['), textBeforeCursor.length) : ""
-    
+    var textBeforeCursor = curLineText.substring(0, cursorPosition);
+    if (!textBeforeCursor) {
+      return;
+    }
+    var tagBeforeCursor =
+      textBeforeCursor.lastIndexOf("[") !== -1
+        ? textBeforeCursor.substring(
+            textBeforeCursor.lastIndexOf("["),
+            textBeforeCursor.length
+          )
+        : "";
+
     // if (tagBeforeCursor.includes(']')) { tagBeforeCursor = "" }
 
-    if (textBeforeCursor.substring(textBeforeCursor.length-2, textBeforeCursor.length) === "[[") { tagBeforeCursor = "[[" }
-    if (textBeforeCursor.substring(textBeforeCursor.length-2, textBeforeCursor.length) === "<<") { tagBeforeCursor = "<<" }
+    if (
+      textBeforeCursor.substring(
+        textBeforeCursor.length - 2,
+        textBeforeCursor.length
+      ) === "[["
+    ) {
+      tagBeforeCursor = "[[";
+    }
+    if (
+      textBeforeCursor.substring(
+        textBeforeCursor.length - 2,
+        textBeforeCursor.length
+      ) === "<<"
+    ) {
+      tagBeforeCursor = "<<";
+    }
 
-    return tagBeforeCursor
-  }
+    return tagBeforeCursor;
+  };
 
   // close tag autocompletion
   $(document).on("keyup", function(e) {
     var autoCompleteButton = document.getElementById("toglAutocomplete");
     if (self.editing() && autoCompleteButton.checked) {
       var key = e.keyCode || e.charCode || e.which;
-      if (key === 37 || key === 38 || key === 39 || key === 40) { return } // Dont trigger if moved cursor using arrow keys
-      if (key === 8 || key === 46 || key === 17 || key === 90) { return } // Dont trigger if backspace or ctrl+z pressed
+      if (key === 37 || key === 38 || key === 39 || key === 40) {
+        return;
+      } // Dont trigger if moved cursor using arrow keys
+      if (key === 8 || key === 46 || key === 17 || key === 90) {
+        return;
+      } // Dont trigger if backspace or ctrl+z pressed
 
       switch (self.getTagBeforeCursor()) {
         case "[[":
@@ -1075,26 +1156,26 @@ export var App = function(name, version) {
         case "[colo":
           self.insertTextAtCursor("r=#][/color] ");
           self.moveEditCursor(-10);
-          self.insertColorCode()
+          self.insertColorCode();
           break;
         case "[b":
-          self.insertTextAtCursor("][/b] ")
+          self.insertTextAtCursor("][/b] ");
           self.moveEditCursor(-5);
           break;
         case "[i]":
-          self.insertTextAtCursor("[/i] ")
+          self.insertTextAtCursor("[/i] ");
           self.moveEditCursor(-5);
           break;
         case "[img":
-          self.insertTextAtCursor("][/img] ")
+          self.insertTextAtCursor("][/img] ");
           self.moveEditCursor(-7);
           break;
         case "[u":
-          self.insertTextAtCursor("][/u] ")
+          self.insertTextAtCursor("][/u] ");
           self.moveEditCursor(-5);
           break;
       }
-    };
+    }
   });
 
   this.testRunFrom = function(startTestNode) {
@@ -1107,13 +1188,20 @@ export var App = function(name, version) {
   };
 
   this.openNodeListMenu = function(action) {
-    var helperLinkSearch = document.getElementById(action + "HelperMenuFilter").value;
+    var helperLinkSearch = document.getElementById(action + "HelperMenuFilter")
+      .value;
     var rootMenu = document.getElementById(action + "HelperMenu");
     for (let i = rootMenu.childNodes.length - 1; i > 1; i--) {
       rootMenu.removeChild(rootMenu.childNodes[i]);
     }
     app.nodes().forEach((node, i) => {
-      if (node.title().toLowerCase().indexOf(helperLinkSearch) >= 0 || helperLinkSearch.length == 0) {
+      if (
+        node
+          .title()
+          .toLowerCase()
+          .indexOf(helperLinkSearch) >= 0 ||
+        helperLinkSearch.length == 0
+      ) {
         var p = document.createElement("span");
         p.innerHTML = node.title();
         p.setAttribute("class", "item");
@@ -1122,12 +1210,28 @@ export var App = function(name, version) {
 
         if (action == "link") {
           if (node.title() !== self.editing().title()) {
-            p.setAttribute("onclick", "app.insertTextAtCursor(' [[Answer:" + node.title() + "|" + node.title() + "]]')");
+            p.setAttribute(
+              "onclick",
+              "app.insertTextAtCursor(' [[Answer:" +
+                node.title() +
+                "|" +
+                node.title() +
+                "]]')"
+            );
             rootMenu.appendChild(p);
           }
         } else if (action == "run") {
-          if (node.title().toLowerCase().indexOf(helperLinkSearch) >= 0 || helperLinkSearch.length == 0) {
-            p.setAttribute("onclick", "app.testRunFrom('" + node.title() + "')");
+          if (
+            node
+              .title()
+              .toLowerCase()
+              .indexOf(helperLinkSearch) >= 0 ||
+            helperLinkSearch.length == 0
+          ) {
+            p.setAttribute(
+              "onclick",
+              "app.testRunFrom('" + node.title() + "')"
+            );
             rootMenu.appendChild(p);
           }
         }
@@ -1137,7 +1241,7 @@ export var App = function(name, version) {
 
   this.saveNode = function() {
     if (self.editing() != null) {
-      self.makeNewNodesFromLinks();//
+      self.makeNewNodesFromLinks(); //
       self.updateNodeLinks();
       self.editing().title(self.trim(self.editing().title()));
       $(".node-editor").transition({ opacity: 0 }, 250);
@@ -1148,7 +1252,9 @@ export var App = function(name, version) {
       var autoCompleteButton = document.getElementById("toglAutocomplete");
       self.config.autocompleteEnabled = autoCompleteButton.checked;
 
-      var autoCompleteWordsButton = document.getElementById("toglAutocompleteWords");
+      var autoCompleteWordsButton = document.getElementById(
+        "toglAutocompleteWords"
+      );
       self.config.autocompleteWordsEnabled = autoCompleteWordsButton.checked;
 
       setTimeout(self.updateSearch, 100);
@@ -1208,38 +1314,53 @@ export var App = function(name, version) {
   this.updateNodeLinks = function() {
     for (var i in self.nodes()) self.nodes()[i].updateLinks();
   };
-  
-  this.makeNewNodesFromLinks = function(){
-    if (this.config && this.config.overwrites && !this.config.overwrites.makeNewNodesFromLinks) {
-      console.info("Autocreation of new nodes from links is disabled in:\n" + this.configFilePath)
-      return
-    };
+
+  this.makeNewNodesFromLinks = function() {
+    if (
+      this.config &&
+      this.config.overwrites &&
+      !this.config.overwrites.makeNewNodesFromLinks
+    ) {
+      console.info(
+        "Autocreation of new nodes from links is disabled in:\n" +
+          this.configFilePath
+      );
+      return;
+    }
     var nodeLinks = self.editing().getLinksInNode();
-    if (nodeLinks == undefined){return}
-    for (var i = 0; i < nodeLinks.length; i ++)
-    {
+    if (nodeLinks == undefined) {
+      return;
+    }
+    for (var i = 0; i < nodeLinks.length; i++) {
       // Create new Nodes from Node Links
-      const newNodeName = nodeLinks[i].trim()
-      var newNodeOffset = 220 * (i+1);
-      self.makeNodeWithName(newNodeName,newNodeOffset)
+      const newNodeName = nodeLinks[i].trim();
+      var newNodeOffset = 220 * (i + 1);
+      self.makeNodeWithName(newNodeName, newNodeOffset);
     }
   };
 
-  this.makeNodeWithName = function(newNodeName,newNodeOffset=220){
+  this.makeNodeWithName = function(newNodeName, newNodeOffset = 220) {
     const otherNodeTitles = self.getOtherNodeTitles();
-    if (newNodeName && newNodeName.length > 0 && !otherNodeTitles.includes(newNodeName) && newNodeName != self.editing().title()){
-      self.newNodeAt(self.editing().x() + newNodeOffset, self.editing().y() - 120).title(newNodeName);
+    if (
+      newNodeName &&
+      newNodeName.length > 0 &&
+      !otherNodeTitles.includes(newNodeName) &&
+      newNodeName != self.editing().title()
+    ) {
+      self
+        .newNodeAt(self.editing().x() + newNodeOffset, self.editing().y() - 120)
+        .title(newNodeName);
     }
   };
 
   this.getOtherNodeTitles = function() {
     var result = [];
-    app.nodes().forEach((node) => {
+    app.nodes().forEach(node => {
       if (node.title() !== self.editing().title()) {
         result.push(node.title().trim());
-      }  
-    })
-    return result
+      }
+    });
+    return result;
   };
 
   this.updateArrows = function() {
@@ -1265,7 +1386,7 @@ export var App = function(name, version) {
       var node = nodes[index];
       if (node.linkedTo().length > 0) {
         for (var link in node.linkedTo()) {
-          link = link.trim()
+          link = link.trim();
           var linked = node.linkedTo()[link];
 
           // get origins
@@ -1481,7 +1602,10 @@ export var App = function(name, version) {
         }
 
         // save history (in chunks)
-        if (self.editingHistory.length == 0 || text != self.editingHistory[self.editingHistory.length - 1].text) {
+        if (
+          self.editingHistory.length == 0 ||
+          text != self.editingHistory[self.editingHistory.length - 1].text
+        ) {
           if (self.editingSaveHistoryTimeout == null)
             self.editingHistory.push({
               text: text,
@@ -1524,11 +1648,21 @@ export var App = function(name, version) {
 
       for (var i = 0, textNode; (textNode = textNodes[i++]); ) {
         endCharCount = charCount + textNode.length;
-        if (!foundStart && startOffset >= charCount && (startOffset <= endCharCount || (startOffset == endCharCount && i < textNodes.length))) {
+        if (
+          !foundStart &&
+          startOffset >= charCount &&
+          (startOffset <= endCharCount ||
+            (startOffset == endCharCount && i < textNodes.length))
+        ) {
           range.setStart(textNode, startOffset - charCount);
           foundStart = true;
         }
-        if (!foundEnd && endOffset >= charCount && (endOffset <= endCharCount || (endOffset == endCharCount && i < textNodes.length))) {
+        if (
+          !foundEnd &&
+          endOffset >= charCount &&
+          (endOffset <= endCharCount ||
+            (endOffset == endCharCount && i < textNodes.length))
+        ) {
           range.setEnd(textNode, endOffset - charCount);
           foundEnd = true;
         }
@@ -1552,8 +1686,16 @@ export var App = function(name, version) {
 
     $(".nodes-holder").transition(
       {
-        transform: "matrix(" + self.cachedScale + ",0,0," + self.cachedScale + "," +
-          self.transformOrigin[0] + "," + self.transformOrigin[1] + ")"
+        transform:
+          "matrix(" +
+          self.cachedScale +
+          ",0,0," +
+          self.cachedScale +
+          "," +
+          self.transformOrigin[0] +
+          "," +
+          self.transformOrigin[1] +
+          ")"
       },
       speed || 0,
       "easeInQuad",
@@ -1599,9 +1741,12 @@ export var App = function(name, version) {
   this.arrangeY = function() {
     var SPACING = 250;
 
-    var selectedNodes = self.nodes().filter(function(el) {
+    var selectedNodes = self
+        .nodes()
+        .filter(function(el) {
           return el.selected;
-        }).sort(function(a, b) {
+        })
+        .sort(function(a, b) {
           if (a.y() > b.y()) return 1;
           if (a.y() < b.y()) return -1;
           return 0;
