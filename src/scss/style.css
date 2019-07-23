@@ -90,7 +90,7 @@ a:hover { color: #000;}
 	border-radius: 4px;
 	width: 32px;
 	height: 32px;
-	background: #eee url('../images/icons.png') no-repeat;
+	background: #eee url('../public/images/icons.png') no-repeat;
 	background-blend-mode: difference;
 	overflow: hidden;
 	opacity: 0.5;
@@ -149,7 +149,7 @@ a:hover { color: #000;}
 {
 	transition: max-height 0.5s;
 	max-height: 0px;
-	overflow: hidden;
+	overflow: auto;
 	float: left;
 }
 
@@ -172,6 +172,15 @@ a:hover { color: #000;}
 {
     background: #ddd;
     color: #555;
+}
+
+.app-menu .dropdown .search-field
+{
+	box-sizing: border-box;
+	float: left;
+	display: block;
+	width: 100%;
+	padding: 10px;
 }
 
 .app-menu .menu:hover .dropdown
@@ -231,7 +240,7 @@ a:hover { color: #000;}
 	width: 32px;
 	height: 32px;
 	margin: 8px;
-	background: #fff url("../images/zooms.png") no-repeat;
+	background: #fff url("../public/images/zooms.png") no-repeat;
 	float: left;
 	display: inline;
 	opacity: 0.25;
@@ -267,7 +276,7 @@ a:hover { color: #000;}
 	width: 32px;
 	height: 32px;
 	margin: 8px;
-	background: #fff url("../images/sort.png") no-repeat;
+	background: #fff url("../public/images/sort.png") no-repeat;
 	float: left;
 	display: inline;
 	opacity: 0.25;
@@ -458,7 +467,7 @@ a:hover { color: #000;}
 	top: 5%;
 	width: 90%;
 	height: 90%;
-	padding: 20px 20px 30px 20px;
+	padding: 20px 20px 40px 20px;
 	background: #fff;
 	border-radius: 4px;
 	box-shadow: 0px 1px 1px #000;
@@ -485,13 +494,70 @@ a:hover { color: #000;}
 	font-family: "Lucida Console", Monaco, monospace;
 }
 
-
-.node-editor .form .editor-container
+.node-editor .form .bbcode-toolbar
 {
-	margin-top: 20px;
-	width: 100%;
-	height: calc(100% - 120px);
 	float: left;
+	width: 100%;
+	font-size: 0.8em;
+    overflow: auto;
+}
+
+.node-editor .form .bbcode-toolbar .bbcode-button
+{
+	cursor: pointer;
+	border: none;
+	text-align:center;
+	border-radius: 12px;
+	background-color: white;
+	color: black;
+	border: 2px solid #e7e7e7;
+	-webkit-transition-duration: 0.4s; /* Safari */
+	transition-duration: 0.4s;
+	text-decoration: none;
+	display: inline-block;
+}
+
+.node-editor .form .bbcode-toolbar .bbcode-button:hover {background-color: #e7e7e7;}
+
+.node-editor .form .bbcode-toolbar .bbcode-button:active 
+{
+	color: purple;
+	background-color: rgb(255, 255, 172);
+}
+
+/* SPECIAL CHECKBOX START */
+.node-editor .form .bbcode-toolbar .styled-checkbox input
+{
+	-webkit-transition-duration: 0.4s; /* Safari */
+	transition-duration: 0.4s;
+	outline:none;
+	opacity:0;
+	display: none;
+}
+.node-editor .form .bbcode-toolbar .styled-checkbox label {
+	padding-right: 4px;
+	padding-left: 4px;
+	color: grey;
+	border-radius: 12px;
+	border: 2px solid rgba(0, 0, 0, 0);
+	box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.5);
+
+}
+.node-editor .form .bbcode-toolbar .styled-checkbox input:checked + label {
+	padding-right: 5px;
+	padding-left: 5px;
+	color: black;
+	background-color: rgb(255, 248, 143);
+	box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.2);
+	border: 1px solid rgba(0, 0, 0, 0);
+}
+/* SPECIAL CHECKBOX END */
+
+.node-editor .form .bbcode-toolbar .editor-counter
+{
+	right: 20px;
+	width: 100%;
+	color: #666;
 }
 
 .node-editor .form .editor
@@ -501,17 +567,38 @@ a:hover { color: #000;}
 	min-height: 100%;
 	padding: 0;
 	margin: 0;
+	line-height: 1.5em;
 	font-size: 0.9em;
 	color: #666;
 	font-family: "Lucida Console", Monaco, monospace;
 	cursor: text;
 }
 
-.node-editor .form .editor-footer
+.node-editor .form .editor-container
 {
+	margin-top: 2px;
 	width: 100%;
-	text-align:center;
-	font-size: 0.8em;
+	height: calc(100% - 120px);
+	float: left;
+	overflow: hidden;
+	position: relative;
+}
+
+.node-editor .form .editor-container .editor-preview
+{
+	visibility: hidden;
+	max-height: 100%;
+	width: 100%;
+	overflow-y: scroll;
+	white-space: pre;
+	box-sizing: border-box;
+	font-size: 0.9em;
+	line-height: 1.5em;
+	color: #666;
+	font-family: "Lucida Console", Monaco, monospace;
+	cursor: pointer;
+	height: 100%;
+	position: absolute;
 }
 
 /* --- EDITOR HIGHLIGHTING --- */
@@ -601,4 +688,12 @@ a:hover { color: #000;}
 		float: right;
 		margin-top: 20px;
 	}
+}
+
+.tooltip
+{
+  opacity:0.7;
+  position: absolute;
+  text-align: center;
+  z-index: 99 !important;
 }

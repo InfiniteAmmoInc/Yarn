@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Yarn</title>
+	<link rel="stylesheet" href="scss/index.scss">
+	
+	<script type="text/javascript" src="index.js"></script>
+		
+	</head>
+	<body>
+		<!-- <button id="updateButton" onClick="ipcRenderer.send('quitAndInstall')"></button> -->
+		<!-- <script>
+			const ipcRenderer = require('electron').ipcRenderer;
+
+			// wait for an updateReady message
+			var updateButton = document.getElementById('updateButton');
+			updateButton.style.display = 'none';
+			ipcRenderer.on('updateReady', function(event, text) {
+				updateButton.innerHTML = "new version ready!";
+				updateButton.style.display = 'block';
+			})
+		</script> -->
+		<!-- Fancy Background -->
+		<div id="app-bg">&nbsp;</div>
+
+		<!-- Entry Point / Container -->
+		<div id="app">
+
+			<!-- search form -->
+			<div class="app-search">
+				<input type="text" class="search-field"/>
+				
+				<div class="search-title search-item">
+					<input type="checkbox" checked="checked" id="search-title" />
+					<label for="search-title">Title</label>
+				</div>
+				<div class="search-body search-item">
+					<input type="checkbox" id="search-body" />
+					<label for="search-body">Body</label>
+				</div>
+				<div class="search-tags search-item">
+					<input type="checkbox" id="search-tags" />
+					<label for="search-tags">Tags</label>
+				</div>
+			</div>
+
+			<!-- zoom controls -->
+			
+			<!-- <div class="app-zoom">
+				<span data-bind="click: function() { app.zoom(4); }"></span>
+				<span data-bind="click: function() { app.zoom(3); }"></span>
+				<span data-bind="click: function() { app.zoom(2); }"></span>
+				<span data-bind="click: function() { app.zoom(1); }"></span>
+			</div> -->
+			
+
+			<div class="app-sort">
+				<span data-bind="click: app.arrangeX"></span>
+				<span data-bind="click: app.arrangeY"></span>
+				<!-- <span data-bind="click: app.arrangeSpiral"></span>
+				<span data-bind="click: app.sortAlphabetical"></span> -->
+			</div>
+
+			<!-- navigation / menu -->
+			<div class="app-menu">
+				<div class="menu">
+					<span class="title" data-bind="click:app.newNode">+ Node</span>
+				</div>
+
+				<div class="menu">
+					<span class="title">File</span>
+					<div class="dropdown">
+						<span class="item" data-bind="click: data.tryOpenFile">Open...</span>
+						<!--<span class="item" data-bind="click: data.tryOpenFolder">Open Folder...</span>-->
+						<span class="item" data-bind="click: data.tryAppend">Append...</span>
+						<!-- ko if:data.editingPath() != null -->
+						<span class="item" data-bind="click: data.trySaveCurrent">Save</span>
+						<!-- /ko -->
+						<span class="item" data-bind="click: function() { data.trySave(FILETYPE.JSON);}">Save As Json...</span>
+						<span class="item" data-bind="click: function() { data.trySave(FILETYPE.YARNTEXT); }">Save As Yarn...</span>
+						<span class="item" data-bind="click: function() { data.trySave(FILETYPE.TWEE); }">Save As Twee...</span>
+						<span class="item" data-bind="click: function() { data.trySave(FILETYPE.TWEE2); }">Save As Twee2...</span>
+						<span class="item" data-bind="click: function() { data.trySave(FILETYPE.XML); }">Save As Xml...</span>
+						<span class="item" data-bind="click: app.quit">Close</span>
+					</div>
+				</div>
+				
+				<div class="menu">
+					<span class="title" onmouseover="app.openNodeListMenu('run')">Run</span>
+					<div class="dropdown" id="runHelperMenu">
+						<input class="search-field" placeholder="search" type="text" id="runHelperMenuFilter" oninput="app.openNodeListMenu('run')"></input>
+					</div>
+				</div>
+
+				<div class="menu" id="sendToParentAppMenu">
+					<span class="title" data-bind="click:data.sendToExternalApp">APPLY</span>
+				</div>
+
+			</div>
+
+			<!-- arrow bg canvas for linked nodes -->
+			<canvas class="arrows">
+
+			</canvas>
+			<!-- foreach loop  of the nodes -->
+			<div class="nodes">
+				<div class="nodes-holder" data-bind="foreach: { data: app.nodes, as: 'node' }">
+					<div class="node" data-bind="nodeBind: true, css: { inactive: !node.active()}" >
+						<div class="title" data-bind="text: node.title, style: {background:
+						node.titleColorValues[node.colorID()]}"></div>
+						<div class="body" data-bind="html: node.clippedBody"></div>
+						<div class="tags" data-bind="html: node.clippedTags"></div>
+						<div class="icon colorDown" data-bind="click: node.cycleColorDown"></div>
+						<div class="icon colorUp" data-bind="click: node.cycleColorUp"></div>
+						<!--<div class="icon edit" data-bind="click: function() { app.editNode(node); }"></div>-->
+						<div class="icon delete" data-bind="click: node.tryRemove"></div>
+						<!--<div class="resize" data-bind="click:node.toggleExpand"></div>-->
+					</div>
+				</div>
+			</div>
+
+			<!-- ko if:app.editing() != null -->
+			<div class="node-editor" data-bind="mousedown:app.saveNode">				
+			
+				<div class="form" data-bind="preventBubble: 'click', preventBubble: 'mousedown'">
+					<input type="text" class="title" data-bind="value: app.editing().title;" onfocus="app.togglePreviewMode(true)">
+					
+					<!-- <div float="left"> </div> -->
+					
+					<!-- <div class="app-menu">
+						<div class="menu" style="float:left">
+							<span class="title" onmouseover="app.openNodeListMenu('link')">Add Link</span>
+							<div id="linkHelperMenu" class="dropdown">
+								<input class="search-field" style="text-align:center" placeholder="search" type="text" id="linkHelperMenuFilter" oninput="app.openNodeListMenu('link')"></input>
+							</div>
+						</div>
+					</div> -->
+
+					<input type="text" data-bind="value: app.editing().tags;" onfocus="app.togglePreviewMode(true)">
+
+					<div class="bbcode-toolbar">
+						<button class="bbcode-button" onclick="app.openLastEditedNode()" title="Go Back to last edited" onfocus="app.togglePreviewMode(false)">&#8617</button>
+						&nbsp;&nbsp;&nbsp;
+						<button class="bbcode-button" onclick="app.insertBBcodeTags('b')" title="Bold"><b>B</b></button>
+						<button class="bbcode-button" onclick="app.insertBBcodeTags('u')" title="Underlined"><u>U</u></button>
+						<button class="bbcode-button" onclick="app.insertBBcodeTags('i')" title="Italic"><i>I</i></button>
+						<button class="bbcode-button" style="color:green" onclick="app.insertBBcodeTags('color=#')"><text color="pink" title="Color">🌈</text></button>
+						<button class="bbcode-button" style="color:#19a4a8" onclick="app.insertBBcodeTags('img')" title="Image">🦄</button>
+						<button class="bbcode-button" style="color:purple" onclick="app.insertBBcodeTags('cmd')" title="Command">🎮</button>
+						<button class="bbcode-button" style="color:#19a4a8" onclick="app.insertBBcodeTags('opt')" title="Choice/Link">❔</button>
+						<button class="bbcode-button" style="color:#19a4a8" onclick="app.insertEmoji()" title="Emoji">😉</button>
+
+						<div class="app-menu" style="position: absolute;">
+							<!-- todo: move to toolbar -->
+							<div class="menu">
+								<span class="title" onmouseover="app.openNodeListMenu('link')">Add Link</span>
+								<div id="linkHelperMenu" class="dropdown">
+									<input class="search-field" style="text-align:center" placeholder="search" type="text" id="linkHelperMenuFilter" oninput="app.openNodeListMenu('link')"></input>
+								</div>
+							</div>
+						</div>
+
+						&nbsp;&nbsp;
+						<span class="styled-checkbox">
+								<input type="checkbox" id="toglShowCounter" onclick="app.toggleShowCounter()"></input>
+								<label for="toglShowCounter" title="Show line counter" style="color:#292929">&#9779</label>
+						</span>
+						<span class="editor-counter">
+							&nbsp;&nbsp;&nbsp;&nbsp;
+							Length: <span class="character-count">0</span>
+							&nbsp;
+							Lines: <span class="line-count">0</span>
+							&nbsp;&nbsp;
+							<span class="find-text" onclick="app.showRandomQuote()">&#9749</span>
+							&nbsp;&nbsp;
+							Line: <span class="row-index">0</span>
+							&nbsp;
+							Col: <span class="column-index">0</span>
+						</span>
+						&nbsp;&nbsp;&nbsp;
+						<span class="styled-checkbox">
+							<input type="checkbox" id="toglAutocomplete"></input>
+							<label for="toglAutocomplete" title="Auto Close tags" style="color:#292929">🔮</label>
+						</span>
+						&nbsp;
+						<span class="styled-checkbox">
+							<input type="checkbox" id="toglAutocompleteWords" onclick="app.toggleWordCompletion()"></input>
+							<label for="toglAutocompleteWords" title="auto-completion">💬</label>
+						</span>
+						&nbsp;
+						<span class="styled-checkbox">
+							<input class="styled-checkbox" type="checkbox" id="toglSpellCheck" onclick="app.toggleSpellCheck()"></input>
+							<label for="toglSpellCheck" title="Spellcheck">&#9745abc</label>
+						</span>
+						&nbsp;
+						<button class="bbcode-button" onclick="app.searchTextInEditor()" title="Search (Ctrl+f)">🔎</button>
+						&nbsp;&nbsp;&nbsp;&nbsp;
+						<span class="styled-checkbox">
+							<input class="styled-checkbox" type="checkbox" id="toglNightMode" onclick="app.toggleNightMode()"></input>
+							<label for="toglNightMode" title="Night Mode"> &#9728 </label>
+						</span>
+					</div>
+
+					<div class="editor-container">
+						<div class="editor-preview" id="editor-preview" onclick="app.togglePreviewMode(false)"></div>
+						<div class="editor" id="editor"
+						data-bind="
+						ace: app.editing().body, 
+						aceOptions: { mode: 'yarn', theme: 'yarn', showPrintMargin: false,
+						enableBasicAutocompletion: true,
+						enableLiveAutocompletion: true }">
+						</div> 
+					</div>
+					<!--<div class="icon close" data-bind="click:app.saveNode"></div>-->
+
+					<div class="tooltip" id="colorPicker-container" hidden>
+						<input type='text' id="colorPicker" data-bind="preventBubble: 'click', preventBubble: 'mousedown'"/>
+					</div>
+
+					<div class="tooltip" id="emojiPicker-container">
+						<div id="emojiPickerDom"></div>
+					</div>
+
+				</div>
+			</div>
+			<!-- /ko -->
+
+			<!-- ko if:app.deleting() != null -->
+			<div class="node-delete" data-bind="click: function() { app.deleting(null); }">
+
+				<div class="form" data-bind="preventBubble: 'click'">
+					<!-- ko if: (app.deleting().selected && (app.getSelectedNodes().length > 1)) -->
+					<div>Remove all selected</div>
+					<!-- /ko -->
+					<!-- ko ifnot: (app.deleting().selected) -->
+					<div>Remove <span data-bind="text: app.deleting().title"></span>?</div>
+					<!-- /ko -->
+					<!-- ko if: (app.deleting().selected && (app.getSelectedNodes().length == 1)) -->
+					<div>Remove <span data-bind="text: app.deleting().title"></span>?</div>
+					<!-- /ko -->
+					<div class="icon close" data-bind="click:app.deleting().remove;"></div>
+				</div>
+
+			</div>
+			<!-- /ko -->
+
+			<!-- app info -->
+			<div class="app-info">
+				<span class="app-title" data-bind="text:app.name"></span>
+				<span class="app-version" data-bind="text:app.version"></span>
+			</div>
+
+			<!-- marquee -->
+			<div id="marquee"></div>
+		</div>
+
+		<!-- Hidden fields, file dialogs, and elements -->
+		<div class="hidden">
+			<input type="file" id="open-file" accept=".txt,.xml,.json,.twee,.tw2"/>
+			<input type="file" id="open-folder" webkitdirectory directory/>
+			<input type="file" id="save-file" nwsaveas="filename.txt" />
+		</div>
+		
+		<script>
+			// import {data} from './classes/data';
+			// import {Utils} from './classes/utils';
+			// import {Node} from './classes/node';
+			// import {App} from './classes/app.js';
+
+			// window.app = new App("Yarn", "0.2.1");
+			// window.app.run();
+		</script>
+
+		<!-- templates container (they get loaded into this) -->
+		<div class="templates">
+		</div>
+	</body>
+</html>
