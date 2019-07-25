@@ -1,11 +1,5 @@
-// import ko from 'knockout'
-
-// import {Utils} from './utils';
-// import {Node} from './node';
-
-// import { FILETYPE } from "./utils";
-
 const path = require("path");
+const saveAs = require("file-saver");
 
 export var data = {
   editingPath: ko.observable(null),
@@ -112,6 +106,8 @@ export var data = {
         return;
       }
     }
+    document.title = filename.replace(/^.*[\\\/]/, "");
+    console.log("NAMEE:", filename, e);
     data.readFile(e, filename, true);
     app.refreshWindowTitle(filename);
   },
@@ -438,17 +434,6 @@ export var data = {
             saveas +
             ">"
         );
-
-      ////NEW
-      // var file = e.files[0];
-      // var reader = new FileReader();
-
-      // reader.onload = function(e) {
-      //   fileDisplayArea.innerText = reader.result;
-      // };
-      // reader.readAsText(file);
-      ///
-
       dialog.unbind("change");
       dialog.remove();
     });
@@ -462,15 +447,21 @@ export var data = {
     //   // ipc.send('saveFileYarn', type, content);
     //   return;
     // }
-    console.log(app.fs);
+    console.log(dialog, type, content);
+    /// new web approach:
+    console.log("name:", data.editingPath());
+    var filename = $("#input-fileName").val();
+    var blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+    saveAs(blob, document.title.replace(/\.[^/.]+$/, "") + "." + type);
+
     // if (app.fs) {
-    dialog.attr("nwsaveas", file);
-    data.openFileDialog(dialog, function(e, path) {
-      console.log(e, path);
-      console.log("Save:", content);
-      data.saveTo(path, content);
-      app.refreshWindowTitle(path);
-    });
+    // dialog.attr("nwsaveas", file);
+    // data.openFileDialog(dialog, function(e, path) {
+    //   console.log(e, path);
+    //   console.log("Save:", content);
+    //   data.saveTo(path, content);
+    //   app.refreshWindowTitle(path);
+    // });
     // } else {
     //   switch (type) {
     //     case "json":
@@ -499,7 +490,7 @@ export var data = {
 
   tryAppend: function() {
     // ipc.send('openFile', 'tryAppend');
-    // data.openFileDialog($('#open-file'), data.appendFile);
+    data.openFileDialog($("#open-file"), data.appendFile);
   },
 
   trySave: function(type) {
