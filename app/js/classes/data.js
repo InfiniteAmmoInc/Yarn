@@ -401,18 +401,8 @@ var data = {
         app.refreshWindowTitle(path);
       });
     } else {
-      switch (type) {
-        case "json":
-          content = "data:text/json," + content;
-          break;
-        case "xml":
-          content = "data:text/xml," + content;
-          break;
-        default:
-          content = "data:text/plain," + content;
-          break;
-      }
-      window.open(content, "_blank");
+	  var blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+	  saveAs(blob, document.title.replace(/\.[^/.]+$/, "") + "." + type);
     }
   },
 
