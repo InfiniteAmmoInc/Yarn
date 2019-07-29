@@ -19,7 +19,7 @@ const config = {
     path: path.resolve(__dirname, 'dist'),
   },
   node: {
-    fs: 'empty'
+    fs: 'empty',
   },
   module: {
     rules: [

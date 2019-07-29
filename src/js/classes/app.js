@@ -864,16 +864,6 @@ export var App = function(name, version) {
         .transition({ y: "0" }, 250);
       self.editor = ace.edit("editor");
 
-      // ace.config.set("basePath", "libs");
-      // self.editor.setOptions({
-      //   mode: "yarn",
-      //   theme: "yarn",
-      //   showPrintMargin: false,
-      //   enableBasicAutocompletion: true,
-      //   enableSnippets: true,
-      //   enableLiveAutocompletion: false
-      // });
-
       // console.log(self.editor)
       var autoCompleteButton = document.getElementById("toglAutocomplete");
       autoCompleteButton.checked = self.config.autocompleteEnabled;
@@ -1239,7 +1229,7 @@ export var App = function(name, version) {
 
   this.saveNode = function() {
     if (self.editing() != null) {
-      self.makeNewNodesFromLinks(); //
+      self.makeNewNodesFromLinks();
       self.updateNodeLinks();
       self.editing().title(self.trim(self.editing().title()));
       $(".node-editor").transition({ opacity: 0 }, 250);
@@ -1255,7 +1245,7 @@ export var App = function(name, version) {
       );
       self.config.autocompleteWordsEnabled = autoCompleteWordsButton.checked;
 
-      setTimeout(self.updateSearch, 100);
+      setTimeout(self.updateSearch, 600);
     }
   };
 
