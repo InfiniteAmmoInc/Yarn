@@ -1,24 +1,13 @@
-// const remote = electron.remote;
-// import ko from 'knockout'
-
-// import 'knockout-ace';
-
 import {
   enable_spellcheck,
   disable_spellcheck,
   suggest_word_for_misspelled
 } from "../libs/spellcheck_ace.js";
-const emojiPicker = require("lightweight-emoji-picker/dist/picker.js");
 
-// import {data} from './data';
-// window.data = data;
 import { FILETYPE } from "./utils";
-import "spectrum-colorpicker";
-const contextMenu = require("jquery-contextmenu");
-// var exports = {}
-// require('./libs/spellcheck_ace'); //borked -todo fix
 
 const fs = require("fs");
+
 //todo store color palette
 export var App = function(name, version) {
   var self = this;
@@ -875,9 +864,14 @@ export var App = function(name, version) {
         .transition({ y: "0" }, 250);
       self.editor = ace.edit("editor");
 
-      // ace.config.set('basePath', 'libs')
+      // ace.config.set("basePath", "libs");
       // self.editor.setOptions({
-      //   mode: 'yarn', theme: 'yarn', showPrintMargin: false
+      //   mode: "yarn",
+      //   theme: "yarn",
+      //   showPrintMargin: false,
+      //   enableBasicAutocompletion: true,
+      //   enableSnippets: true,
+      //   enableLiveAutocompletion: false
       // });
 
       // console.log(self.editor)
@@ -930,10 +924,14 @@ export var App = function(name, version) {
       });
 
       /// Enable autocompletion for node links (borked atm)
-      // var langTools = ace.require("ace/ext/language_tools");
-      // var nodeLinksCompleter = Utils.createAutocompleter(["string.llink", "string.rlink"], self.getOtherNodeTitles(), "Node Link");
-      // console.log(langTools)
-      // langTools.addCompleter(nodeLinksCompleter);
+      var langTools = ace.require("ace/ext/language_tools");
+      var nodeLinksCompleter = Utils.createAutocompleter(
+        ["string.llink", "string.rlink"],
+        self.getOtherNodeTitles(),
+        "Node Link"
+      );
+      console.log(langTools);
+      langTools.addCompleter(nodeLinksCompleter);
 
       if (!self.nodeVisitHistory.includes(node.title())) {
         self.nodeVisitHistory.push(node.title());
