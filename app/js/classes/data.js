@@ -31,13 +31,11 @@ var data = {
     } else {
       var file = e.currentTarget.files[0];
       var reader = new FileReader();
-
       reader.onload = function(e) {
         // fileDisplayArea.innerText = reader.result;
         var type = data.getFileType(filename);
         if (type == FILETYPE.UNKNOWN) alert("Unknown filetype!");
         else {
-          console.log("reading-", type, filename, reader);
           data.editingPath(filename);
           data.editingType(type);
           data.loadData(reader.result, type, clearNodes);
