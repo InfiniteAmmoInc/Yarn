@@ -13,7 +13,7 @@
     "url": "https://github.com/InfiniteAmmoInc/Yarn/issues"
   },
   "scripts": {
-    "build": "webpack -p --progress --mode production --config webpack.config.js",
+    "build": "NODE_ENV=dev webpack -p --progress --mode production --config webpack.config.js",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",
     "dev": "cross-env NODE_ENV=dev webpack-dev-server --open --config webpack.config.js",

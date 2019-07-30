@@ -8,7 +8,7 @@ require("jquery-mousewheel");
 
 import ace from "ace-builds/src-noconflict/ace";
 window.ace = ace;
-ace.config.set("basePath", "libs"); //needed to import yarn mode
+ace.config.set("basePath", "public"); //needed to import yarn mode
 window.define = ace.define;
 
 require("ace-builds/src-min-noconflict/ext-language_tools");
