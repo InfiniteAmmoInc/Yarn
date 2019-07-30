@@ -6,13 +6,10 @@ window.$ = window.jQuery = require("jquery");
 require("jquery-contextmenu");
 require("jquery-mousewheel");
 
-import ace from "ace-builds/src-noconflict/ace"
-window.ace = ace//require("ace-builds/src-noconflict/ace");
+import ace from "ace-builds/src-noconflict/ace";
+window.ace = ace;
 ace.config.set("basePath", "libs"); //needed to import yarn mode
 window.define = ace.define;
-
-// import 'ace-builds/webpack-resolver';
-
 
 require("ace-builds/src-min-noconflict/ext-language_tools");
 require("ace-builds/src-min-noconflict/ext-searchbox");

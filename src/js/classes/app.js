@@ -350,9 +350,9 @@ export var App = function(name, version) {
     });
 
     $(document).on("keydown", function(e) {
-      if (self.isElectron === false) {
-        return;
-      }
+      // if (self.isElectron === false) {
+      //   return;
+      // }
 
       if (e.ctrlKey || e.metaKey) {
         if (e.shiftKey) {
@@ -392,6 +392,20 @@ export var App = function(name, version) {
       }
     });
 
+    $(document).on("keydown", function(e) {
+      // clipboard manual saving to get around browser security bs
+      if (self.editing()) {
+        // ctrl + c
+        if ((e.metaKey || e.ctrlKey) && e.keyCode == 67) {
+          self.clipboard = self.editor.getSelectedText();
+        }
+        // ctrl + x
+        else if ((e.metaKey || e.ctrlKey) && e.keyCode == 88) {
+          self.clipboard = self.editor.getSelectedText();
+          app.insertTextAtCursor("");
+        }
+      }
+    });
     $(document).on("keydown", function(e) {
       if (
         self.editing() ||
@@ -920,7 +934,6 @@ export var App = function(name, version) {
         self.getOtherNodeTitles(),
         "Node Link"
       );
-      console.log(langTools);
       langTools.addCompleter(nodeLinksCompleter);
 
       if (!self.nodeVisitHistory.includes(node.title())) {
@@ -1041,7 +1054,6 @@ export var App = function(name, version) {
       //preview mode
       editor.style.visibility = "hidden";
       editorPreviewer.style.visibility = "visible";
-      console.log(self.editing().body());
       editorPreviewer.innerHTML = self
         .editing()
         .textToHtml(self.editing().body(), true);
