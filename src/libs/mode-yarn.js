@@ -134,11 +134,20 @@ define("ace/mode/yarn", [
         if (app.config.spellcheckEnabled) {
           var suggestedCorrections = app.getSpellCheckSuggestionItems();
           if (suggestedCorrections !== false) {
+            console.log(suggestedCorrections);
             options.items.corrections = {
               name: "Correct word",
               items: suggestedCorrections
             };
           }
+        }
+        // suggest similar words - thesaurus.com sysnonyms and anthonyms
+        var suggested = app.getThesaurusItems();
+        if (suggested !== false) {
+          options.items.corrections = {
+            name: "Related words",
+            items: suggested
+          };
         }
       } else {
         options.items = {

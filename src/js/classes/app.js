@@ -6,7 +6,7 @@ import {
 
 import { FILETYPE } from "./utils";
 
-const fs = require("fs");
+var fs = require("fs");
 
 //todo store color palette
 export var App = function(name, version) {
@@ -996,6 +996,38 @@ export var App = function(name, version) {
     } else {
       return false;
     }
+  };
+
+  this.getThesaurusItems = function() {
+    var synonyms = require("synonyms");
+    var words = synonyms(self.editor.getSelectedText());
+    var wordSuggestions = [];
+    Object.keys(words).forEach(function(type) {
+      console.log(words[type]);
+      words[type].forEach(function(word) {
+        if (!wordSuggestions.includes(word) && word !== type) {
+          wordSuggestions.push(word);
+        }
+      });
+    });
+
+    console.log(wordSuggestions);
+    if (wordSuggestions) {
+      var suggestionObject = {};
+      wordSuggestions.forEach(suggestion => {
+        suggestionObject[suggestion] = {
+          name: suggestion,
+          icon: "edit",
+          callback: key => {
+            self.insertTextAtCursor(key);
+          }
+        };
+      });
+      return suggestionObject;
+    } else {
+      return false;
+    }
+    return false;
   };
 
   this.toggleSpellCheck = function() {

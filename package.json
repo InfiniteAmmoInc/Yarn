@@ -35,7 +35,8 @@
     "lightweight-emoji-picker": "0.0.2",
     "nspell": "^2.1.2",
     "popper.js": "^1.15.0",
-    "spectrum-colorpicker": "^1.8.0"
+    "spectrum-colorpicker": "^1.8.0",
+    "synonyms": "^1.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.4.5",
