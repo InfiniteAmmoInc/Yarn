@@ -1001,18 +1001,16 @@ export var App = function(name, version) {
   this.getThesaurusItems = function() {
     var synonyms = require("synonyms");
     var words = synonyms(self.editor.getSelectedText());
+    if (!words) return false;
     var wordSuggestions = [];
     Object.keys(words).forEach(function(type) {
-      console.log(words[type]);
       words[type].forEach(function(word) {
         if (!wordSuggestions.includes(word) && word !== type) {
           wordSuggestions.push(word);
         }
       });
     });
-
-    console.log(wordSuggestions);
-    if (wordSuggestions) {
+    if (wordSuggestions.length > 0) {
       var suggestionObject = {};
       wordSuggestions.forEach(suggestion => {
         suggestionObject[suggestion] = {
@@ -1027,7 +1025,6 @@ export var App = function(name, version) {
     } else {
       return false;
     }
-    return false;
   };
 
   this.toggleSpellCheck = function() {
