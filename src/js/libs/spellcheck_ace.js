@@ -2,16 +2,16 @@
 
 // This is a custom made fork that uses nspell instead of typo.js due to major performance issues in the later.
 // Please keep this file for now...
-const nspell = require("nspell");
+var nspell = require("nspell");
 // You should configure these classes.
-const editor = "editor"; // This should be the id of your editor element.
+var editor = "editor"; // This should be the id of your editor element.
 
-// const dicPath = "public/dictionaries/en_US/en_US.dic";
-// const affPath = "public/dictionaries/en_US/en_US.aff";
-var dicPath =
-  "https://raw.githubusercontent.com/elastic/hunspell/master/dicts/en_US/en_US.dic";
-var affPath =
-  "https://raw.githubusercontent.com/elastic/hunspell/master/dicts/en_US/en_US.aff";
+var dicPath = "public/dictionaries/en_US/en_US.dic";
+var affPath = "public/dictionaries/en_US/en_US.aff";
+// var dicPath =
+//   "https://raw.githubusercontent.com/elastic/hunspell/master/dicts/en_US/en_US.dic";
+// var affPath =
+//   "https://raw.githubusercontent.com/elastic/hunspell/master/dicts/en_US/en_US.aff";
 
 // Make red underline for gutter and words.
 $(

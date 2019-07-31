@@ -1,5 +1,7 @@
 const path = require("path");
 const saveAs = require("file-saver");
+import { Node } from "./node";
+import { Utils, FILETYPE } from "./utils";
 
 export var data = {
   editingPath: ko.observable(null),
@@ -504,6 +506,8 @@ export var data = {
     }
   },
   doesFileExist: function(filePath) {
+    //todo remove fs from everywhere, use cache to load images instead
+    return false;
     if (!fs.existsSync(filePath)) {
       return false;
     }

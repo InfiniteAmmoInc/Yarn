@@ -19,15 +19,9 @@ require("jquery.transit");
 require("spectrum-colorpicker");
 require("lightweight-emoji-picker/dist/picker.js");
 
-import { FILETYPE } from "./classes/utils";
-window.FILETYPE = FILETYPE;
 import { App } from "./classes/app.js";
 import { data } from "./classes/data";
-import { Utils } from "./classes/utils";
-import { Node } from "./classes/node";
-
 window.data = data;
-window.Utils = Utils;
-window.Node = Node;
+
 window.app = new App("Yarn", "0.4.1");
 window.app.run();

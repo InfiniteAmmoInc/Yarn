@@ -1,4 +1,4 @@
-export const FILETYPE = {
+export var FILETYPE = {
   JSON: "json",
   XML: "xml",
   TWEE: "twee",
@@ -7,7 +7,6 @@ export const FILETYPE = {
   YARNTEXT: "yarn.txt"
 };
 
-// var exports = {}
 export var Utils = {
   createAutocompleter: function(
     allowedTokens,

@@ -3,8 +3,9 @@ import {
   disable_spellcheck,
   suggest_word_for_misspelled
 } from "../libs/spellcheck_ace.js";
-
-import { FILETYPE } from "./utils";
+import { Node } from "./node";
+import { data } from "./data";
+import { Utils, FILETYPE } from "./utils";
 
 var fs = require("fs");
 
@@ -123,7 +124,6 @@ export var App = function(name, version) {
         });
       }
     };
-
     // updateArrows
     // setInterval(function() { self.updateArrows(); }, 16);
 
@@ -878,7 +878,6 @@ export var App = function(name, version) {
         .transition({ y: "0" }, 250);
       self.editor = ace.edit("editor");
 
-      // console.log(self.editor)
       var autoCompleteButton = document.getElementById("toglAutocomplete");
       autoCompleteButton.checked = self.config.autocompleteEnabled;
       var autoCompleteWordsButton = document.getElementById(
@@ -893,6 +892,7 @@ export var App = function(name, version) {
       var showCounterButton = document.getElementById("toglShowCounter");
       showCounterButton.checked = self.config.showCounter;
       self.toggleShowCounter();
+      self.toggleWordCompletion();
 
       /// set color picker
       $("#colorPicker").spectrum({
@@ -1274,7 +1274,7 @@ export var App = function(name, version) {
       self.updateNodeLinks();
       self.editing().title(self.trim(self.editing().title()));
       $(".node-editor").transition({ opacity: 0 }, 250);
-      $(".node-editor .form").transition({ y: "-100" }, 250, function() {
+      $(".node-editor .form").transition({ y: "-100" }, 250, function(e) {
         self.editing(null);
       });
 
