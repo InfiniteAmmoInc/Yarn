@@ -35,17 +35,9 @@ export var data = {
       }
     }
   },
-  readFile: function(e, filename, clearNodes) {
-    console.log("reading-", e, filename);
-    //NEW Read approach that works for webapps
-    var file;
-    try {
-      file = e.currentTarget.files[0];
-    } catch (error) {
-      //assume that the event is the file object
-      file = e;
-    }
-
+  readFile: function(file, filename, clearNodes) {
+    console.log("reading-", file, filename);
+    // Read approach that works for webapps
     var reader = new FileReader();
     reader.onload = function(e) {
       // fileDisplayArea.innerText = reader.result;
@@ -59,49 +51,9 @@ export var data = {
       }
     };
     reader.readAsText(file);
-
-    // if (app.fs != undefined) {
-    //   if (
-    //     app.fs.readFile(filename, "utf-8", function(error, contents) {
-    //       if (error) {
-    //       } else {
-    //         var type = data.getFileType(filename);
-    //         if (type == FILETYPE.UNKNOWN) alert("Unknown filetype!");
-    //         else {
-    //           data.editingPath(filename);
-    //           data.editingType(type);
-    //           data.loadData(contents, type, clearNodes);
-    //         }
-    //       }
-    //     })
-    //   );
-    // } else {
-    //   alert("Unable to load file from your browser");
-    // }
-
-    /*
-		else if (window.File && window.FileReader && window.FileList && window.Blob && e.target && e.target.files && e.target.files.length > 0)
-		{
-			var reader  = new FileReader();
-			reader.onloadend = function(e) 
-			{
-				if (e.srcElement && e.srcElement.result && e.srcElement.result.length > 0)
-				{
-					var contents = e.srcElement.result;
-					var type = data.getFileType(contents);
-					alert("type(2): " + type);
-					if (type == FILETYPE.UNKNOWN)
-						alert("Unknown filetype!");
-					else
-						data.loadData(contents, type, clearNodes);
-				}
-			}
-			reader.readAsText(e.target.files[0], "UTF-8");
-		}
-		*/
   },
 
-  openFile: function(e, filename) {
+  openFile: function(file, filename) {
     if (data.editingPath()) {
       if (
         !confirm(
@@ -114,8 +66,8 @@ export var data = {
       }
     }
     document.title = filename.replace(/^.*[\\\/]/, "");
-    console.log("NAMEE:", filename, e);
-    data.readFile(e, filename, true);
+    console.log("NAMEE:", filename, file);
+    data.readFile(file, filename, true);
     app.refreshWindowTitle(filename);
   },
 
@@ -126,8 +78,8 @@ export var data = {
     );
   },
 
-  appendFile: function(e, filename) {
-    data.readFile(e, filename, false);
+  appendFile: function(file, filename) {
+    data.readFile(file, filename, false);
   },
 
   getFileType: function(filename) {
@@ -419,7 +371,7 @@ export var data = {
       console.log("event", e);
       console.log("val:", dialog.val());
       console.log("my file", e.currentTarget.files[0]);
-      callback(e, dialog.val());
+      callback(e.currentTarget.files[0], dialog.val());
 
       // replace input field with a new identical one, with the value cleared
       // (html can't edit file field values)
