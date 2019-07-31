@@ -26,14 +26,32 @@ $(
 var dictionary = null;
 $.get(dicPath, function(data) {
   dicData = data;
-}).done(function() {
-  $.get(affPath, function(data) {
-    affData = data;
-  }).done(function() {
-    console.log("Dictionary loaded");
-    dictionary = new nspell(affData, dicData);
+})
+  .catch(function() {
+    console.log("Loading hunspell dictionary from server instead");
+    dicPath =
+      "https://raw.githubusercontent.com/elastic/hunspell/master/dicts/en_US/en_US.dic";
+    affPath =
+      "https://raw.githubusercontent.com/elastic/hunspell/master/dicts/en_US/en_US.aff";
+    $.get(dicPath, function(data) {
+      dicData = data;
+    }).done(function() {
+      $.get(affPath, function(data) {
+        affData = data;
+      }).done(function() {
+        console.log("Dictionary loaded");
+        dictionary = new nspell(affData, dicData);
+      });
+    });
+  })
+  .done(function() {
+    $.get(affPath, function(data) {
+      affData = data;
+    }).done(function() {
+      console.log("Dictionary loaded");
+      dictionary = new nspell(affData, dicData);
+    });
   });
-});
 
 // Check the spelling of a line, and return [start, end]-pairs for misspelled words.
 function misspelled(line) {

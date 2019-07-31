@@ -37,11 +37,16 @@ export var data = {
   },
   readFile: function(e, filename, clearNodes) {
     console.log("reading-", e, filename);
+    //NEW Read approach that works for webapps
+    var file;
+    try {
+      file = e.currentTarget.files[0];
+    } catch (error) {
+      //assume that the event is the file object
+      file = e;
+    }
 
-    //NEW
-    var file = e.currentTarget.files[0];
     var reader = new FileReader();
-
     reader.onload = function(e) {
       // fileDisplayArea.innerText = reader.result;
       var type = data.getFileType(filename);

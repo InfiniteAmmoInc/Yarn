@@ -42,7 +42,7 @@
         try {
           editor.destroy();
         } catch (e) {
-          console.error("Failed to destroy editor instance:", e);
+          console.warn("Failed to destroy editor instance:", e);
         }
         delete instances_by_id[element.id];
       });
