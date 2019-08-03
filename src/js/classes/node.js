@@ -33,6 +33,8 @@ export var Node = function() {
   this.colorID = ko.observable(0);
   this.checked = false;
   this.selected = false;
+  this.createX = null;
+  this.createY = null;
 
   // clipped values for display
   this.clippedTags = ko.computed(function() {
@@ -136,9 +138,14 @@ export var Node = function() {
     Utils.pushToTop($(self.element));
     self.style = window.getComputedStyle($(self.element).get(0));
 
-    var parent = $(self.element).parent();
-    self.x(-parent.offset().left + $(window).width() / 2 - 100);
-    self.y(-parent.offset().top + $(window).height() / 2 - 100);
+    if (self.createX && self.createY) {
+      self.x(self.createX);
+      self.y(self.createY);
+    } else {
+      var parent = $(self.element).parent();
+      self.x(-parent.offset().left + $(window).width() / 2 - 100);
+      self.y(-parent.offset().top + $(window).height() / 2 - 100);
+    }
 
     var updateArrowsInterval = setInterval(app.updateArrowsThrottled, 16);
 

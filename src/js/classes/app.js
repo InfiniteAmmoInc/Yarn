@@ -410,12 +410,11 @@ export var App = function(name, version) {
       } else {
         // ctrl + c NODES
         if ((e.metaKey || e.ctrlKey) && e.keyCode == 67) {
-          self.nodeClipboard = self.getSelectedNodes();
-          console.log();
+          self.nodeClipboard = app.cloneNodeArray(self.getSelectedNodes());
         }
         // ctrl + x NODES
         else if ((e.metaKey || e.ctrlKey) && e.keyCode == 88) {
-          self.nodeClipboard = self.getSelectedNodes();
+          self.nodeClipboard = app.cloneNodeArray(self.getSelectedNodes());
           self.deleteSelectedNodes();
         }
       }
@@ -456,9 +455,12 @@ export var App = function(name, version) {
       if ((e.metaKey || e.ctrlKey) && e.keyCode == 86) {
         // ctrl + v NODES
         if (!self.editing() && self.nodeClipboard.length) {
+          self.deselectAllNodes();
           self.nodeClipboard.forEach(function(node) {
-            self.recreateNode(node, node.x() + 10, node.y() + 10);
+            self.nodes.push(node);
+            self.addNodeSelected(node);
           });
+          self.updateNodeLinks();
         }
       }
       // console.log(e.keyCode+"-"+e.key)
@@ -840,6 +842,19 @@ export var App = function(name, version) {
       self.removeNodeSelection(nodes[i]);
       nodes[i].remove();
     }
+  };
+
+  this.cloneNodeArray = function(nodeArray) {
+    return nodeArray.map(function(oldNode) {
+      var node = new Node();
+      node.title(oldNode.title());
+      node.body(oldNode.body());
+      node.tags(oldNode.tags());
+      node.colorID(oldNode.colorID());
+      node.createX = oldNode.x() + 10;
+      node.createY = oldNode.y() + 10;
+      return node;
+    });
   };
 
   this.newNode = function(updateArrows) {
