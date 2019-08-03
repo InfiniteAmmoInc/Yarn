@@ -9,18 +9,6 @@
 		
 	</head>
 	<body>
-		<!-- <button id="updateButton" onClick="ipcRenderer.send('quitAndInstall')"></button> -->
-		<!-- <script>
-			const ipcRenderer = require('electron').ipcRenderer;
-
-			// wait for an updateReady message
-			var updateButton = document.getElementById('updateButton');
-			updateButton.style.display = 'none';
-			ipcRenderer.on('updateReady', function(event, text) {
-				updateButton.innerHTML = "new version ready!";
-				updateButton.style.display = 'block';
-			})
-		</script> -->
 		<!-- Fancy Background -->
 		<div id="app-bg">&nbsp;</div>
 
@@ -71,17 +59,17 @@
 				<div class="menu">
 					<span class="title">File</span>
 					<div class="dropdown">
-						<span class="item" data-bind="click: data.tryOpenFile">Open...</span>
+						<span class="item" data-bind="click: app.data.tryOpenFile">Open...</span>
 						<!--<span class="item" data-bind="click: data.tryOpenFolder">Open Folder...</span>-->
-						<span class="item" data-bind="click: data.tryAppend">Append...</span>
+						<span class="item" data-bind="click: app.data.tryAppend">Append...</span>
 						<!-- ko if:data.editingPath() != null -->
-						<span class="item" data-bind="click: data.trySaveCurrent">Save</span>
+						<span class="item" data-bind="click: app.data.trySaveCurrent">Save</span>
 						<!-- /ko -->
-						<span class="item" data-bind="click: function() { data.trySave('json');}">Save As Json...</span>
-						<span class="item" data-bind="click: function() { data.trySave('yarn.txt'); }">Save As Yarn...</span>
-						<span class="item" data-bind="click: function() { data.trySave('twee'); }">Save As Twee...</span>
-						<span class="item" data-bind="click: function() { data.trySave('tw2'); }">Save As Twee2...</span>
-						<span class="item" data-bind="click: function() { data.trySave('xml'); }">Save As Xml...</span>
+						<span class="item" data-bind="click: function() { app.data.trySave('json');}">Save As Json...</span>
+						<span class="item" data-bind="click: function() { app.data.trySave('yarn.txt'); }">Save As Yarn...</span>
+						<span class="item" data-bind="click: function() { app.data.trySave('twee'); }">Save As Twee...</span>
+						<span class="item" data-bind="click: function() { app.data.trySave('tw2'); }">Save As Twee2...</span>
+						<span class="item" data-bind="click: function() { app.data.trySave('xml'); }">Save As Xml...</span>
 					</div>
 				</div>
 				
@@ -91,11 +79,6 @@
 						<input class="search-field" placeholder="search" type="text" id="runHelperMenuFilter" oninput="app.openNodeListMenu('run')"></input>
 					</div>
 				</div> -->
-<!-- 
-				<div class="menu" id="sendToParentAppMenu">
-					<span class="title" data-bind="click:data.sendToExternalApp">APPLY</span>
-				</div> -->
-
 			</div>
 
 			<!-- arrow bg canvas for linked nodes -->
@@ -124,17 +107,6 @@
 			
 				<div class="form" data-bind="preventBubble: 'click', preventBubble: 'mousedown'">
 					<input type="text" class="title" data-bind="value: app.editing().title;" onfocus="app.togglePreviewMode(true)">
-					
-					<!-- <div float="left"> </div> -->
-					
-					<!-- <div class="app-menu">
-						<div class="menu" style="float:left">
-							<span class="title" onmouseover="app.openNodeListMenu('link')">Add Link</span>
-							<div id="linkHelperMenu" class="dropdown">
-								<input class="search-field" style="text-align:center" placeholder="search" type="text" id="linkHelperMenuFilter" oninput="app.openNodeListMenu('link')"></input>
-							</div>
-						</div>
-					</div> -->
 
 					<input type="text" data-bind="value: app.editing().tags;" onfocus="app.togglePreviewMode(true)">
 
@@ -151,7 +123,6 @@
 						<button class="bbcode-button" style="color:#19a4a8" onclick="app.insertEmoji()" title="Emoji">😉</button>
 
 						<div class="app-menu" style="position: absolute;">
-							<!-- todo: move to toolbar -->
 							<div class="menu">
 								<span class="title" onmouseover="app.openNodeListMenu('link')">Add Link</span>
 								<div id="linkHelperMenu" class="dropdown">
@@ -225,7 +196,6 @@
 				</div>
 			</div>
 			<!-- /ko -->
-
 			<!-- ko if:app.deleting() != null -->
 			<div class="node-delete" data-bind="click: function() { app.deleting(null); }">
 
@@ -257,21 +227,11 @@
 
 		<!-- Hidden fields, file dialogs, and elements -->
 		<div class="hidden">
+			<input type="file" id="open-image" accept=".jpg,.jpeg,.png,.gif,.bmp"/>
 			<input type="file" id="open-file" accept=".txt,.xml,.json,.twee,.tw2"/>
 			<input type="file" id="open-folder" webkitdirectory directory/>
 			<input type="file" id="save-file" nwsaveas="filename.txt" />
 		</div>
-		
-		<script>
-			// import {data} from './classes/data';
-			// import {Utils} from './classes/utils';
-			// import {Node} from './classes/node';
-			// import {App} from './classes/app.js';
-
-			// window.app = new App("Yarn", "0.2.1");
-			// window.app.run();
-		</script>
-
 		<!-- templates container (they get loaded into this) -->
 		<div class="templates">
 		</div>

@@ -1,3 +1,4 @@
+// custom fork of this library due to the original using brance and being unmaintained atm
 (function() {
   var instances_by_id = {}, // needed for referencing instances during updates.
     init_id = 0; // generated id increment storage
@@ -41,9 +42,7 @@
       ko.utils.domNodeDisposal.addDisposeCallback(element, function() {
         try {
           editor.destroy();
-        } catch (e) {
-          console.warn("Failed to destroy editor instance:", e);
-        }
+        } catch (e) {}
         delete instances_by_id[element.id];
       });
     },

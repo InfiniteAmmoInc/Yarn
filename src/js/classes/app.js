@@ -15,6 +15,7 @@ export var App = function(name, version) {
 
   // self
   this.instance = this;
+  this.data = data;
   this.name = ko.observable(name);
   this.version = ko.observable(version);
   this.editing = ko.observable(null);

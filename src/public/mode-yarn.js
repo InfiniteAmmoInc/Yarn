@@ -134,7 +134,6 @@ define("ace/mode/yarn", [
         if (app.config.spellcheckEnabled) {
           var suggestedCorrections = app.getSpellCheckSuggestionItems();
           if (suggestedCorrections !== false) {
-            console.log(suggestedCorrections);
             options.items.corrections = {
               name: "Correct word",
               items: suggestedCorrections
@@ -165,13 +164,7 @@ define("ace/mode/yarn", [
         options.items["Choose image"] = {
           name: "Choose image",
           callback: () => {
-            if (!data.editingPath()) {
-              alert(
-                "Please save the yarn file to a location first. \nIt is required for this feature to work..."
-              );
-              return;
-            }
-            ipc.send("openFile", "addImgTag");
+            app.data.insertImageFileName();
           }
         };
       }

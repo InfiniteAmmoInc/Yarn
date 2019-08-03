@@ -5,6 +5,7 @@ import { Utils, FILETYPE } from "./utils";
 
 export var data = {
   editingPath: ko.observable(null),
+  editingName: ko.observable(""),
   editingType: ko.observable(""),
   editingFolder: ko.observable(null),
   editingFileFolder: function(addSubPath = "") {
@@ -45,7 +46,7 @@ export var data = {
       if (type == FILETYPE.UNKNOWN) alert("Unknown filetype!");
       else {
         console.log("reading-", type, filename, reader);
-        data.editingPath(filename);
+        data.editingPath(file.path);
         data.editingType(type);
         data.loadData(reader.result, type, clearNodes);
       }
@@ -65,7 +66,8 @@ export var data = {
         return;
       }
     }
-    document.title = filename.replace(/^.*[\\\/]/, "");
+    data.editingName(filename.replace(/^.*[\\\/]/, ""));
+    document.title = file.path ? file.path : data.editingName();
     console.log("NAMEE:", filename, file);
     data.readFile(file, filename, true);
     app.refreshWindowTitle(filename);
@@ -368,10 +370,6 @@ export var data = {
   openFileDialog: function(dialog, callback) {
     dialog.bind("change", function(e) {
       // make callback
-      console.log("dialog", dialog);
-      console.log("event", e);
-      console.log("val:", dialog.val());
-      console.log("my file", e.currentTarget.files[0]);
       callback(e.currentTarget.files[0], dialog.val());
 
       // replace input field with a new identical one, with the value cleared
@@ -402,45 +400,19 @@ export var data = {
   },
 
   saveFileDialog: function(dialog, type, content) {
-    // if (ipc) {
-    var file = "file." + type;
-    //   // ipc.send('saveFileYarn', type, content);
-    //   return;
-    // }
-    console.log(dialog, type, content);
-    /// new web approach:
-    console.log("name:", data.editingPath());
-    var filename = $("#input-fileName").val();
     var blob = new Blob([content], { type: "text/plain;charset=utf-8" });
-    saveAs(blob, document.title.replace(/\.[^/.]+$/, "") + "." + type);
+    console.log(data.editingName());
+    saveAs(blob, data.editingName().replace(/\.[^/.]+$/, "") + "." + type);
+  },
 
-    // if (app.fs) {
-    // dialog.attr("nwsaveas", file);
-    // data.openFileDialog(dialog, function(e, path) {
-    //   console.log(e, path);
-    //   console.log("Save:", content);
-    //   data.saveTo(path, content);
-    //   app.refreshWindowTitle(path);
-    // });
-    // } else {
-    //   switch (type) {
-    //     case "json":
-    //       content = "data:text/json," + content;
-    //       break;
-    //     case "xml":
-    //       content = "data:text/xml," + content;
-    //       break;
-    //     default:
-    //       content = "data:text/plain," + content;
-    //       break;
-    //   }
-    //   window.open(content, "_blank");
-    // }
+  insertImageFileName: function() {
+    data.openFileDialog($("#open-image"), function(e, path) {
+      app.insertTextAtCursor(e.path ? e.path : e.name);
+    });
   },
 
   tryOpenFile: function() /// Refactor to send signal to the main process
   {
-    // ipc.send('openFile', 'tryOpenFile');
     data.openFileDialog($("#open-file"), data.openFile);
   },
 
@@ -449,7 +421,6 @@ export var data = {
   },
 
   tryAppend: function() {
-    // ipc.send('openFile', 'tryAppend');
     data.openFileDialog($("#open-file"), data.appendFile);
   },
 
