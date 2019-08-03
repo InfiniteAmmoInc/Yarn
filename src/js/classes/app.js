@@ -459,6 +459,7 @@ export var App = function(name, version) {
           self.nodeClipboard.forEach(function(node) {
             self.nodes.push(node);
             self.addNodeSelected(node);
+            self.recordNodeAction("created", node);
           });
           self.updateNodeLinks();
         }
