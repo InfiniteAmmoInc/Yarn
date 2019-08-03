@@ -77,25 +77,24 @@
 						<!-- ko if:data.editingPath() != null -->
 						<span class="item" data-bind="click: data.trySaveCurrent">Save</span>
 						<!-- /ko -->
-						<span class="item" data-bind="click: function() { data.trySave(FILETYPE.JSON);}">Save As Json...</span>
-						<span class="item" data-bind="click: function() { data.trySave(FILETYPE.YARNTEXT); }">Save As Yarn...</span>
-						<span class="item" data-bind="click: function() { data.trySave(FILETYPE.TWEE); }">Save As Twee...</span>
-						<span class="item" data-bind="click: function() { data.trySave(FILETYPE.TWEE2); }">Save As Twee2...</span>
-						<span class="item" data-bind="click: function() { data.trySave(FILETYPE.XML); }">Save As Xml...</span>
-						<span class="item" data-bind="click: app.quit">Close</span>
+						<span class="item" data-bind="click: function() { data.trySave('json');}">Save As Json...</span>
+						<span class="item" data-bind="click: function() { data.trySave('yarn.txt'); }">Save As Yarn...</span>
+						<span class="item" data-bind="click: function() { data.trySave('twee'); }">Save As Twee...</span>
+						<span class="item" data-bind="click: function() { data.trySave('tw2'); }">Save As Twee2...</span>
+						<span class="item" data-bind="click: function() { data.trySave('xml'); }">Save As Xml...</span>
 					</div>
 				</div>
 				
-				<div class="menu">
+				<!-- <div class="menu">
 					<span class="title" onmouseover="app.openNodeListMenu('run')">Run</span>
 					<div class="dropdown" id="runHelperMenu">
 						<input class="search-field" placeholder="search" type="text" id="runHelperMenuFilter" oninput="app.openNodeListMenu('run')"></input>
 					</div>
-				</div>
-
+				</div> -->
+<!-- 
 				<div class="menu" id="sendToParentAppMenu">
 					<span class="title" data-bind="click:data.sendToExternalApp">APPLY</span>
-				</div>
+				</div> -->
 
 			</div>
 

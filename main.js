@@ -12,7 +12,6 @@ const BrowserWindow = electron.BrowserWindow;
 let mainWindow;
 let yarnRunnerWindow;
 let yarnVersion = "0.4.1";
-
 function createWindow() {
   // Create the browser window.
   mainWindow = new BrowserWindow({
@@ -26,9 +25,13 @@ function createWindow() {
   });
   mainWindow.setMenu(null);
   // and load the index.html of the app.
-  // mainWindow.loadURL(`file://${__dirname}/app/index.html`);
   mainWindow.loadURL(`file://${__dirname}/dist/index.html`);
 
+  // if (isDev) {
+  //   mainWindow.loadURL(`http://localhost:8080`);
+  // } else {
+  //   mainWindow.loadURL(`file://${__dirname}/dist/index.html`);
+  // }
   if (isDev) {
     mainWindow.webContents.openDevTools();
   }

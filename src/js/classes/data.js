@@ -355,10 +355,11 @@ export var data = {
     return output;
   },
 
-  saveTo: function(path, content) {
+  saveTo: function(path, content, callback = null) {
     if (app.fs != undefined) {
       app.fs.writeFile(path, content, { encoding: "utf-8" }, function(err) {
         data.editingPath(path);
+        if (callback) callback();
         if (err) alert("Error Saving Data to " + path + ": " + err);
       });
     }
@@ -469,8 +470,5 @@ export var data = {
       return false;
     }
     return fs.lstatSync(filePath).isFile();
-  },
-  sendToExternalApp: function() {
-    // ipc.send('sendYarnDataToObject', JSON.parse(data.getSaveData(FILETYPE.JSON)));
   }
 };

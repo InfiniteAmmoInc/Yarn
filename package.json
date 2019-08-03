@@ -28,7 +28,6 @@
     "ace-builds": "^1.4.5",
     "bbcode": "^0.1.5",
     "bondage": "^2.0.1",
-    "electron-builder": "^21.2.0",
     "electron-is": "^3.0.0",
     "file-saver": "^2.0.2",
     "jquery": "^3.4.1",
@@ -39,7 +38,6 @@
     "knockout-ace": "^1.0.1",
     "lightweight-emoji-picker": "0.0.2",
     "nspell": "^2.1.2",
-    "popper.js": "^1.15.0",
     "spectrum-colorpicker": "^1.8.0",
     "synonyms": "^1.0.1"
   },
@@ -55,6 +53,7 @@
     "css-loader": "^3.0.0",
     "css-url-relative-plugin": "^1.0.0",
     "electron": "^6.0.0",
+    "electron-builder": "^21.2.0",
     "eslint": "^6.0.1",
     "eslint-config-prettier": "^6.0.0",
     "eslint-plugin-babel": "^5.3.0",

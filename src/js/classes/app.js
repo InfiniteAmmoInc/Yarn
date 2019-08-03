@@ -647,6 +647,12 @@ export var App = function(name, version) {
         );
       }
     };
+    // Callback for embedding in other webapps
+    var event = new CustomEvent("yarnReady");
+    event.document = document;
+    event.data = data;
+    event.app = this;
+    window.parent.dispatchEvent(event);
   };
 
   this.getNodesConnectedTo = function(toNode) {
