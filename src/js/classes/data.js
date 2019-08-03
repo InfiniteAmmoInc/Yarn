@@ -37,7 +37,6 @@ export var data = {
     }
   },
   readFile: function(file, filename, clearNodes) {
-    console.log("reading-", file, filename);
     // Read approach that works for webapps
     var reader = new FileReader();
     reader.onload = function(e) {
@@ -45,7 +44,7 @@ export var data = {
       var type = data.getFileType(filename);
       if (type == FILETYPE.UNKNOWN) alert("Unknown filetype!");
       else {
-        console.log("reading-", type, filename, reader);
+        // console.log("reading-", type, filename, reader);
         data.editingPath(file.path);
         data.editingType(type);
         data.loadData(reader.result, type, clearNodes);
@@ -99,26 +98,6 @@ export var data = {
     else if (filename.toLowerCase().indexOf(".twee") > -1)
       return FILETYPE.TWEE2;
     return FILETYPE.UNKNOWN;
-    /*
-		// is json?
-		if (/^[\],:{}\s]*$/.test(clone.replace(/\\["\\\/bfnrtu]/g, '@').
-			replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']').
-			replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) 
-			return FILETYPE.JSON;
-
-		// is xml?
-		var oParser = new DOMParser();
-		var oDOM = oParser.parseFromString(content, "text/xml");
-		if (oDOM.documentElement["outerText"] == undefined)
-			return FILETYPE.XML;
-
-		// is twee?
-		//console.log(content.substr(0, 2));
-		console.log(content.indexOf("::"));
-		if (content.trim().substr(0, 2) == "::")
-			return FILETYPE.TWEE;
-		return FILETYPE.UNKNOWN;
-		*/
   },
 
   loadData: function(content, type, clearNodes) {
@@ -401,7 +380,7 @@ export var data = {
 
   saveFileDialog: function(dialog, type, content) {
     var blob = new Blob([content], { type: "text/plain;charset=utf-8" });
-    console.log(data.editingName());
+    // console.log(data.editingName());
     saveAs(blob, data.editingName().replace(/\.[^/.]+$/, "") + "." + type);
   },
 

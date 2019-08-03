@@ -41,6 +41,8 @@ export var App = function(name, version) {
   this.nodeVisitHistory = [];
   this.mouseX = 0;
   this.mouseY = 0;
+  this.clipboard = "";
+  this.nodeClipboard = [];
   this.fs = fs;
 
   this.UPDATE_ARROWS_THROTTLE_MS = 25;
@@ -405,6 +407,17 @@ export var App = function(name, version) {
           self.clipboard = self.editor.getSelectedText();
           app.insertTextAtCursor("");
         }
+      } else {
+        // ctrl + c NODES
+        if ((e.metaKey || e.ctrlKey) && e.keyCode == 67) {
+          self.nodeClipboard = self.getSelectedNodes();
+          console.log();
+        }
+        // ctrl + x NODES
+        else if ((e.metaKey || e.ctrlKey) && e.keyCode == 88) {
+          self.nodeClipboard = self.getSelectedNodes();
+          self.deleteSelectedNodes();
+        }
       }
     });
     $(document).on("keydown", function(e) {
@@ -440,6 +453,14 @@ export var App = function(name, version) {
     });
 
     $(document).on("keyup", function(e) {
+      if ((e.metaKey || e.ctrlKey) && e.keyCode == 86) {
+        // ctrl + v NODES
+        if (!self.editing() && self.nodeClipboard.length) {
+          self.nodeClipboard.forEach(function(node) {
+            self.recreateNode(node, node.x() + 10, node.y() + 10);
+          });
+        }
+      }
       // console.log(e.keyCode+"-"+e.key)
       if (e.keyCode === 46 || e.key === "Delete") {
         // Delete selected
@@ -514,7 +535,7 @@ export var App = function(name, version) {
         self.insertColorCode();
         // return
       } else if (self.getTagBeforeCursor().match(/\[img\]/)) {
-        console.log("IMAGE");
+        // console.log("IMAGE");
       }
     };
 
@@ -1607,7 +1628,6 @@ export var App = function(name, version) {
         // ctrl + v
         if ((e.metaKey || e.ctrlKey) && e.keyCode == 86) {
           var clipboard = self.gui.Clipboard.get();
-          console.log(clipboard);
           text =
             text.substr(0, startOffset) +
             clipboard.get("text") +

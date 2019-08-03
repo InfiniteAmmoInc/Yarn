@@ -173,14 +173,8 @@ define("ace/mode/yarn", [
   });
 
   /// Enable autocompletion via word guessing
-  var langTools = ace.require("ace/ext/language_tools");
   app.editor.setOptions({
     enableBasicAutocompletion: app.config.autocompleteWordsEnabled,
     enableLiveAutocompletion: app.config.autocompleteWordsEnabled
   });
-
-  // Todo: replace with some other library that doesn't require fs
-  // var commonWordList = getWordsList('english');
-  // var commonWordCompleter = Utils.createAutocompleter(["text"], commonWordList, "Common word");
-  // langTools.addCompleter(commonWordCompleter);
 });
