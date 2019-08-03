@@ -16,7 +16,7 @@
   "scripts": {
     "start-electron": "npm run build && electron .",
     "build-electron": "build --linux portable",
-    "build": "NODE_ENV=dev webpack -p --progress --mode production --config webpack.config.js",
+    "build": "webpack -p --progress --mode production --config webpack.config.js",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",
     "dev": "cross-env NODE_ENV=dev webpack-dev-server --open --config webpack.config.js",

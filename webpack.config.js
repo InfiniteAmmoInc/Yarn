@@ -148,7 +148,10 @@ files.forEach(file => {
       filename: path.basename(file),
       template: file,
       favicon: path.resolve(__dirname, "./src/public/icon.ico"),
-      minify: !IS_DEV
+      minify: {
+        collapseWhitespace: true,
+        useShortDoctype: true
+      }
     })
   );
 });
