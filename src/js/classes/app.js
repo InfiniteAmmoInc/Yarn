@@ -81,6 +81,8 @@ export var App = function(name, version) {
     if (navigator.platform.indexOf("Mac") != -1) osName = "MacOS";
     if (navigator.platform.indexOf("X11") != -1) osName = "UNIX";
     if (navigator.platform.indexOf("Linux") != -1) osName = "Linux";
+    self.isElectron = navigator.userAgent.toLowerCase().includes("electron");
+    // console.log(self.isElectron);
 
     if (osName == "Windows") self.zoomSpeed = 0.1;
 
@@ -112,7 +114,6 @@ export var App = function(name, version) {
         });
       }
     };
-
     ko.bindingHandlers.mousedown = {
       init: function(
         element,

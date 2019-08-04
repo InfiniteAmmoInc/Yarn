@@ -5,7 +5,7 @@ import { Utils, FILETYPE } from "./utils";
 
 export var data = {
   editingPath: ko.observable(null),
-  editingName: ko.observable(""),
+  editingName: ko.observable("NewFile"),
   editingType: ko.observable(""),
   editingFolder: ko.observable(null),
   editingFileFolder: function(addSubPath = "") {
@@ -380,8 +380,12 @@ export var data = {
 
   saveFileDialog: function(dialog, type, content) {
     var blob = new Blob([content], { type: "text/plain;charset=utf-8" });
-    // console.log(data.editingName());
     saveAs(blob, data.editingName().replace(/\.[^/.]+$/, "") + "." + type);
+    // if (app.isElectron) {
+    // } else {
+    //   var blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+    //   saveAs(blob, data.editingName().replace(/\.[^/.]+$/, "") + "." + type);
+    // }
   },
 
   insertImageFileName: function() {
