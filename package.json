@@ -14,7 +14,7 @@
     "url": "https://github.com/InfiniteAmmoInc/Yarn/issues"
   },
   "scripts": {
-    "start-electron": "npm run build && electron .",
+    "electron": "npm run build && electron .",
     "build-electron": "build --linux portable",
     "build": "webpack -p --progress --mode production --config webpack.config.js",
     "predeploy": "npm run build",

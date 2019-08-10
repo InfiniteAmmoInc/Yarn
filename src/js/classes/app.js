@@ -605,6 +605,11 @@ export var App = function(name, version) {
         top: self.mouseY - 125,
         left: self.mouseX - 200
       });
+      $("#emojiPicker-container").show();
+      $("#emojiPicker-container").on("click", function() {
+        self.togglePreviewMode(false);
+      });
+      self.togglePreviewMode(true);
     };
 
     $(document).on("mousemove", function(e) {
@@ -648,6 +653,13 @@ export var App = function(name, version) {
       self.togglePreviewMode(true);
     };
 
+    document.addEventListener(
+      "contextmenu",
+      function(evt) {
+        if (self.editing()) evt.preventDefault();
+      },
+      false
+    );
     $(document).on("mouseup", function(e) {
       if (self.editing() && e.button === 2) {
         self.guessPopUpHelper();
@@ -711,6 +723,20 @@ export var App = function(name, version) {
   this.quit = function() {
     if (self.isElectron) {
       // remote.app.quit();
+    }
+  };
+
+  this.validateTitle = function() {
+    var enteredValue = document.getElementById("editorTitle").value;
+    if (
+      self.getOtherNodeTitles().includes(enteredValue) ||
+      self.titleExistsTwice(enteredValue)
+    ) {
+      $("#editorTitle").css({ color: "red" });
+      $("#editorTitle").attr("title", "Another node has the same title");
+    } else {
+      $("#editorTitle").css({ color: "#666" });
+      $("#editorTitle").attr("title", "");
     }
   };
 
@@ -943,6 +969,8 @@ export var App = function(name, version) {
       self.toggleShowCounter();
       self.toggleWordCompletion();
 
+      //// warn if titlealready exists
+      self.validateTitle();
       /// set color picker
       $("#colorPicker").spectrum({
         flat: true,
@@ -1143,6 +1171,13 @@ export var App = function(name, version) {
       editorPreviewer.style.visibility = "hidden";
       editor.style.visibility = "visible";
       self.editor.focus();
+      //close any pop up helpers tooltip class
+      if ($("#colorPicker-container").is(":visible")) {
+        $("#colorPicker-container").hide();
+      }
+      if ($("#emojiPicker-container").is(":visible")) {
+        $("#emojiPicker-container").hide();
+      }
     }
   };
 
@@ -1429,6 +1464,13 @@ export var App = function(name, version) {
         .newNodeAt(self.editing().x() + newNodeOffset, self.editing().y() - 120)
         .title(newNodeName);
     }
+  };
+
+  this.titleExistsTwice = function(title) {
+    return (
+      app.nodes().filter(node => node.title().trim() === title.trim()).length >
+      1
+    );
   };
 
   this.getOtherNodeTitles = function() {
