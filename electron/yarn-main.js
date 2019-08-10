@@ -11,7 +11,7 @@ window.addEventListener("yarnReady", e => {
   yarn.app.fs = fs;
   ipcRenderer.send("yarn-ready");
 });
-editorFrameEl.src = "dist/index.html";
+editorFrameEl.src = "app/index.html";
 
 // Called to load yarn data. Should be called after the window is fully loaded.
 ipcRenderer.on("yarn-open", (event, receivedOptions) => {
