@@ -435,6 +435,3 @@ ko.bindingHandlers.nodeBind = {
     });
   }
 };
-
-// export default Node
-// exports.Node = Node;

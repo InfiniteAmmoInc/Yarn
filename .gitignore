@@ -31,6 +31,10 @@ build/Release
 # Dependency directory
 node_modules
 
+# Dist
+dist
+electron/dist
+
 # Optional npm cache directory
 .npm
 

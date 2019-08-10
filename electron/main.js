@@ -2,6 +2,7 @@ const electron = require("electron");
 const ipcMain = electron.ipcMain;
 const { dialog } = electron;
 const isDev = require("electron-is").dev();
+// const fs = require("fs");
 // Module to control application life.
 const app = electron.app;
 // Module to create native browser window.
@@ -21,11 +22,14 @@ function createWindow() {
     minHeight: 600,
     maximize: false,
     show: false,
-    autoHideMenuBar: true
+    autoHideMenuBar: true,
+    webPreferences: {
+      nodeIntegration: true
+    }
   });
   mainWindow.setMenu(null);
   // and load the index.html of the app.
-  mainWindow.loadURL(`file://${__dirname}/dist/index.html`);
+  mainWindow.loadURL(`file://${__dirname}/yarn-index.html`);
 
   // if (isDev) {
   //   mainWindow.loadURL(`http://localhost:8080`);
@@ -52,6 +56,8 @@ function createWindow() {
     // if(yarnData){
     //   mainWindow.webContents.send('loadYarnDataObject', yarnData)
     // };
+    // console.log(mainWindow.webContents);
+    // mainWindow.yarn.app.fs = fs;
     mainWindow.webContents.send("initiate", yarnVersion);
     mainWindow.show();
     mainWindow.maximize();

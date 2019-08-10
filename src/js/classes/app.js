@@ -7,9 +7,6 @@ import { Node } from "./node";
 import { data } from "./data";
 import { Utils, FILETYPE } from "./utils";
 
-var fs = require("fs");
-
-//todo store color palette
 export var App = function(name, version) {
   var self = this;
 
@@ -43,7 +40,7 @@ export var App = function(name, version) {
   this.mouseY = 0;
   this.clipboard = "";
   this.nodeClipboard = [];
-  this.fs = fs;
+  // this.fs = fs;
 
   this.UPDATE_ARROWS_THROTTLE_MS = 25;
 
@@ -1991,5 +1988,3 @@ export var App = function(name, version) {
     $(".editor-counter .column-index").html(cursor.column);
   };
 };
-// export default App
-// exports.App = App

@@ -18,9 +18,9 @@ const config = {
     filename: "js/[name].[hash].js",
     path: path.resolve(__dirname, "dist")
   },
-  node: {
-    fs: "empty"
-  },
+  // node: {
+  //   fs: "empty"
+  // },
   module: {
     rules: [
       {
@@ -133,7 +133,6 @@ const config = {
 if (!IS_DEV) {
   const TerserPlugin = require("terser-webpack-plugin");
   const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
-
   config.optimization.minimizer.push(
     new TerserPlugin(),
     new OptimizeCSSAssetsPlugin({})

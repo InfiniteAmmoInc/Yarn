@@ -413,6 +413,7 @@ export var data = {
   },
 
   trySaveCurrent: function() {
+    console.log(fs);
     if (data.editingPath().length > 0 && data.editingType().length > 0) {
       data.saveTo(data.editingPath(), data.getSaveData(data.editingType()));
     }
