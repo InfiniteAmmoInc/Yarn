@@ -67,7 +67,6 @@ export var data = {
     }
     data.editingName(filename.replace(/^.*[\\\/]/, ""));
     document.title = file.path ? file.path : data.editingName();
-    console.log("NAMEE:", filename, file);
     data.readFile(file, filename, true);
     app.refreshWindowTitle(filename);
   },
@@ -86,7 +85,6 @@ export var data = {
   getFileType: function(filename) {
     var clone = filename;
 
-    console.log(filename);
     if (filename.toLowerCase().indexOf(".json") > -1) return FILETYPE.JSON;
     else if (filename.toLowerCase().indexOf(".yarn.txt") > -1)
       return FILETYPE.YARNTEXT;
@@ -197,8 +195,6 @@ export var data = {
             // have any tags for this Passage
             metaStart = openPosition;
           }
-
-          console.log(openBracket, openPosition, metaStart);
 
           if (metaStart) {
             title = lines[i].substr(3, metaStart - 3);
@@ -420,7 +416,6 @@ export var data = {
   },
 
   trySaveCurrent: function() {
-    console.log(fs);
     if (data.editingPath().length > 0 && data.editingType().length > 0) {
       data.saveTo(data.editingPath(), data.getSaveData(data.editingType()));
     }

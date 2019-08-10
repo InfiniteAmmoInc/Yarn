@@ -1,9 +1,8 @@
 {
   "name": "yarn",
-  "version": "0.4.1",
-  "license": "MIT",
-  "author": " @infinite_ammo, @seiyria, @beeglebug ,Todor Imreorov",
   "description": "Dialogue editor created for \"Night in the Woods\" (and other projects) by @NoelFB and @infinite_ammo with contributions from @seiyria and @beeglebug. It is heavily inspired by and based on the amazing Twine software: http://twinery.org/. This version has been ported over to Electron and extended with further functionality by Todor Imreorov",
+  "license": "MIT",
+  "author": "@infinite_ammo, @seiyria, @beeglebug ,Todor Imreorov",
   "homepage": "https://github.com/InfiniteAmmoInc/Yarn#readme",
   "repository": {
     "type": "git",
@@ -12,6 +11,7 @@
   "bugs": {
     "url": "https://github.com/InfiniteAmmoInc/Yarn/issues"
   },
+  "version": "0.4.1",
   "scripts": {
     "build": "webpack -p --progress --mode production --config webpack.config.js",
     "build-dev": "cross-env NODE_ENV=dev webpack -p --progress --config webpack.config.js",
@@ -88,10 +88,6 @@
   "lint-staged": {
     "package.json": [
       "prettier-package-json --write",
-      "git add"
-    ],
-    "*.js": [
-      "eslint --fix",
       "git add"
     ]
   }
