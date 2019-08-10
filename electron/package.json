@@ -14,9 +14,11 @@
     "url": "https://github.com/InfiniteAmmoInc/Yarn/issues"
   },
   "scripts": {
+    "build-web-app-dev": "cd .. && npm run build-dev && cd dist && copyfiles *.html ../electron/app && copyfiles **/* ../electron/app",
     "build-web-app": "cd .. && npm run build && cd dist && copyfiles *.html ../electron/app && copyfiles **/* ../electron/app",
-    "start": "npm run build-web-app && electron .",
-    "build-linux": "npm run build-web-app && electron-builder --linux"
+    "start": "npm run build-web-app-dev && electron .",
+    "build-linux": "npm run build-web-app && electron-builder --linux",
+    "build-window": "npm run build-web-app && electron-builder --windows"
   },
   "dependencies": {
     "electron-is": "^3.0.0"

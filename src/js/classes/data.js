@@ -260,6 +260,13 @@ export var data = {
       .css({ opacity: 0 })
       .transition({ opacity: 1 }, 500);
     app.updateNodeLinks();
+
+    // Callback for embedding in other webapps
+    var event = new CustomEvent("yarnLoadedData");
+    event.document = document;
+    event.data = data;
+    event.app = app;
+    window.parent.dispatchEvent(event);
   },
 
   getSaveData: function(type) {

@@ -1,6 +1,5 @@
 {
   "name": "yarn",
-  "main": "main.js",
   "version": "0.4.1",
   "license": "MIT",
   "author": " @infinite_ammo, @seiyria, @beeglebug ,Todor Imreorov",
@@ -14,9 +13,8 @@
     "url": "https://github.com/InfiniteAmmoInc/Yarn/issues"
   },
   "scripts": {
-    "electron": "npm run build && electron .",
-    "build-electron": "build --linux portable",
     "build": "webpack -p --progress --mode production --config webpack.config.js",
+    "build-dev": "cross-env NODE_ENV=dev webpack -p --progress --config webpack.config.js",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",
     "dev": "cross-env NODE_ENV=dev webpack-dev-server --open --config webpack.config.js",
