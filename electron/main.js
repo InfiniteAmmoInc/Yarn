@@ -33,8 +33,6 @@ function createWindow() {
 
   // if (isDev) {
   //   mainWindow.loadURL(`http://localhost:8080`);
-  // } else {
-  //   mainWindow.loadURL(`file://${__dirname}/dist/index.html`);
   // }
   if (isDev) {
     mainWindow.webContents.openDevTools();

@@ -598,15 +598,12 @@ export var App = function(name, version) {
 
     this.insertEmoji = function() {
       this.emPicker.toggle();
+      self.togglePreviewMode(true);
       $("#emojiPicker-container").css({
         top: self.mouseY - 125,
         left: self.mouseX - 200
       });
       $("#emojiPicker-container").show();
-      $("#emojiPicker-container").on("click", function() {
-        self.togglePreviewMode(false);
-      });
-      self.togglePreviewMode(true);
     };
 
     $(document).on("mousemove", function(e) {
@@ -1020,6 +1017,7 @@ export var App = function(name, version) {
         emoji => {
           self.insertTextAtCursor(emoji.char);
           this.emPicker.toggle();
+          self.togglePreviewMode(false);
         }
       );
 
