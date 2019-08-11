@@ -1,0 +1,23 @@
+<nodes>
+	<node>
+		<title>Start</title>
+		<tags></tags>
+		<body> [[Node2]]</body>
+		<position x="590" y="32"></position>
+		<colorID>0</colorID>
+	</node>
+	<node>
+		<title>Node2</title>
+		<tags></tags>
+		<body>[[Node3]] </body>
+		<position x="284" y="291"></position>
+		<colorID>0</colorID>
+	</node>
+	<node>
+		<title>Node3</title>
+		<tags></tags>
+		<body>Empty Text</body>
+		<position x="830" y="285"></position>
+		<colorID>0</colorID>
+	</node>
+</nodes>

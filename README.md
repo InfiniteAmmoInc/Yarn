@@ -2,13 +2,42 @@
 
 Dialogue editor created for "Night in the Woods" (and other projects) by @NoelFB and @infinite_ammo with contributions from @seiyria and @beeglebug. It is heavily inspired by and based on the amazing Twine software: http://twinery.org/
 
-![Screenshot](http://infiniteammo.com/Yarn/screenshot.jpg)
+This is a port to electron, made possible by Todor Imreorov. It adds a number of new features, such as:
+- Integration of bondage.js (yarnspinner port in javascript) inside Yarn - this allows testing yarn stories directly inside yarn, as well as rendering of rich text bbcode. The tester is written in a very reusable way (as a class with methods)- so it is easy to integrate in html5 games!  
+- Helper menu to create node links - with a search filter
+- Helper menu to test yarn story from a specific node - with a search filter (via bondage.js)
+- Support for multiple app instances and file drag and drop
+- Automatic creation of nodes with correct name and path when writing any new story threads that have no node created yet
+![yarn-testerbbcode](https://user-images.githubusercontent.com/6495061/41685950-2b8b3580-74da-11e8-89ea-c7d23dea19da.gif)
+
+# BBcode styling in editor, Spellchecking, Autocompletion, and more!
+- Optional syntax autocompletion (autoclose tags)
+- preview of bbcode tag effects and goto in trimmed nodes
+- optional spell checking
+- optional word guessing and autocompletion
+- optional preview bbcode in editor mode
+- a color picker (using spectrum.js) to set font color in bbcode
+- new context menu
+- misspelled word suggestions in the new context menu - if you have selected a misspelled word
+- nodelink suggestions as you type in the right places
+- Night mode - Toggling it will invert all the light colors which the editor currently uses
+- A context menu command to visit other nodes via their links in the editor and even create new ones
+- Button to go back to the previous edited node. If there is no previous - save and close the current one
+![yarn-0 3 5-newfeatures](https://user-images.githubusercontent.com/6495061/50045609-b646e900-008d-11e9-9f17-2ac6b01908f6.gif)
 
 # Builds
 
-Win64: http://infiniteammo.com/Yarn/Yarn-2016-08-15-win.zip
+Win64 and MacOS: https://github.com/blurymind/Yarn/releases/latest
 
-MacOS: http://infiniteammo.com/Yarn/Yarn-2016-08-15-mac.zip
+# To compile and run from source:
+Make sure you have nodejs and electron installed. Then
+
+npm install
+
+npm start
+
+# To build a yarn executable yourself:
+npm run-script build
 
 # Examples
 
@@ -61,17 +90,6 @@ https://github.com/InfiniteAmmoInc/yarn-test
 You can find a more advanced Yarn interpreter here: 
 
 https://github.com/thesecretlab/YarnSpinner
-
-# How to Run the Yarn Source as an App
-
-Download http://nwjs.io/ for your platform and extract the contents.
-
-Win64: Download the latest nwjs for Windows 64bit. Extract the content to wherever you like. Drag the yarn folder into nw.exe and it should run yarn! (if not ensure that the yarn folder has package.json in it). Alternatively run nw.exe and navigate to C:/path_to_yarn/Yarn/app/index.html 
-
-MacOS: Place source code in a new folder named "app.nw" inside the extracted nwjs.app's "Contents/Resources/" folder.
-(to explore an app's folder structure, right click and select "Show Package Contents")
-
-Linux: Download latest nwjs for linux. Extract the content to wherver you like. In that folder make a new folder named "package.nw". Clone yarn into the package.nw folder so that readme, licence and most imporatantly package.json are in the package.nw folder. Now open terminal, navigate to the folder where you extracted nwjs and run the "nw" executable.
 
 # Yarn Icon
 
