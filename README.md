@@ -5,10 +5,10 @@ Dialogue editor created for "Night in the Woods" (and other projects) by @NoelFB
 This is a port to electron, made possible by Todor Imreorov. It adds a number of new features, such as:
 - Integration of bondage.js (yarnspinner port in javascript) inside Yarn - this allows testing yarn stories directly inside yarn, as well as rendering of rich text bbcode. The tester is written in a very reusable way (as a class with methods)- so it is easy to integrate in html5 games!  
 - Helper menu to create node links - with a search filter
-- Helper menu to test yarn story from a specific node - with a search filter (via bondage.js)
 - Support for multiple app instances and file drag and drop
 - Automatic creation of nodes with correct name and path when writing any new story threads that have no node created yet
-![yarn-testerbbcode](https://user-images.githubusercontent.com/6495061/41685950-2b8b3580-74da-11e8-89ea-c7d23dea19da.gif)
+- Ability to copy/paste nodes
+-  Ability to run as a web app with propper file open and save functionality
 
 # BBcode styling in editor, Spellchecking, Autocompletion, and more!
 - Optional syntax autocompletion (autoclose tags)
@@ -19,6 +19,7 @@ This is a port to electron, made possible by Todor Imreorov. It adds a number of
 - a color picker (using spectrum.js) to set font color in bbcode
 - new context menu
 - misspelled word suggestions in the new context menu - if you have selected a misspelled word
+- similar word suggestions in the new context menu (thesaurus)
 - nodelink suggestions as you type in the right places
 - Night mode - Toggling it will invert all the light colors which the editor currently uses
 - A context menu command to visit other nodes via their links in the editor and even create new ones
@@ -29,15 +30,25 @@ This is a port to electron, made possible by Todor Imreorov. It adds a number of
 
 Win64 and MacOS: https://github.com/blurymind/Yarn/releases/latest
 
-# To compile and run from source:
-Make sure you have nodejs and electron installed. Then
+# To compile and run web app on localhost from source:
+Make sure you have nodejs installed. Then from the root folder
 
 npm install
-
 npm start
 
-# To build a yarn executable yourself:
-npm run-script build
+# To build web app:
+npm run build
+
+# To compile and run electron app:
+cd electron
+nmp install
+npm start
+
+# To build an electron yarn executable yourself:
+cd electron
+npm run build-windows
+or
+npm run build-linux
 
 # Examples
 
