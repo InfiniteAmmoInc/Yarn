@@ -44,7 +44,7 @@ npm run build
 # To compile and run electron app:
 cd electron
 
-nmp install
+npm install
 
 npm start
 
