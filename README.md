@@ -3,7 +3,6 @@
 Dialogue editor created for "Night in the Woods" (and other projects) by @NoelFB and @infinite_ammo with contributions from @seiyria and @beeglebug. It is heavily inspired by and based on the amazing Twine software: http://twinery.org/
 
 This is a port to electron, made possible by Todor Imreorov. It adds a number of new features, such as:
-- Integration of bondage.js (yarnspinner port in javascript) inside Yarn - this allows testing yarn stories directly inside yarn, as well as rendering of rich text bbcode. The tester is written in a very reusable way (as a class with methods)- so it is easy to integrate in html5 games!  
 - Helper menu to create node links - with a search filter
 - Support for multiple app instances and file drag and drop
 - Automatic creation of nodes with correct name and path when writing any new story threads that have no node created yet
