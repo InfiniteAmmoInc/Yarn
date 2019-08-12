@@ -16,6 +16,7 @@ This is a port to electron, made possible by Todor Imreorov. It adds a number of
 - optional word guessing and autocompletion
 - optional preview bbcode in editor mode
 - a color picker (using spectrum.js) to set font color in bbcode
+- emoji picker to insert emojis
 - new context menu
 - misspelled word suggestions in the new context menu - if you have selected a misspelled word
 - similar word suggestions in the new context menu (thesaurus)
