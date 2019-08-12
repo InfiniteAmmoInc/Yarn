@@ -34,21 +34,30 @@ Win64 and MacOS: https://github.com/blurymind/Yarn/releases/latest
 Make sure you have nodejs installed. Then from the root folder
 
 npm install
+
 npm start
 
 # To build web app:
 npm run build
 
+
 # To compile and run electron app:
 cd electron
+
 nmp install
+
 npm start
+
 
 # To build an electron yarn executable yourself:
 cd electron
+
 npm run build-windows
+
 or
+
 npm run build-linux
+
 
 # Examples
 
