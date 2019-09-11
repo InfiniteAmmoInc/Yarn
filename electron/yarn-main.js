@@ -10,6 +10,7 @@ window.addEventListener("yarnReady", e => {
   //give the yarn webb app the fs module, so we can ctrl+s in electron without pop ups
   yarn = e;
   yarn.app.fs = fs;
+  yarn.app.electron = electron;
   ipcRenderer.send("yarn-ready");
 });
 editorFrameEl.src = "app/index.html";

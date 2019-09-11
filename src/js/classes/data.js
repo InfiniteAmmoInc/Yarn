@@ -384,11 +384,6 @@ export var data = {
   saveFileDialog: function(dialog, type, content) {
     var blob = new Blob([content], { type: "text/plain;charset=utf-8" });
     saveAs(blob, data.editingName().replace(/\.[^/.]+$/, "") + "." + type);
-    // if (app.isElectron) {
-    // } else {
-    //   var blob = new Blob([content], { type: "text/plain;charset=utf-8" });
-    //   saveAs(blob, data.editingName().replace(/\.[^/.]+$/, "") + "." + type);
-    // }
   },
 
   insertImageFileName: function() {

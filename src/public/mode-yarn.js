@@ -79,6 +79,14 @@ define("ace/mode/yarn", [
 
   exports.Mode = Mode;
 
+  const triggerPaste = function() {
+    if (app.electron) {
+      document.execCommand("paste");
+    } else {
+      // execCommand("paste") will not work on web browsers, due to security
+      app.insertTextAtCursor(app.clipboard);
+    }
+  };
   /// set context menu
   $.contextMenu({
     selector: ".node-editor .form .editor",
@@ -115,9 +123,7 @@ define("ace/mode/yarn", [
           paste: {
             name: "Paste",
             icon: "paste",
-            callback: () => {
-              app.insertTextAtCursor(app.clipboard);
-            }
+            callback: () => triggerPaste()
           },
           sep1: "---------"
         };
@@ -153,9 +159,7 @@ define("ace/mode/yarn", [
           paste: {
             name: "Paste",
             icon: "paste",
-            callback: () => {
-              app.insertTextAtCursor(app.clipboard);
-            }
+            callback: () => triggerPaste()
           }
         };
       }

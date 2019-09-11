@@ -66,12 +66,6 @@ export var App = function(name, version) {
 
   this.$searchField = $(".search-field");
 
-  if (typeof require == "function") {
-    // this.gui = remote.getCurrentWindow();
-    // this.fs = remote.require("fs");
-    this.isElectron = true;
-  }
-
   this.run = function() {
     var osName = "Unknown OS";
     if (navigator.platform.indexOf("Win") != -1) osName = "Windows";
@@ -79,7 +73,6 @@ export var App = function(name, version) {
     if (navigator.platform.indexOf("X11") != -1) osName = "UNIX";
     if (navigator.platform.indexOf("Linux") != -1) osName = "Linux";
     self.isElectron = navigator.userAgent.toLowerCase().includes("electron");
-    // console.log(self.isElectron);
 
     if (osName == "Windows") self.zoomSpeed = 0.1;
 
@@ -351,10 +344,6 @@ export var App = function(name, version) {
     });
 
     $(document).on("keydown", function(e) {
-      // if (self.isElectron === false) {
-      //   return;
-      // }
-
       if (e.ctrlKey || e.metaKey) {
         if (e.shiftKey) {
           switch (e.keyCode) {
@@ -402,7 +391,7 @@ export var App = function(name, version) {
         }
         // ctrl + x
         else if ((e.metaKey || e.ctrlKey) && e.keyCode == 88) {
-          self.clipboard = self.editor.getSelectedText();
+          app.clipboard = app.editor.getSelectedText();
           app.insertTextAtCursor("");
         }
       } else {
