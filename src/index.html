@@ -169,6 +169,13 @@
 							<input class="styled-checkbox" type="checkbox" id="toglNightMode" onclick="app.toggleNightMode()"></input>
 							<label for="toglNightMode" title="Night Mode"> &#9728 </label>
 						</span>
+						&nbsp;&nbsp;|
+						<span>
+							<select id="select_language" onchange="app.updateCountry()">
+								</select> >
+							</span>
+						<button id="speakTextBtn" class="bbcode-button" style="color:#19a4a8" onclick="app.hearText()" title="Transcribe">🎤</button>
+						<button  class="bbcode-button" style="color:#19a4a8" onclick="app.speakText()" title="Speak text">👂</button>
 					</div>
 
 					<div class="editor-container">

@@ -18,6 +18,7 @@ import "jquery.transit";
 
 import "spectrum-colorpicker";
 import "lightweight-emoji-picker/dist/picker.js";
+import spoken from "spoken";
 
 import { App } from "./classes/app.js";
 

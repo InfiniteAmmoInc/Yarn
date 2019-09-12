@@ -40,6 +40,8 @@ export var App = function(name, version) {
   this.mouseY = 0;
   this.clipboard = "";
   this.nodeClipboard = [];
+  this.speachInstance = null;
+  this.language = "en-US";
   // this.fs = fs;
 
   this.UPDATE_ARROWS_THROTTLE_MS = 25;
@@ -595,6 +597,40 @@ export var App = function(name, version) {
       $("#emojiPicker-container").show();
     };
 
+    this.updateCountry = function() {
+      var select_language = document.getElementById("select_language");
+      self.language = Utils.langs[select_language.selectedIndex][1][0];
+      spoken.recognition.lang = self.language;
+    };
+
+    this.speakText = function() {
+      const selectedText = self.editor.getSelectedText();
+      const say = selectedText
+        ? selectedText
+        : self.editor.getSession().getValue();
+      spoken.say(say);
+    };
+
+    this.hearText = function() {
+      //https://codepen.io/velvasi/pen/qIEsr
+
+      const available = spoken.listen.available();
+      if (!available) {
+        alert("Speech recognition not avaiilable!");
+        return;
+      }
+
+      spoken.listen.on.partial(ts => ($("#speakTextBtn").title = ts));
+      spoken
+        .listen()
+        .then(transcript => {
+          self.insertTextAtCursor(transcript);
+          $("#speakTextBtn").title = "";
+        })
+        .catch(error => console.warn(error.message));
+      // console.log("Text: " + transcript);
+    };
+
     $(document).on("mousemove", function(e) {
       self.mouseX = e.pageX;
       self.mouseY = e.pageY;
@@ -1009,6 +1045,17 @@ export var App = function(name, version) {
           self.togglePreviewMode(false);
         }
       );
+
+      /// init language selector
+      var select_language = document.getElementById("select_language");
+      for (var i = 0; i < Utils.langs.length; i++) {
+        var option = document.createElement("option");
+        option.text = Utils.langs[i][0];
+        select_language.add(option);
+      }
+      select_language.selectedIndex = 6;
+      self.updateCountry();
+      // select_dialect.selectedIndex = 6;
 
       self.toggleSpellCheck();
       self.updateEditorStats();
