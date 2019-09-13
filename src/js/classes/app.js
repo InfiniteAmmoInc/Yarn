@@ -1,7 +1,8 @@
 import {
   enable_spellcheck,
   disable_spellcheck,
-  suggest_word_for_misspelled
+  suggest_word_for_misspelled,
+  load_dictionary
 } from "../libs/spellcheck_ace.js";
 import { Node } from "./node";
 import { data } from "./data";
@@ -601,6 +602,7 @@ export var App = function(name, version) {
       var select_language = document.getElementById("select_language");
       self.language = Utils.langs[select_language.selectedIndex][1][0];
       spoken.recognition.lang = self.language;
+      load_dictionary(self.language.split("-")[0]);
     };
 
     this.speakText = function() {
@@ -608,7 +610,17 @@ export var App = function(name, version) {
       const say = selectedText
         ? selectedText
         : self.editor.getSession().getValue();
-      spoken.say(say);
+
+      spoken.voices().then(countries => {
+        const lookUp = self.language.split("-")[0];
+        const voices = countries.filter(v => !v.lang.indexOf(lookUp));
+
+        if (voices.length) {
+          spoken.say(say, voices[0]);
+        } else {
+          spoken.say(say);
+        }
+      });
     };
 
     this.hearText = function() {
@@ -620,7 +632,9 @@ export var App = function(name, version) {
         return;
       }
 
-      spoken.listen.on.partial(ts => ($("#speakTextBtn").title = ts));
+      // spoken.listen.on.partial(ts => ($("#speakTextBtn").title = ts));
+      spoken.listen.on.partial(ts => console.log(ts));
+
       spoken
         .listen()
         .then(transcript => {
