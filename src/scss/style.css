@@ -362,7 +362,7 @@ a:hover { color: #000;}
 	padding: 8px 8px 8px 8px;
 	font-size: 0.8em;
 	overflow: hidden;
-	font-family: "Lucida Console", Monaco, monospace;
+	font-family: "Droid Sans Mono", arial !important;
 	color: #666;
 	line-height: 1.3em;
 }
@@ -570,7 +570,7 @@ a:hover { color: #000;}
 	line-height: 1.5em;
 	font-size: 0.9em;
 	color: #666;
-	font-family: "Lucida Console", Monaco, monospace;
+	font-family: "Droid Sans Mono", arial !important;
 	cursor: text;
 }
 
@@ -595,7 +595,7 @@ a:hover { color: #000;}
 	font-size: 0.9em;
 	line-height: 1.5em;
 	color: #666;
-	font-family: "Lucida Console", Monaco, monospace;
+	font-family: "Droid Sans Mono", arial !important;
 	cursor: pointer;
 	height: 100%;
 	position: absolute;

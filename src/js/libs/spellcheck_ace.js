@@ -5,7 +5,7 @@
 var nspell = require("nspell");
 // You should configure these classes.
 var editor = "editor"; // This should be the id of your editor element.
-var language = "en_US";
+var language = "en";
 
 var dicPath = "public/dictionaries/en_US/en_US.dic";
 var affPath = "public/dictionaries/en_US/en_US.aff";
@@ -58,7 +58,7 @@ function load_dictionary(dicLanguage) {
       });
     });
 }
-load_dictionary(language);
+load_dictionary("en_US");
 exports.load_dictionary = load_dictionary;
 
 // Check the spelling of a line, and return [start, end]-pairs for misspelled words.
