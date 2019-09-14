@@ -643,7 +643,7 @@ export var App = function(name, version) {
       spoken
         .listen()
         .then(transcript => {
-          self.insertTextAtCursor(transcript);
+          self.insertTextAtCursor(transcript+" ");
           document.getElementById("speakTextBtnBubble").title = "Transcribe";
         })
         .catch(error => console.warn(error.message));
