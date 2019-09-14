@@ -1393,6 +1393,11 @@ export var App = function(name, version) {
             helperLinkSearch.length == 0
           ) {
             p.setAttribute("onclick", `app.openNodeByTitle("${node.title()}")`);
+            // self.warpToNodeIdx(self.nodes.indexOf(selectedNodes[0]));
+            p.setAttribute(
+              "onmouseover",
+              `app.warpToNodeIdx(${self.nodes.indexOf(node)})`
+            );
             rootMenu.appendChild(p);
           }
         }
@@ -1969,6 +1974,8 @@ export var App = function(name, version) {
         selectedNodes[0].y() + arrayY * 210
       );
     });
+
+    self.warpToNodeIdx(self.nodes.indexOf(selectedNodes[0]));
   };
 
   this.moveNodes = function(offX, offY) {
