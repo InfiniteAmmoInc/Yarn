@@ -90,7 +90,8 @@ export var App = function(name, version) {
     // search field enter
     self.$searchField.on("keydown", function(e) {
       // enter
-      if (e.keyCode == 13) self.searchWarp();
+      self.searchWarp();
+      // if (e.keyCode == 13) self.searchWarp();
       // escape
       if (e.keyCode == 27) self.clearSearch();
     });
@@ -1393,7 +1394,6 @@ export var App = function(name, version) {
             helperLinkSearch.length == 0
           ) {
             p.setAttribute("onclick", `app.openNodeByTitle("${node.title()}")`);
-            // self.warpToNodeIdx(self.nodes.indexOf(selectedNodes[0]));
             p.setAttribute(
               "onmouseover",
               `app.warpToNodeIdx(${self.nodes.indexOf(node)})`
