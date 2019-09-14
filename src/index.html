@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html manifest="yarn.appcache">
 	<head>
 		<meta charset="utf-8">
 		<title>Yarn</title>
@@ -174,8 +174,10 @@
 							<select id="select_language" onchange="app.updateCountry()">
 								</select> >
 							</span>
-						<button id="speakTextBtn" class="bbcode-button" style="color:#19a4a8" onclick="app.hearText()" title="Transcribe">🎤</button>
-						<button  class="bbcode-button" style="color:#19a4a8" onclick="app.speakText()" title="Speak text">👂</button>
+						<button  class="bbcode-button" style="color:#19a4a8" onclick="app.hearText()" ><span title="Transcribe" class="button-bubble" id="speakTextBtnBubble"></span>🎤</button>
+						
+						<button  class="bbcode-button" style="color:#19a4a8" onclick="app.speakText()" title="Speak text">🔊</button>
+						<!-- <span class="button-bubble" title="test123"> </span>  -->
 					</div>
 
 					<div class="editor-container">

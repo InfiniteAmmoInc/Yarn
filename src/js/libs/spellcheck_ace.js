@@ -5,10 +5,9 @@
 var nspell = require("nspell");
 // You should configure these classes.
 var editor = "editor"; // This should be the id of your editor element.
-var language = "en";
 
-var dicPath = "public/dictionaries/en_US/en_US.dic";
-var affPath = "public/dictionaries/en_US/en_US.aff";
+var dicPath = "public/dictionaries/en/index.dic";
+var affPath = "public/dictionaries/en/index.aff";
 // var dicPath =
 //   "https://raw.githubusercontent.com/elastic/hunspell/master/dicts/en_US/en_US.dic";
 // var affPath =
@@ -27,13 +26,17 @@ $(
 var dictionary = null;
 
 function load_dictionary(dicLanguage) {
-  dicPath = `public/dictionaries/${dicLanguage}/${dicLanguage}.dic`;
+  console.info(`Loading ${dicLanguage} hunspell dictionary locally`);
+  dicPath = `public/dictionaries/${dicLanguage}/index.dic`;
+  affPath = `public/dictionaries/${dicLanguage}/index.aff`;
 
   $.get(dicPath, function(data) {
     dicData = data;
   })
     .catch(function() {
-      console.log("Loading hunspell dictionary from server instead");
+      console.error(
+        `${dicLanguage} not found locally. Loading dictionary from server instead...`
+      );
       // https://raw.githubusercontent.com/wooorm/dictionaries/master/dictionaries/bg/index.dic
       dicPath = `https://raw.githubusercontent.com/wooorm/dictionaries/master/dictionaries/${dicLanguage}/index.dic`;
       affPath = `https://raw.githubusercontent.com/wooorm/dictionaries/master/dictionaries/${dicLanguage}/index.aff`;
@@ -46,6 +49,8 @@ function load_dictionary(dicLanguage) {
         }).done(function() {
           console.log("Dictionary loaded");
           dictionary = new nspell(affData, dicData);
+          contents_modified = true;
+          spell_check();
         });
       });
     })
@@ -55,10 +60,11 @@ function load_dictionary(dicLanguage) {
       }).done(function() {
         console.log("Dictionary loaded");
         dictionary = new nspell(affData, dicData);
+        contents_modified = true;
+        spell_check();
       });
     });
 }
-load_dictionary("en_US");
 exports.load_dictionary = load_dictionary;
 
 // Check the spelling of a line, and return [start, end]-pairs for misspelled words.

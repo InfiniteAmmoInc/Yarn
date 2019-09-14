@@ -697,3 +697,35 @@ a:hover { color: #000;}
   text-align: center;
   z-index: 99 !important;
 }
+
+.button-bubble {
+	/* display: inline; */
+	width: 20px;
+	height: 20px;
+	position: absolute;
+	overflow-wrap: break-word;
+}
+.button-bubble:hover:after{
+  display: -webkit-flex;
+  display: flex;
+  -webkit-justify-content: center;
+  justify-content: center;
+  background: #444;
+  border-radius: 8px;
+  color: #fff;
+  content: attr(title);
+  margin: -62px -110px 0;
+  font-size: 16px;
+  padding: 13px;
+	width: 220px;
+	z-index: 99 !important;
+}
+.button-bubble:hover:before{
+  border: solid;
+  border-color: #444 transparent;
+  border-width: 12px 6px 0 6px;
+  content: "";
+  left: 45%;
+  bottom: 30px;
+  position: absolute;
+}

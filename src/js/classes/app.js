@@ -42,7 +42,8 @@ export var App = function(name, version) {
   this.clipboard = "";
   this.nodeClipboard = [];
   this.speachInstance = null;
-  this.language = "en-US";
+  this.selectedLanguageIndex = 6;
+  this.language = null;
   // this.fs = fs;
 
   this.UPDATE_ARROWS_THROTTLE_MS = 25;
@@ -600,6 +601,8 @@ export var App = function(name, version) {
 
     this.updateCountry = function() {
       var select_language = document.getElementById("select_language");
+      self.selectedLanguageIndex = select_language.selectedIndex;
+
       self.language = Utils.langs[select_language.selectedIndex][1][0];
       spoken.recognition.lang = self.language;
       load_dictionary(self.language.split("-")[0]);
@@ -616,6 +619,7 @@ export var App = function(name, version) {
         const voices = countries.filter(v => !v.lang.indexOf(lookUp));
 
         if (voices.length) {
+          console.log("Loaded voice", voices[0]);
           spoken.say(say, voices[0]);
         } else {
           spoken.say(say);
@@ -624,8 +628,6 @@ export var App = function(name, version) {
     };
 
     this.hearText = function() {
-      //https://codepen.io/velvasi/pen/qIEsr
-
       const available = spoken.listen.available();
       if (!available) {
         alert("Speech recognition not avaiilable!");
@@ -633,16 +635,18 @@ export var App = function(name, version) {
       }
 
       // spoken.listen.on.partial(ts => ($("#speakTextBtn").title = ts));
-      spoken.listen.on.partial(ts => console.log(ts));
+      spoken.listen.on.partial(ts => {
+        console.log(ts);
+        document.getElementById("speakTextBtnBubble").title = `🗣️ ${ts} 🦜`;
+      });
 
       spoken
         .listen()
         .then(transcript => {
           self.insertTextAtCursor(transcript);
-          $("#speakTextBtn").title = "";
+          document.getElementById("speakTextBtnBubble").title = "Transcribe";
         })
         .catch(error => console.warn(error.message));
-      // console.log("Text: " + transcript);
     };
 
     $(document).on("mousemove", function(e) {
@@ -1067,9 +1071,12 @@ export var App = function(name, version) {
         option.text = Utils.langs[i][0];
         select_language.add(option);
       }
-      select_language.selectedIndex = 6;
-      self.updateCountry();
-      // select_dialect.selectedIndex = 6;
+
+      select_language.selectedIndex = self.selectedLanguageIndex;
+      if (!self.language) {
+        self.language = "en-US";
+        self.updateCountry();
+      }
 
       self.toggleSpellCheck();
       self.updateEditorStats();
