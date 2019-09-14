@@ -1949,7 +1949,6 @@ export var App = function(name, version) {
     var arrayX = 0;
     var arrayY = 0;
     self.nodes().forEach(function(node, i) {
-      console.log(i % arrayWidth, i);
       if (i % arrayWidth === 0) {
         arrayY += 1;
         arrayX = 0;
