@@ -1877,7 +1877,7 @@ export var App = function(name, version) {
    * Align selected nodes relative to a node with the lowest x-value
    */
   this.arrangeX = function() {
-    var SPACING = 250;
+    var SPACING = 210;
 
     var selectedNodes = self
         .nodes()
@@ -1906,7 +1906,7 @@ export var App = function(name, version) {
    * Align selected nodes relative to a node with the lowest y-value
    */
   this.arrangeY = function() {
-    var SPACING = 250;
+    var SPACING = 210;
 
     var selectedNodes = self
         .nodes()
@@ -1932,8 +1932,12 @@ export var App = function(name, version) {
   };
 
   this.arrangeSpiral = function() {
-    for (var i in self.nodes()) {
-      var node = self.nodes()[i];
+    const selectedNodes = self.getSelectedNodes().length
+      ? self.getSelectedNodes()
+      : self.nodes();
+
+    for (var i in selectedNodes) {
+      var node = selectedNodes[i];
       var y = Math.sin(i * 0.5) * (600 + i * 30);
       var x = Math.cos(i * 0.5) * (600 + i * 30);
       node.moveTo(x, y);
@@ -1941,14 +1945,18 @@ export var App = function(name, version) {
   };
 
   this.sortAlphabetical = function() {
-    self.nodes().sort(function(a, b) {
+    const selectedNodes = self.getSelectedNodes().length
+      ? self.getSelectedNodes()
+      : self.nodes();
+
+    selectedNodes.sort(function(a, b) {
       return a.title().localeCompare(b.title());
     });
 
-    var arrayWidth = Math.round(self.nodes().length / 2);
+    var arrayWidth = Math.round(selectedNodes.length / 2);
     var arrayX = 0;
     var arrayY = 0;
-    self.nodes().forEach(function(node, i) {
+    selectedNodes.forEach(function(node, i) {
       if (i % arrayWidth === 0) {
         arrayY += 1;
         arrayX = 0;
@@ -1957,8 +1965,8 @@ export var App = function(name, version) {
       }
       if (i === 1) arrayY = 0;
       node.moveTo(
-        self.nodes()[0].x() + 210 * arrayX,
-        self.nodes()[0].y() + arrayY * 210
+        selectedNodes[0].x() + 210 * arrayX,
+        selectedNodes[0].y() + arrayY * 210
       );
     });
   };
