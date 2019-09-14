@@ -57,6 +57,13 @@
 				</div>
 
 				<div class="menu">
+					<span class="title" onmouseover="app.openNodeListMenu('open')">> Find</span>
+					<div class="dropdown" id="openHelperMenu">
+						<input class="search-field" placeholder="search" type="text" id="openHelperMenuFilter" oninput="app.openNodeListMenu('open')"></input>
+					</div>
+				</div>
+
+				<div class="menu">
 					<span class="title">File</span>
 					<div class="dropdown">
 						<span class="item" data-bind="click: app.data.tryOpenFile">Open...</span>
@@ -72,13 +79,6 @@
 						<span class="item" data-bind="click: function() { app.data.trySave('xml'); }">Save As Xml...</span>
 					</div>
 				</div>
-				
-				<!-- <div class="menu">
-					<span class="title" onmouseover="app.openNodeListMenu('run')">Run</span>
-					<div class="dropdown" id="runHelperMenu">
-						<input class="search-field" placeholder="search" type="text" id="runHelperMenuFilter" oninput="app.openNodeListMenu('run')"></input>
-					</div>
-				</div> -->
 			</div>
 
 			<!-- arrow bg canvas for linked nodes -->

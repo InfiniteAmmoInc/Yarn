@@ -1359,6 +1359,11 @@ export var App = function(name, version) {
     for (let i = rootMenu.childNodes.length - 1; i > 1; i--) {
       rootMenu.removeChild(rootMenu.childNodes[i]);
     }
+    // rootMenu.childNodes.forEach(child => {
+    //   console.log(child.constructor.name);
+    //   if (child.constructor.name == "HTMLSpanElement")
+    //     rootMenu.removeChild(child);
+    // });
     app.nodes().forEach((node, i) => {
       if (
         node
@@ -1385,7 +1390,8 @@ export var App = function(name, version) {
             );
             rootMenu.appendChild(p);
           }
-        } else if (action == "run") {
+        } else if (action == "open") {
+          console.log(node.title());
           if (
             node
               .title()
@@ -1393,10 +1399,7 @@ export var App = function(name, version) {
               .indexOf(helperLinkSearch) >= 0 ||
             helperLinkSearch.length == 0
           ) {
-            p.setAttribute(
-              "onclick",
-              "app.testRunFrom('" + node.title() + "')"
-            );
+            p.setAttribute("onclick", `app.openNodeByTitle("${node.title()}")`);
             rootMenu.appendChild(p);
           }
         }
@@ -1528,7 +1531,7 @@ export var App = function(name, version) {
   this.getOtherNodeTitles = function() {
     var result = [];
     app.nodes().forEach(node => {
-      if (node.title() !== self.editing().title()) {
+      if (!self.editing() || node.title() !== self.editing().title()) {
         result.push(node.title().trim());
       }
     });
