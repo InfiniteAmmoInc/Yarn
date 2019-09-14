@@ -88,7 +88,7 @@ export var App = function(name, version) {
     self.newNode().title("Start");
 
     // search field enter
-    self.$searchField.on("keydown", function(e) {
+    self.$searchField.on("keyup", function(e) {
       // enter
       self.searchWarp();
       // if (e.keyCode == 13) self.searchWarp();
@@ -2039,18 +2039,22 @@ export var App = function(name, version) {
 
   this.searchWarp = function() {
     // if search field is empty
-    if (self.$searchField.val() == "") {
+    var search = self.$searchField
+      .val()
+      .toLowerCase()
+      .trim();
+
+    if (search === "") {
       // warp to the first node
       self.warpToNodeIdx(0);
     } else {
-      var search = self.$searchField.val().toLowerCase();
-      for (var i in self.nodes()) {
-        var node = self.nodes()[i];
-        if (node.title().toLowerCase() == search) {
-          self.warpToNodeIdx(i);
-          return;
-        }
-      }
+      const foundNode = self.nodes().find(node =>
+        node
+          .title()
+          .toLowerCase()
+          .includes(search)
+      );
+      self.warpToNodeIdx(self.nodes.indexOf(foundNode));
     }
   };
 
