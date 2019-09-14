@@ -1941,8 +1941,7 @@ export var App = function(name, version) {
   };
 
   this.sortAlphabetical = function() {
-    console.log(self.nodes.sort);
-    self.nodes.sort(function(a, b) {
+    self.nodes().sort(function(a, b) {
       return a.title().localeCompare(b.title());
     });
   };
