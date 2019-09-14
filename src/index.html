@@ -158,11 +158,6 @@
 							<label for="toglAutocompleteWords" title="auto-completion">💬</label>
 						</span>
 						&nbsp;
-						<span class="styled-checkbox">
-							<input class="styled-checkbox" type="checkbox" id="toglSpellCheck" onclick="app.toggleSpellCheck()"></input>
-							<label for="toglSpellCheck" title="Spellcheck">&#9745abc</label>
-						</span>
-						&nbsp;
 						<button class="bbcode-button" onclick="app.searchTextInEditor()" title="Search (Ctrl+f)">🔎</button>
 						&nbsp;&nbsp;&nbsp;&nbsp;
 						<span class="styled-checkbox">
@@ -173,6 +168,11 @@
 						<span>
 							<select id="select_language" onchange="app.updateCountry()">
 								</select> >
+							</span>
+							&nbsp;
+							<span class="styled-checkbox">
+								<input class="styled-checkbox" type="checkbox" id="toglSpellCheck" onclick="app.toggleSpellCheck()"></input>
+								<label for="toglSpellCheck" title="Spellcheck">&#9745abc</label>
 							</span>
 						<button  class="bbcode-button" style="color:#19a4a8" onclick="app.hearText()" ><span title="Transcribe" class="button-bubble" id="speakTextBtnBubble"></span>🎤</button>
 						
