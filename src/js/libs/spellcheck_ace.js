@@ -40,19 +40,6 @@ function load_dictionary(dicLanguage) {
       // https://raw.githubusercontent.com/wooorm/dictionaries/master/dictionaries/bg/index.dic
       dicPath = `https://raw.githubusercontent.com/wooorm/dictionaries/master/dictionaries/${dicLanguage}/index.dic`;
       affPath = `https://raw.githubusercontent.com/wooorm/dictionaries/master/dictionaries/${dicLanguage}/index.aff`;
-
-      $.get(dicPath, function(data) {
-        dicData = data;
-      }).done(function() {
-        $.get(affPath, function(data) {
-          affData = data;
-        }).done(function() {
-          console.log("Dictionary loaded");
-          dictionary = new nspell(affData, dicData);
-          contents_modified = true;
-          spell_check();
-        });
-      });
     })
     .done(function() {
       $.get(affPath, function(data) {
