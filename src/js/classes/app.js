@@ -1944,6 +1944,24 @@ export var App = function(name, version) {
     self.nodes().sort(function(a, b) {
       return a.title().localeCompare(b.title());
     });
+
+    var arrayWidth = Math.round(self.nodes().length / 2);
+    var arrayX = 0;
+    var arrayY = 0;
+    self.nodes().forEach(function(node, i) {
+      console.log(i % arrayWidth, i);
+      if (i % arrayWidth === 0) {
+        arrayY += 1;
+        arrayX = 0;
+      } else {
+        arrayX += 1;
+      }
+      if (i === 1) arrayY = 0;
+      node.moveTo(
+        self.nodes()[0].x() + 210 * arrayX,
+        self.nodes()[0].y() + arrayY * 210
+      );
+    });
   };
 
   this.moveNodes = function(offX, offY) {
