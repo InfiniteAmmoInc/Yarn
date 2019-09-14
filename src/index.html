@@ -57,9 +57,10 @@
 				</div>
 
 				<div class="menu">
-					<span class="title" onmouseover="app.openNodeListMenu('open')">> Find</span>
-					<div class="dropdown" id="openHelperMenu">
-						<input class="search-field" placeholder="search" type="text" id="openHelperMenuFilter" oninput="app.openNodeListMenu('open')"></input>
+					<span class="title" onmouseover="app.openNodeListMenu('open')">Open Node</span>
+					<div class="dropdown">
+						<input id="openHelperMenuFilter" class="search-field" placeholder="search" type="text"  oninput="app.openNodeListMenu('open')"></input>
+						<div  id="openHelperMenu" ></div>
 					</div>
 				</div>
 
@@ -124,8 +125,9 @@
 						<div class="app-menu" style="position: absolute;">
 							<div class="menu">
 								<span class="title" onmouseover="app.openNodeListMenu('link')">Add Link</span>
-								<div id="linkHelperMenu" class="dropdown">
+								<div class="dropdown">
 									<input class="search-field" style="text-align:center" placeholder="search" type="text" id="linkHelperMenuFilter" oninput="app.openNodeListMenu('link')"></input>
+									<div  id="linkHelperMenu" ></div>
 								</div>
 							</div>
 						</div>
