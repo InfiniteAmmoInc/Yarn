@@ -15,6 +15,7 @@
   "scripts": {
     "build": "webpack -p --progress --mode production --config webpack.config.js",
     "build-dev": "cross-env NODE_ENV=dev webpack -p --progress --config webpack.config.js",
+    "copy-web-app": "cd dist && copyfiles *.html ../electron/app && copyfiles **/* ../electron/app && copyfiles **/*/**/* ../electron/app",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",
     "dev": "cross-env NODE_ENV=dev webpack-dev-server --open --config webpack.config.js",
