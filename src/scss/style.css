@@ -1,3 +1,7 @@
+@font-face {
+	font-family: yarnFont;
+	src: url("../public/droid-sans-mono.ttf");
+  }
 /* --- ROOT CSS --- */
 
 body
@@ -374,7 +378,7 @@ a:hover { color: #000;}
 	padding: 8px 8px 8px 8px;
 	font-size: 0.8em;
 	overflow: hidden;
-	font-family: "Droid Sans Mono", arial !important;
+	font-family: yarnFont;
 	color: #666;
 	line-height: 1.3em;
 }
@@ -582,7 +586,7 @@ a:hover { color: #000;}
 	line-height: 1.5em;
 	font-size: 0.9em;
 	color: #666;
-	font-family: "Droid Sans Mono", arial !important;
+	font-family: yarnFont;
 	cursor: text;
 }
 
@@ -607,7 +611,7 @@ a:hover { color: #000;}
 	font-size: 0.9em;
 	line-height: 1.5em;
 	color: #666;
-	font-family: "Droid Sans Mono", arial !important;
+	font-family: yarnFont;
 	cursor: pointer;
 	height: 100%;
 	position: absolute;
