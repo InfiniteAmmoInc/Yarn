@@ -68,12 +68,13 @@ exports.load_dictionary = load_dictionary;
 
 // Check the spelling of a line, and return [start, end]-pairs for misspelled words.
 function misspelled(line) {
-  var words = line.split(" "); //(/[^a-zA-Z\-']/);
+  var multiLangualNonWords = /\s+|\.|\,|\?|\\|\/|\!|\[|\]|"|'|;|:|`|\+|\-|\&|\$|@|~|#|>|<|_|\)|\(|£|\^|%|\*|„|“|\||[0-9]+/g;
+  var words = line.split(multiLangualNonWords);
+  // console.log(words);
   var i = 0;
   var bads = [];
   for (word in words) {
-    var x = words[word] + "";
-    var checkWord = x; //.replace(/[^a-zA-Z\-']/g, "");
+    var checkWord = words[word];
     if (!dictionary.correct(checkWord)) {
       bads[bads.length] = [i, i + words[word].length];
     }
