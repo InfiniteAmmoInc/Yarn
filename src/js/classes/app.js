@@ -53,6 +53,7 @@ export var App = function(name, version) {
   this.config = {
     nightModeEnabled: false,
     spellcheckEnabled: true,
+    transcribeEnabled: false,
     showCounter: false,
     autocompleteWordsEnabled: true,
     autocompleteEnabled: true,
@@ -628,6 +629,72 @@ export var App = function(name, version) {
       });
     };
 
+    this.startCapture = function() {
+      spoken
+        .listen({ continuous: true })
+        .then(transcript => {
+          console.log(transcript);
+          if (self.editing()) {
+            self.insertTextAtCursor(transcript + ". ");
+            document.getElementById("speakTextBtnBubble").title = "Transcribe";
+          } else {
+            if (transcript === "open") {
+              console.log("try open...");
+              var firstFoundTitle = self
+                .getFirstFoundNode(self.$searchField.val())
+                .title();
+              console.log("try open:", firstFoundTitle);
+              self.openNodeByTitle(firstFoundTitle);
+            } else if (transcript === "clear") {
+              self.$searchField.val("");
+              self.updateSearch();
+            } else {
+              self.$searchField.val(transcript);
+              self.updateSearch();
+            }
+          }
+
+          spoken.listen.stop().then(() => {
+            if (self.editing()) {
+              document.getElementById("speakTextBtnBubble").style.visibility =
+                "hidden";
+            }
+
+            this.continueCapture();
+          });
+        })
+        .catch(e => spoken.listen.stop().then(() => this.continueCapture()));
+    };
+
+    this.continueCapture = function() {
+      spoken.delay(500).then(() => {
+        if (spoken.recognition.continuous) self.startCapture();
+      });
+    };
+
+    this.toglTranscribing = function() {
+      const available = spoken.listen.available();
+      var transcribeButton = document.getElementById("toglTranscribing");
+      var speakBubble = document.getElementById("speakTextBtnBubble");
+      self.config.transcribeEnabled = transcribeButton.checked;
+      if (transcribeButton.checked && available) {
+        spoken.listen.on.partial(ts => {
+          if (self.editing()) {
+            speakBubble.style.visibility = "visible";
+            speakBubble.title = `🗣️ ${ts} 🦜`;
+          } else {
+            self.$searchField.val(`🗣️ ${ts} 🦜`);
+          }
+        });
+        self.startCapture();
+      } else {
+        speakBubble.style.visibility = "hidden";
+        transcribeButton.checked = false;
+        spoken.recognition.continuous = false;
+        spoken.listen.stop();
+      }
+    };
+
     this.hearText = function() {
       const available = spoken.listen.available();
       if (!available) {
@@ -990,6 +1057,7 @@ export var App = function(name, version) {
         .css({ y: "-100" })
         .transition({ y: "0" }, 250);
       self.editor = ace.edit("editor");
+      self.editor.navigateFileEnd();
 
       var autoCompleteButton = document.getElementById("toglAutocomplete");
       autoCompleteButton.checked = self.config.autocompleteEnabled;
@@ -999,6 +1067,9 @@ export var App = function(name, version) {
       autoCompleteWordsButton.checked = self.config.autocompleteWordsEnabled;
       var spellCheckButton = document.getElementById("toglSpellCheck");
       spellCheckButton.checked = self.config.spellcheckEnabled;
+      var transcribeButton = document.getElementById("toglTranscribing");
+      transcribeButton.checked = self.config.transcribeEnabled;
+      self.toglTranscribing();
       var nightModeButton = document.getElementById("toglNightMode");
       nightModeButton.checked = self.config.nightModeEnabled;
       self.toggleNightMode();
@@ -1091,7 +1162,12 @@ export var App = function(name, version) {
   this.openNodeByTitle = function(nodeTitle) {
     self.makeNodeWithName(nodeTitle);
     app.nodes().forEach(node => {
-      if (node.title() === nodeTitle.trim()) {
+      if (
+        node
+          .title()
+          .trim()
+          .toLowerCase() === nodeTitle.trim().toLowerCase()
+      ) {
         self.editNode(node);
       }
     });
@@ -2019,6 +2095,14 @@ export var App = function(name, version) {
     }
   };
 
+  this.getFirstFoundNode = function(search) {
+    return self.nodes().find(node =>
+      node
+        .title()
+        .toLowerCase()
+        .includes(search)
+    );
+  };
   this.warpToNodeXY = function(x, y) {
     //alert("warp to x, y: " + x + ", " + y);
     const nodeWidth = 100,
@@ -2048,12 +2132,7 @@ export var App = function(name, version) {
       // warp to the first node
       self.warpToNodeIdx(0);
     } else {
-      const foundNode = self.nodes().find(node =>
-        node
-          .title()
-          .toLowerCase()
-          .includes(search)
-      );
+      const foundNode = self.getFirstFoundNode(search);
       self.warpToNodeIdx(self.nodes.indexOf(foundNode));
     }
   };

@@ -17,7 +17,7 @@
 
 			<!-- search form -->
 			<div class="app-search">
-				<input type="text" class="search-field"/>
+				<input id="nodeSearchInput" type="text" class="search-field"/>
 				
 				<div class="search-title search-item">
 					<input type="checkbox" checked="checked" id="search-title" />
@@ -178,10 +178,14 @@
 								<input class="styled-checkbox" type="checkbox" id="toglSpellCheck" onclick="app.toggleSpellCheck()"></input>
 								<label for="toglSpellCheck" title="Spellcheck">&#9745abc</label>
 							</span>
-						<button  class="bbcode-button" style="color:#19a4a8" onclick="app.hearText()" ><span title="Transcribe" class="button-bubble" id="speakTextBtnBubble"></span>🎤</button>
-						
+						<!-- <button  class="bbcode-button" style="color:#19a4a8" onclick="app.hearText()" ><span title="Transcribe" class="button-bubble" id="speakTextBtnBubble"></span>🎤</button> -->
+						<span class="styled-checkbox">
+							<input class="styled-checkbox" type="checkbox" id="toglTranscribing" onclick="app.toglTranscribing()"></input>
+							<label for="toglTranscribing" title="Transcribe"><span title="Transcribe" class="button-bubble" id="speakTextBtnBubble"></span>🎤</label>
+						</span>
+
 						<button  class="bbcode-button" style="color:#19a4a8" onclick="app.speakText()" title="Hear text">🔊</button>
-						<!-- <span class="button-bubble" title="test123"> </span>  -->
+						
 					</div>
 
 					<div class="editor-container">
